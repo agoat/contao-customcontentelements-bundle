@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+	<file datatype="php" original="system/modules/elements/languages/en/default.php" source-language="en">
+		<body>
+			<trans-unit id="MOD.contentblocks">
+				<source>Content block elements</source>
+			</trans-unit>
+
+			<trans-unit id="CTP.input">
+				<source>Input fields</source>
+			</trans-unit>
+			<trans-unit id="CTP.layout">
+				<source>Form layout</source>
+			</trans-unit>
+			<trans-unit id="CTP.element">
+				<source>Element properties</source>
+			</trans-unit>
+			<trans-unit id="CTP.system">
+				<source>System modules</source>
+			</trans-unit>
+
+			<trans-unit id="CTP.textfield.0">
+				<source>Text field</source>
+			</trans-unit>
+			<trans-unit id="CTP.textfield.1">
+				<source>Insert a text input field.</source>
+			</trans-unit>
+			<trans-unit id="CTP.textarea.0">
+				<source>Text area</source>
+			</trans-unit>
+			<trans-unit id="CTP.textarea.1">
+				<source>Insert a text area field with a rich text editor.</source>
+			</trans-unit>
+			<trans-unit id="CTP.selectfield.0">
+				<source>Select field</source>
+			</trans-unit>
+			<trans-unit id="CTP.selectfield.1">
+				<source>Insert a select input field.</source>
+			 </trans-unit>
+			<trans-unit id="CTP.checkbox.0">
+				<source>Checkbox</source>
+			</trans-unit>
+			<trans-unit id="CTP.checkbox.1">
+				<source>Insert a checkbox input field.</source>
+			</trans-unit>
+			<trans-unit id="CTP.filetree.0">
+				<source>Source selection</source>
+			</trans-unit>
+			<trans-unit id="CTP.filetree.1">
+				<source>Insert a file select input field with size selection.</source>
+			</trans-unit>
+			<trans-unit id="CTP.listwizard.0">
+				<source>List Wizard</source>
+			</trans-unit>
+			<trans-unit id="CTP.listwizard.1">
+				<source>Insert a list wizard.</source>
+			</trans-unit>
+			<trans-unit id="CTP.tablewizard.0">
+				<source>Table Wizard</source>
+			</trans-unit>
+			<trans-unit id="CTP.tablewizard.1">
+				<source>Insert a table wizard.</source>
+			</trans-unit>
+			<trans-unit id="CTP.code.0">
+				<source>Code</source>
+			</trans-unit>
+			<trans-unit id="CTP.code.1">
+				<source>Insert a highlighted code input field.</source>
+			</trans-unit>
+
+			<trans-unit id="CTP.section.0">
+				<source>Section</source>
+			</trans-unit>
+			<trans-unit id="CTP.section.1">
+				<source>Start a new palette section.</source>
+			</trans-unit>
+			<trans-unit id="CTP.explanation.0">
+				<source>Explanation</source>
+			</trans-unit>
+			<trans-unit id="CTP.explanation.1">
+				<source>Insert an explanation.</source>
+			</trans-unit>
+
+			<trans-unit id="CTP.visibility.0">
+				<source>Visibility</source>
+			</trans-unit>
+			<trans-unit id="CTP.visibility.1">
+				<source>Insert elements visibility settings.</source>
+			</trans-unit>
+			<trans-unit id="CTP.protection.0">
+				<source>Protection</source>
+			</trans-unit>
+			<trans-unit id="CTP.protection.1">
+				<source>Insert elements protection settings.</source>
+			</trans-unit>
+
+			<trans-unit id="CTP.form.0">
+				<source>Form</source>
+			</trans-unit>
+			<trans-unit id="CTP.form.1">
+				<source>Insert a form.</source>
+			</trans-unit>
+			<trans-unit id="CTP.comment.0">
+				<source>Comments</source>
+			</trans-unit>
+			<trans-unit id="CTP.comment.1">
+				<source>Insert comments.</source>
+			</trans-unit>
+			<trans-unit id="CTP.module.0">
+				<source>Module</source>
+			</trans-unit>
+			<trans-unit id="CTP.module.1">
+				<source>Insert a module.</source>
+			</trans-unit>
+	  
+
+			<trans-unit id="CTE.ctb">
+				<source>Content blocks</source>
+			</trans-unit>
+
+			<trans-unit id="ERR.fieldNameExists">
+				<source>The field name "%s" already exists for this content block element!</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

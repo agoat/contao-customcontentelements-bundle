@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * Content Block Extension for Contao CMS
+ *
+ * Copyright (c) 2015 Arne Stappen
+ *
+ * @license LGPL-3.0+
+ */
+
+
+/**
+ * This is a template for debugging
+ * 
+ * ATTENTION!!!
+ * All Template variables will be printed to screen!
+ * 
+ */
+ ?>
+<div style="clear:both;">
+<?php 
+$vars = $this->getData(); 
+unset($vars[Template]);
+echo "<pre>\n";
+print_r($vars);
+echo "</pre>\n";
+?>
+</div>

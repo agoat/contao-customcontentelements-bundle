@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * Content Block Extension for Contao CMS
+ *
+ * Copyright (c) 2015 Arne Stappen
+ *
+ * @license LGPL-3.0+
+ */
+
+
+/**
+ * This is a simple example template
+ * 
+ * Pattern Text field (Alias: headline) 		>> @property string		$this->headline
+ * Pattern Text area (Alias: text) 				>> @property string		$this->text
+ * Pattern Source selection (Alias: image)		>> @property array		$this->image
+ * 
+ */
+?>
+<div class="contentblock">
+
+<!-- headline (textfield) -->
+<div class='headline'><?php echo $this->headline; ?></div>
+
+<!-- text (textarea) -->
+<div class='text'>
+<?php echo $this->text; ?> 
+</div>
+
+<!-- single images (source selection) -->
+<div class="image">
+<?php if ($this->image) { $this->insert('picture_default', $this->image); } ?>
+</div>
+
+</div>

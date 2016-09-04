@@ -1,0 +1,5 @@
+<div class="comments">
+<?= implode('', $this->comments) ?>
+<?= $this->pagination ?>
+<?php include $this->getTemplate('mod_comment_form', 'html5'); ?>
+</div>

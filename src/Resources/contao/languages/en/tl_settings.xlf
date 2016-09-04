@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+	<file datatype="php" original="system/modules/core/languages/en/tl_settings.php" source-language="en">
+		<body>
+			<trans-unit id="tl_settings.elements_legend">
+				<source>Content elements management</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.overwriteCTE.0">
+				<source>Hide standard content elements</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.overwriteCTE.1">
+				<source>Show only the content blocks as new content element type (existing standard content elements will still be editable).</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.disableVisualSelect.0">
+				<source>Disable visual content element selection</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.disableVisualSelect.1">
+				<source>Shows the standard content element selection widget.</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.validVideoTypes.0">
+				<source>Video file types</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.validVideoTypes.1">
+				<source>Here you can enter a comma separated list of file types that will be handled as html5 video.</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.validAudioTypes.0">
+				<source>Audio file types</source>
+			</trans-unit>
+			<trans-unit id="tl_settings.validAudioTypes.1">
+				<source>Here you can enter a comma separated list of file types that will be handled as html5 audio.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

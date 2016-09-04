@@ -1,0 +1,261 @@
+<?php
+
+/**
+ * Content Block Extension for Contao CMS
+ *
+ * Copyright (c) 2015 Arne Stappen
+ *
+ * @license LGPL-3.0+
+ */
+
+
+/**
+ * This is an example template file to show how to output every pattern
+ * 
+ *
+ * -- Pattern: Text field, Text area
+ * @property string		$this->%alias%
+ *
+ *
+ * -- Pattern: Select field
+ * @property string		$this->%alias%
+ *
+ *
+ * -- Pattern: Checkbox
+ * @property boolean	$this->%alias%
+ *
+ *
+ * -- Pattern: Source selection
+ * @property array		$this->%alias%
+ *
+ *
+ * (Type: Images)
+ * Array
+ *       (
+ *           [img] => Array
+ *               (
+ *                   [src] => ..
+ *                   [width] => ..
+ *                   [height] => ..
+ *                   [srcset] => ..
+ *                   [sizes] => ..
+ *               )
+ *
+ *           [sources] => Array
+ *               (
+ *                   [0] => Array
+ *                       (
+ *                           [src] => ..
+ *                           [width] => ..
+ *                           [height] => ..
+ *                           [srcset] => ..
+ *                           [sizes] => ..
+ *                           [media] => ..
+ *                       )
+ *
+ *                   [1] => ..
+ * 
+ *           [alt] => ..
+ *           [title] => ..
+ *           [caption] => ..
+ *           [extension] => ..
+ *           [path] => ..
+ *       ) 
+ *
+ * (Type: All, Videos, Audio, Custom)
+ * Array
+ *       (
+ *           [id] => ..
+ *           [uuid] => ..
+ *           [name] => ..
+ *           [src] => ..
+ *           [size] => ..
+ *           [title] => ..
+ *           [alt] => ..
+ *           [link] => ..
+ *           [imageUrl] => ..
+ *           [caption] => ..
+ *           [href] => ..
+ *           [filesize] => ..
+ *           [icon] => ..
+ *           [mime] => ..
+ *           [extension] => ..
+ *           [path] => ..
+ *       ) 
+ *
+ * (Multiple source selection)
+ * Array
+ *       (
+ *           [0] => Array
+ *               (
+ *                   [id] => ..
+ *                   [uuid] => ..
+ *                   [name] => ..
+ *                   ..
+ *               )
+ *           [1] => Array
+ *               (
+ *                   [id] => ..
+ *                   [uuid] => ..
+ *                   [name] => ..
+ *                   ..
+ *               )
+ *           [2] => ..
+ *       ) 
+ *
+ *
+ *
+ * -- Pattern: List wizard
+ * @property array		$this->%alias%
+ *
+ * Array
+ *       (
+ *           [0] => ..
+ *           [1] => ..
+ *           [2] => ..
+ *       )
+ *
+ * -- Pattern: Table wizard
+ * @property array		$this->%alias%
+ *
+ * Array
+ *       (
+ *           [0] => Array
+ *               (
+ *                   [0] => ..
+ *                   [1] => ..
+ *                   [2] => ..
+ *               )
+ *           [1] => Array
+ *               (
+ *                   [0] => ..
+ *                   [1] => ..
+ *                   [2] => ..
+ *               )
+ *           [2] => ..
+ *       ) 
+ *
+ */
+?>
+<div class="contentblock">
+
+<!-- textfield, textarea -->
+<div class='textfield'>
+<?php echo $this->textfield; ?> 
+</div>
+
+<div class='textarea'>
+<?php echo $this->textarea; ?> 
+</div>
+
+
+<!-- select field (with two options) -->
+<div class='selectfield'>
+<?php switch ($this->selectfield):
+case "one": ?>
+Option one selected
+<?php break; case "two": ?>
+Option two selected
+</div>
+<?php break; endswitch; ?>
+
+
+<!-- checkbox field (boolean) -->
+<div class="checkbox">
+<?php if ($this->checkbox): ?>
+Checkbox is selected
+<?php endif; ?>
+</div>
+
+
+<!-- single images -->
+<div class="image">
+<?php if ($this->image) { $this->insert('picture_default', $this->image); } ?>
+</div>
+
+<!-- multiple images (gallery) -->
+<div class="gallery">
+<?php if (is_array($this->images)): foreach ($this->images as $image): ?>
+<div class="image">
+<?php $this->insert('picture_default', $image); ?>
+</div>
+<?php endforeach; endif; ?>
+</div>
+
+
+<!-- html5 video/audio -->
+<div class="html5video">
+<?php if (is_array($this->video)): ?>
+<video controls style="width: 640px; height: auto">
+<?php foreach ($this->video as $source): ?>
+<source type="<?= $source['mime'] ?>" src="<?= $source['src'] ?>" title="<?= $source['title'] ?>">
+<?php endforeach; ?>
+</video>
+<?php endif; ?>
+</div>
+
+
+<!-- single file -->
+<div class="file">
+<?php if ($this->file): ?>
+<img src="<?= $this->file['icon'] ?>"> <a href="<?= $this->file['href'] ?>" title="<?= $this->file['title'] ?>"><?= $this->file['name'] ?></a> <span>(<?= $this->file['filesize'] ?>)</span>
+<?php endif; ?>
+</div>
+
+
+<!-- multiple files -->
+<div class="files">
+<?php if (is_array($this->files)): ?>
+<div class="list">
+<?php foreach ($this->files as $file): ?>
+<div class="file">
+<img src="<?= $file['icon'] ?>"> 
+<a href="<?= $file['href'] ?>" title="<?= $file['title'] ?>"><?= $file['name'] ?></a> 
+<span>(<?= $file['filesize'] ?>)</span>
+</div>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</div>
+
+
+<!-- list wizard -->
+<div class="list">
+<?php if (is_array($this->list)): ?>
+<ul>
+<?php foreach ($this->list as $row): ?>
+<li><?php echo $row; ?></li>
+<?php endforeach; ?>
+</ul>
+<?php endif; ?>
+</div>
+
+
+<!-- table wizard -->
+<div class="table">
+<?php if (is_array($this->table)): ?>
+<table>
+<?php foreach ($this->table as $row): ?>
+<tr>
+<?php foreach ($row as $cell): ?>
+<td>
+<?php echo $cell; ?>
+</td>
+<?php endforeach; ?>
+</tr>
+<?php endforeach; ?>
+</table>
+<?php endif; ?>
+</div>
+
+<!-- form output -->
+<?php if ($this->form) echo $this->form; ?>
+
+<!-- module output -->
+<?php if ($this->module) echo $this->module; ?>
+
+<!-- comments output -->
+<?php if ($this->comments) echo $this->comments; ?>
+
+
+

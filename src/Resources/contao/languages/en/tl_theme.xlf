@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+  <file datatype="php" original="system/modules/elements/languages/en/tl_theme.php" source-language="en">
+    <body>
+      <trans-unit id="tl_theme.ctb.0">
+        <source>Content blocks</source>
+      </trans-unit>
+      <trans-unit id="tl_theme.ctb.1">
+        <source>Edit the content blocks for the theme ID %s</source>
+      </trans-unit>
+
+
+ 	  
+    </body>
+  </file>
+</xliff>

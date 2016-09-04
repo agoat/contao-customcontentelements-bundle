@@ -1,0 +1,15 @@
+/* styles for content block editing page */
+.ctb_group, .ctb_element.published, .ctb_element.unpublished {color: #000; margin: 0; background: none;}
+.ctb_element.unpublished {opacity: .33;}
+
+/* style for visual element selection */
+.chzn-container .chzn-results{max-height: 346px;}
+.chzn-container .chzn-results .result-selected{background: #f8f8f8; color: #444}
+
+
+/* standard contao template overwrite to show the backend the right way */
+#main h1.main_headline, #tl_navigation h1, #header h1 {font-size: 0.75rem;}
+#tl_navigation img, .tl_listing_container .tl_content_right img {width: auto;}
+
+/* backend theme sb-admin compatibility */
+.tl_content .cte_type.ctb_element.published::before, .tl_content .cte_type.ctb_element.unpublished::before {display: none;}
