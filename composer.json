@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
     "name": "agoat/contentblocks-bundle",
     "type": "contao-bundle",
@@ -38,44 +37,3 @@
         }
     }
 }
-=======
-{
-    "name": "agoat/contentblocks-bundle",
-    "type": "contao-bundle",
-    "description": "Contao content blocks extension",
-    "license": "LGPL-3.0+",
-    "authors": [
-        {
-            "name": "Arne Stappen",
-            "homepage": "https://github.com/agoat"
-        }
-    ],
-    "require": {
-        "php": ">=5.5.0",
-        "symfony/framework-bundle": "~2.8|~3.0",
-        "contao/core-bundle": "^4.2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~4.5"
-    },
-    "autoload": {
-        "psr-4": {
-            "Agoat\\ContentBlocksBundle\\": "src/"
-        },
-        "classmap": [
-            "src/Resources/contao"
-        ],
-        "exclude-from-classmap": [
-            "src/Resources/contao/config",
-            "src/Resources/contao/dca",
-            "src/Resources/contao/languages",
-            "src/Resources/contao/templates"
-        ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Agoat\\ContentBlocksBundle\\Test\\": "tests/"
-        }
-    }
-}
->>>>>>> origin/master
