@@ -8,15 +8,19 @@
  * @license LGPL-3.0+
  */
 
-namespace Agoat;
+namespace Agoat\ContentBlocks;
+
+use Contao\Backend;
 
 
 /**
+ * Modified Contao\Theme class to include content block elements
+ * 
  * Provide methods to handle themes.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class Theme extends \Backend
+class Theme extends Backend
 {
 
 	/**

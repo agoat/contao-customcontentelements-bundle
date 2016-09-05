@@ -1,0 +1,36 @@
+<?php
+
+namespace Contao;
+
+if ($GLOBALS['TL_CONFIG']['useRTE']):
+
+?>
+<script>window.tinymce || document.write('<script src="<?= TL_ASSETS_URL ?>assets/tinymce4/js/tinymce.gzip.js">\x3C/script>')</script>
+<script>
+window.tinymce && tinymce.init({
+  skin: 'contao',
+  selector: '#<?= $this->selector ?>',
+  language: '<?= Backend::getTinyMceLanguage() ?>',
+  element_format: 'html',
+  document_base_url: '<?= Environment::get('base') ?>',
+  entities: '160,nbsp,60,lt,62,gt,173,shy',
+  setup: function(editor) {
+    editor.getElement().removeAttribute('required');
+  },
+  init_instance_callback: function(editor) {
+    editor.on('focus', function(){ Backend.getScrollOffset(); });
+  },
+  file_browser_callback: function(field_name, url, type, win) {
+    Backend.openModalBrowser(field_name, url, type, win);
+  },
+  plugins: 'code link',
+  browser_spellcheck: true,
+  tabfocus_elements: ":prev,:next",
+
+  fontsize_formats: "0.5em 0.7em 1em 1.2em 1.5em 1.8em 2em 3em 4em",
+
+  menubar: false,
+  toolbar: "fontsizeselect | bold italic | alignleft aligncenter | outdent indent | undo redo | removeformat | code"
+});
+</script>
+<?php endif; ?>

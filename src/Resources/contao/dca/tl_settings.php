@@ -13,7 +13,7 @@
 
 
 // legacy mode
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('maintenanceMode', 'maintenanceMode;{elements_legend},overwriteCTE,disableVisualSelect', $GLOBALS['TL_DCA']['tl_settings']['palettes']['default']);
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('{frontend_legend}', '{elements_legend},overwriteCTE,disableVisualSelect;{frontend_legend}', $GLOBALS['TL_DCA']['tl_settings']['palettes']['default']);
 
 // more file types
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('validImageTypes', 'validImageTypes,validVideoTypes,validAudioTypes', $GLOBALS['TL_DCA']['tl_settings']['palettes']['default']);
@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['validVideoTypes'] = array
 	'eval'                    => array('tl_class'=>'w50'),
 	'save_callback' => array
 	(
-		array('tl_settings_change', 'checkVideoTypes')
+		array('tl_settings_contentblocks', 'checkVideoTypes')
 	)
 );
 $GLOBALS['TL_DCA']['tl_settings']['fields']['validAudioTypes'] = array
@@ -51,14 +51,14 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['validAudioTypes'] = array
 	'eval'                    => array('tl_class'=>'w50'),
 	'save_callback' => array
 	(
-		array('tl_settings_change', 'checkAudioTypes')
+		array('tl_settings_contentblocks', 'checkAudioTypes')
 	)
 );		
 
 
 
 
-class tl_settings_change extends Backend
+class tl_settings_contentblocks extends Backend
 {
 	
 	public function checkVideoTypes ($varValue)

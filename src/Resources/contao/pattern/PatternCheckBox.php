@@ -11,14 +11,13 @@
  * @license	  LGPL-3.0+
  */
 
+namespace Agoat\ContentBlocks;
 
-namespace Agoat;
+use Agoat\ContentBlocks\Pattern;
 
- 
-class PatternCheckBox extends \Pattern
+
+class PatternCheckBox extends Pattern
 {
-
-
 	/**
 	 * generate the DCA construct
 	 */

@@ -12,10 +12,14 @@
  */
 
 
-namespace Agoat;
+namespace Agoat\ContentBlocks;
+
+use Contao\ContentElement;
+use Agoat\ContentBlocks\Template;
+use Agoat\ContentBlocks\Pattern;
 
 
-class ContentBlockElement extends \ContentElement
+class ContentBlockElement extends ContentElement
 {
 
 	/**
@@ -103,7 +107,7 @@ class ContentBlockElement extends \ContentElement
 			return '';
 		}
 
-		$this->Template = new \ContentBlockTemplate($this->strTemplate);
+		$this->Template = new Template($this->strTemplate);
 		$this->Template->setData($this->arrData);
 		$this->Template->inColumn = $this->strColumn;
 
@@ -147,7 +151,7 @@ class ContentBlockElement extends \ContentElement
 			}
 
 			
-			$strClass = \Pattern::findClass($objPattern->type);
+			$strClass = Pattern::findClass($objPattern->type);
 				
 			if (!class_exists($strClass))
 			{

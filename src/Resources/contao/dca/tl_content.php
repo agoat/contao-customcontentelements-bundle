@@ -14,16 +14,16 @@
 
 
 // table callbacks
-$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_element', 'buildPaletteAndFields');
-$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_element', 'savePatternFields');
+$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_contentblocks', 'buildPaletteAndFields');
+$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_contentblocks', 'savePatternFields');
 
-$GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][] = array('tl_content_element', 'copyRelatedValues');
-$GLOBALS['TL_DCA']['tl_content']['config']['ondelete_callback'][] = array('tl_content_element', 'deleteRelatedValues');
+$GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][] = array('tl_content_contentblocks', 'copyRelatedValues');
+$GLOBALS['TL_DCA']['tl_content']['config']['ondelete_callback'][] = array('tl_content_contentblocks', 'deleteRelatedValues');
 
-$GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = array('tl_content_element', 'createRelatedValuesVersion');
-$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_element', 'restoreRelatedValuesVersion');
+$GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = array('tl_content_contentblocks', 'createRelatedValuesVersion');
+$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_contentblocks', 'restoreRelatedValuesVersion');
 
-$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_element', 'addCteType');
+$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_contentblocks', 'addCteType');
 
 // remove some filter options
 $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
@@ -36,16 +36,16 @@ if (!\Config::get('disableVisualSelect'))
 }
 
 // new options callback to get new content block elements
-$GLOBALS['TL_DCA']['tl_content']['fields']['type']['options_callback'] = array('tl_content_element', 'getContentBlockElements');
+$GLOBALS['TL_DCA']['tl_content']['fields']['type']['options_callback'] = array('tl_content_contentblocks', 'getContentBlockElements');
 
 // set new default element
-$GLOBALS['TL_DCA']['tl_content']['fields']['type']['load_callback'] = array(array('tl_content_element', 'setDefaultType'));
+$GLOBALS['TL_DCA']['tl_content']['fields']['type']['load_callback'] = array(array('tl_content_contentblocks', 'setDefaultType'));
 $GLOBALS['TL_DCA']['tl_content']['fields']['type']['default'] = false;
 
 
 
 	
-class tl_content_element extends tl_content
+class tl_content_contentblocks extends tl_content
 {
 	
 	
@@ -90,7 +90,7 @@ class tl_content_element extends tl_content
 	public function getContentBlockElements ($dc)
 	{
 		// try to get the theme id
-		$intLayoutId = \ContentBlocks::getLayoutId($dc->activeRecord->ptable,  $dc->activeRecord->pid);
+		$intLayoutId = \Agoat\ContentBlocks\Controller::getLayoutId($dc->activeRecord->ptable,  $dc->activeRecord->pid);
 	
 		$objLayout = \LayoutModel::findById($intLayoutId);	
 
@@ -143,7 +143,7 @@ class tl_content_element extends tl_content
 		if (!$value)
 		{
 			// try to get the theme id
-			$intLayoutId = \ContentBlocks::getLayoutId($dc->activeRecord->ptable,  $dc->activeRecord->pid);
+			$intLayoutId = \Agoat\ContentBlocks\Controller::getLayoutId($dc->activeRecord->ptable,  $dc->activeRecord->pid);
 	
 			$objLayout = \LayoutModel::findById($intLayoutId);
 
@@ -233,7 +233,7 @@ class tl_content_element extends tl_content
 			}
 		
 			// construct dca for pattern
-			$strClass = \Pattern::findClass($colPattern->current()->type);
+			$strClass = \Agoat\ContentBlocks\Pattern::findClass($colPattern->current()->type);
 				
 			if (!class_exists($strClass))
 			{

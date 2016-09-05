@@ -13,29 +13,34 @@
 
 
  /**
- * Register back end module tables
+ * Register back end module (tables, css, overwritten classes)
  */
+
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern');
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 
- 
-//dump($GLOBALS['BE_MOD']['design']['themes']);
+$GLOBALS['BE_MOD']['design']['themes']['importTheme'] = array('Agoat\\ContentBlocks\\Theme', 'importTheme');
+$GLOBALS['BE_MOD']['design']['themes']['exportTheme'] = array('Agoat\\ContentBlocks\\Theme', 'exportTheme');
+
+
 
  /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentBlocks','loadAndRegisterBlockElements');
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentBlocks','loadAndRegisterElementsWithGroups');
+$GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentBlocks\\Controller','loadAndRegisterBlockElements');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentBlocks\\Controller','loadAndRegisterElementsWithGroups');
 
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentBlocks','setNewsArticleCallbacks');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentBlocks\\Controller','setNewsArticleCallbacks');
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks','addPageLayoutToBE');
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addPageLayoutToBE');
 
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks','addContentBlockCSS');
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks','addContentBlockJS');
-$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentBlocks','addLayoutJS');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addContentBlockCSS');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addContentBlockJS');
+$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentBlocks\\Controller','addLayoutJS');
 
 
+ 
+ 
 /**
  * Content pattern
  */
@@ -43,8 +48,8 @@ $GLOBALS['TL_CTP'] = array
 (
 	'input' => array
 	(
-		'textfield'		=> 'PatternTextField',
-		'textarea'		=> 'PatternTextArea',
+		'textfield'		=> 'Agoat\ContentBlocks\PatternTextField',
+		'textarea'		=> 'Agoat\ContentBlocks\PatternTextArea',
 		'selectfield'	=> 'PatternSelectField',
 		'checkbox'		=> 'PatternCheckBox',
 		'filetree'		=> 'PatternFileTree',
@@ -54,7 +59,7 @@ $GLOBALS['TL_CTP'] = array
 	),
 	'layout' => array
 	(
-		'section'		=> 'PatternSection',
+		'section'		=> 'Agoat\ContentBlocks\PatternSection',
 		'explanation'	=> 'PatternExplanation',
 	),
 	'element' => array

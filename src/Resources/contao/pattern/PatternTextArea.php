@@ -11,11 +11,13 @@
  * @license	  LGPL-3.0+
  */
 
+namespace Agoat\ContentBlocks;
 
-namespace Contao;
+use Contao\TemplateLoader;
+use Agoat\ContentBlocks\Pattern;
 
- 
-class PatternTextArea extends \Pattern
+
+class PatternTextArea extends Pattern
 {
 
 
@@ -24,6 +26,19 @@ class PatternTextArea extends \Pattern
 	 */
 	public function construct()
 	{
+		// register all tinyMCE template files
+		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
+		{
+			$arrTemplateFiles = glob(TL_ROOT . '/templates/*/be_tinyMCE*');
+			
+			foreach ($arrTemplateFiles as $strFile)
+			{
+				$arrTemplates[basename($strFile, '.html5')] = str_replace(TL_ROOT, '', dirname($strFile));
+			}
+			
+			TemplateLoader::addFiles($arrTemplates);
+		}
+
 		$this->generateDCA('text', array
 		(
 			'inputType' 	=>	'textarea',
@@ -32,7 +47,7 @@ class PatternTextArea extends \Pattern
 			(
 				'mandatory'		=>	($this->mandatory) ? true : false, 
 				'tl_class'		=> 	'clr',
-				'rte'			=>	'tinyMCEpattern',
+				'rte'			=>	substr($this->rteTemplate, 3),
 				'preserveTags'	=>	true,
 			)
 		));
@@ -47,13 +62,26 @@ class PatternTextArea extends \Pattern
 	{
 		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 
-		$selector = 'ctrl_textarea' . $this->id;
+		$this->selector = 'ctrl_textarea' . $this->id;
 		$this->field = 'pre_' . $this->id;
 		
-		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
+		$strPreview .= '<textarea id="' . $this->selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
+		// register all tinyMCE template files
+		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
+		{
+			$arrTemplateFiles = glob(TL_ROOT . '/templates/*/be_tinyMCE*');
+
+			foreach ($arrTemplateFiles as $strFile)
+			{
+				$arrTemplates[basename($strFile, '.html5')] = str_replace(TL_ROOT, '', dirname($strFile));
+			}
+			
+			TemplateLoader::addFiles($arrTemplates);
+		}
+
 		ob_start();
-		include TL_ROOT . '/system/config/tinyMCEpattern.php';
+		include(\TemplateLoader::getPath($this->rteTemplate, 'html5'));
 		$strPreview .= ob_get_contents();
 		ob_end_clean();
 			

@@ -1,5 +1,6 @@
 /* styles for content block editing page */
 .ctb_group, .ctb_element.published, .ctb_element.unpublished {color: #000; margin: 0; background: none;}
+.ctb_group {padding: 5px; font-weight: 500;}
 .ctb_element.unpublished {opacity: .33;}
 
 /* style for visual element selection */

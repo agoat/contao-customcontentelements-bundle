@@ -253,7 +253,7 @@ class tl_content_blocks extends Backend
 		switch ($arrRow['type'])
 		{
 			case 'group':
-				return '<div class="cte_type ctb_group" style="padding: 5px;font-size: 1.2em; font-weight: bold;">' . $arrRow['title'] . '</div>';
+				return '<div class="cte_type ctb_group">' . $arrRow['title'] . '</div>';
 
 			case 'element':
 				$key = $arrRow['invisible'] ? 'unpublished' : 'published';

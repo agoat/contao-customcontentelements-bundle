@@ -11,11 +11,12 @@
  * @license	  LGPL-3.0+
  */
 
+namespace Agoat\ContentBlocks;
 
-namespace Contao;
+use Agoat\ContentBlocks\Pattern;
 
- 
-class PatternSection extends \Pattern
+
+class PatternSection extends Pattern
 {
 
 	

@@ -12,7 +12,9 @@
  */
 
 
-namespace Contao;
+namespace Agoat\ContentBlocks;
+
+use Contao/Widget;
 
 
 /**
@@ -23,7 +25,7 @@ namespace Contao;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class Explanation extends \Widget
+class Explanation extends Widget
 {
 
 

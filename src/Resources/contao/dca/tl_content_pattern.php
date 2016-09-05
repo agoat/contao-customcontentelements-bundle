@@ -11,6 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
+use Contao\System;
+use Contao\Database;
+use Agoat\ContentBlocks\Pattern;
 
  
 /**
@@ -220,7 +223,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
 			'exclude'                 => true,
 			'inputType'               => 'textarea',
-			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCEexplanation'),
+			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCE_explanation'),
 			'sql'                     => "mediumtext NULL"
 		),
 		'hidden' => array
@@ -343,7 +346,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['rteTemplate'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'default'				  => 'tinymce_standard',
+			'default'				  => 'be_tinyMCE_standard',
 			'flag'                    => 11,
 			'options_callback'        => array('tl_content_pattern', 'getRteTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
@@ -653,7 +656,7 @@ class tl_content_pattern extends Backend
 		$objPattern = new ContentPatternModel();
 		$objPattern->setRow($arrRow);
 		
-		$strClass = \Pattern::findClass($objPattern->type);
+		$strClass = Pattern::findClass($objPattern->type);
 				
 		if (!class_exists($strClass))
 		{
@@ -680,19 +683,20 @@ class tl_content_pattern extends Backend
 	 */
 	public function setPickerOptions($value, $dc)
 	{
+		$db = Database::getInstance();
 		switch ($value)
 		{
 			case 'date':
 				if (!in_array($dc->activeRecord->rgxp, array('date', 'time', 'datim')))
 				{
 					// change rgxp in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
 								   ->execute('date', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
 								   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -701,7 +705,7 @@ class tl_content_pattern extends Backend
 				if (!in_array($dc->activeRecord->rgxp, array('alnum', 'extnd')))
 				{
 					// change rgxp in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
 								   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -710,13 +714,13 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->rgxp != 'url')
 				{
 					// change rgxp in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
 								   ->execute('url', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
 								   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -725,13 +729,13 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->maxLength > 200)
 				{
 					// change maxLength in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
 								   ->execute(200, $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// change multiple in database
-					$this->Database->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
 								   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -865,7 +869,7 @@ class tl_content_pattern extends Backend
 	 */
 	public function getRteTemplates()
 	{
-		return $this->getTemplateGroup('tinymce_');
+		return $this->getTemplateGroup('be_tinyMCE');
 	}
 
 	

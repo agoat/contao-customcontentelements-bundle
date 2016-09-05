@@ -11,8 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
+namespace Agoat\ContentBlocks;
 
-namespace Contao;
+use Contao/Widget;
 
 
 /**
@@ -26,7 +27,7 @@ namespace Contao;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class VisualSelectMenu extends \Widget
+class VisualSelectMenu extends Widget
 {
 
 	/**

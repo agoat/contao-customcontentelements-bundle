@@ -11,7 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Contao;
+namespace Agoat\ContentBlocks;
+
+use Contao/Widget;
 
 
 /**
@@ -24,7 +26,7 @@ namespace Contao;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class FileTree extends \Widget
+class FileTree extends Widget
 {
 
 	/**

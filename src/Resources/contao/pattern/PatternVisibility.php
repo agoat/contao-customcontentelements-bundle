@@ -11,11 +11,12 @@
  * @license	  LGPL-3.0+
  */
 
+namespace Agoat\ContentBlocks;
 
-namespace Agoat;
+use Agoat\ContentBlocks\Pattern;
 
- 
-class PatternVisibility extends \Pattern
+
+class PatternVisibility extends Pattern
 {
 
 

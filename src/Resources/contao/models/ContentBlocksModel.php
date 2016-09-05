@@ -11,19 +11,12 @@
  * @license	  LGPL-3.0+
  */
 
-
 namespace Contao;
 
+use Contao\Model;
 
-/**
- * Reads and writes news
- *
- * @property integer $id
- * @property integer $pid
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- */
-class ContentBlocksModel extends \Model
+
+class ContentBlocksModel extends Model
 {
 
 	/**

@@ -11,18 +11,12 @@
  * @license	  LGPL-3.0+
  */
 
-
 namespace Contao;
 
+use Contao\Model;
 
-/**
- * Reads and writes values
- *
 
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- */
-class ContentValueModel extends \Model
+class ContentValueModel extends Model
 {
 
 	/**

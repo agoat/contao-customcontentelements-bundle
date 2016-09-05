@@ -11,11 +11,12 @@
  * @license	  LGPL-3.0+
  */
 
+namespace Agoat\ContentBlocks;
 
-namespace Agoat;
+use Agoat\ContentBlocks\Pattern;
 
- 
-class PatternTextField extends \Pattern
+
+class PatternTextField extends Pattern
 {
 
 

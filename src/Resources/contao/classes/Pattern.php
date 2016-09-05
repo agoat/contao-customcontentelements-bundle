@@ -12,9 +12,11 @@
  */
 
  
-namespace Agoat;
+namespace Agoat\ContentBlocks;
  
- 
+use Contao\System;
+use Contao\File;
+use Agoat\ContentBlocks\Controller;
 
 /**
  * Pattern class
@@ -26,7 +28,7 @@ namespace Agoat;
  *
  * @author Arne Stappen
  */
-abstract class Pattern extends \Controller
+abstract class Pattern extends Controller
 {
 
 	/**
@@ -127,12 +129,12 @@ abstract class Pattern extends \Controller
 			// load default value
 			if ($arrFieldDCA['default'])
 			{
-				array_unshift($arrFieldDCA['load_callback'], array('tl_content_element', 'defaultValue'));
+				array_unshift($arrFieldDCA['load_callback'], array('tl_content_contentblocks', 'defaultValue'));
 			}
 
 			// load/save database values first/last
-			array_unshift($arrFieldDCA['load_callback'], array('tl_content_element', 'loadFieldValue'));
-			array_push($arrFieldDCA['save_callback'], array('tl_content_element', 'saveFieldAndClear'));
+			array_unshift($arrFieldDCA['load_callback'], array('tl_content_contentblocks', 'loadFieldValue'));
+			array_push($arrFieldDCA['save_callback'], array('tl_content_contentblocks', 'saveFieldAndClear'));
 		}
 
 		// add to palette
@@ -243,7 +245,7 @@ abstract class Pattern extends \Controller
 
 		try
 		{
-			$objFile = new \File($arrItem['singleSRC'], true);
+			$objFile = new File($arrItem['singleSRC'], true);
 		}
 		catch (\Exception $e)
 		{
@@ -309,12 +311,12 @@ abstract class Pattern extends \Controller
 
 			if ($src !== $arrItem['singleSRC'])
 			{
-				$objFile = new \File(rawurldecode($src), true);
+				$objFile = new File(rawurldecode($src), true);
 			}
 		}
 		catch (\Exception $e)
 		{
-			\System::log('Image "' . $arrItem['singleSRC'] . '" could not be processed: ' . $e->getMessage(), __METHOD__, TL_ERROR);
+			System::log('Image "' . $arrItem['singleSRC'] . '" could not be processed: ' . $e->getMessage(), __METHOD__, TL_ERROR);
 
 			$src = '';
 			$picture = array('img'=>array('src'=>'', 'srcset'=>''), 'sources'=>array());
@@ -368,7 +370,7 @@ abstract class Pattern extends \Controller
 					// Do not add the TL_FILES_URL to external URLs (see #4923)
 					if (strncmp($arrItem['imageUrl'], 'http://', 7) !== 0 && strncmp($arrItem['imageUrl'], 'https://', 8) !== 0)
 					{
-						$objTemplate->$strHrefKey = TL_FILES_URL . \System::urlEncode($arrItem['imageUrl']);
+						$objTemplate->$strHrefKey = TL_FILES_URL . System::urlEncode($arrItem['imageUrl']);
 					}
 
 					$objTemplate->attributes = ($objPage->outputFormat == 'xhtml') ? ' rel="' . $strLightboxId . '"' : ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
@@ -383,7 +385,7 @@ abstract class Pattern extends \Controller
 		// Fullsize view
 		elseif ($arrItem['fullsize'] && TL_MODE == 'FE')
 		{
-			$objTemplate->$strHrefKey = TL_FILES_URL . \System::urlEncode($arrItem['singleSRC']);
+			$objTemplate->$strHrefKey = TL_FILES_URL . System::urlEncode($arrItem['singleSRC']);
 			$objTemplate->attributes = ($objPage->outputFormat == 'xhtml') ? ' rel="' . $strLightboxId . '"' : ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
 		}
 
