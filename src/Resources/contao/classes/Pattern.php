@@ -19,6 +19,7 @@ use Contao\System;
 use Contao\File;
 use Contao\Image;
 use Contao\Picture;
+use Contao\StringUtil;
 use Agoat\ContentBlocks\Controller;
 
 /**
@@ -263,8 +264,8 @@ abstract class Pattern extends Controller
 			$objTemplate->height = $imgSize[1];
 		}
 
-		$size = deserialize($arrItem['size']);
-		$arrMargin = (TL_MODE == 'BE') ? array() : deserialize($arrItem['imagemargin']);
+		$size = StringUtil::deserialize($arrItem['size']);
+		$arrMargin = (TL_MODE == 'BE') ? array() : StringUtil::deserialize($arrItem['imagemargin']);
 
 		if (is_array($size))
 		{
@@ -330,8 +331,8 @@ abstract class Pattern extends Controller
 			$objTemplate->imgSize = ' width="' . $imgSize[0] . '" height="' . $imgSize[1] . '"';
 		}
 
-		$picture['alt'] = specialchars($arrItem['alt']);
-		$picture['title'] = specialchars($arrItem['title']);
+		$picture['alt'] = StringUtil::specialchars($arrItem['alt']);
+		$picture['title'] = StringUtil::specialchars($arrItem['title']);
 
 		$objTemplate->picture = $picture;
 
@@ -392,8 +393,8 @@ abstract class Pattern extends Controller
 
 		// Do not urlEncode() here because getImage() already does (see #3817)
 		$objTemplate->src = TL_FILES_URL . $src;
-		$objTemplate->alt = specialchars($arrItem['alt']);
-		$objTemplate->title = specialchars($arrItem['title']);
+		$objTemplate->alt = StringUtil::specialchars($arrItem['alt']);
+		$objTemplate->title = StringUtil::specialchars($arrItem['title']);
 		$objTemplate->linkTitle = $objTemplate->title;
 		$objTemplate->fullsize = $arrItem['fullsize'] ? true : false;
 		$objTemplate->addBefore = ($arrItem['floating'] != 'below');

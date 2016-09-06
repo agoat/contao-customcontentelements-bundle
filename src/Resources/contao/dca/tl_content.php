@@ -373,7 +373,7 @@ class tl_content_contentblocks extends tl_content
 		$objUndo = $this->Database->prepare("SELECT data FROM tl_undo WHERE id=?")
 								  ->execute($intUndoId) ;
 			
-		$arrData = deserialize($objUndo->fetchAssoc()[data]);
+		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 		
 
 		foreach ($colValues as $objValue)
@@ -465,7 +465,7 @@ class tl_content_contentblocks extends tl_content
 				break;
 			}
 			
-			$data = deserialize($objData->data);
+			$data = \StringUtil::deserialize($objData->data);
 			
 			if (!is_array($data))
 			{

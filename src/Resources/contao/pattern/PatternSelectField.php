@@ -13,6 +13,7 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\StringUtil;
 use Agoat\ContentBlocks\Pattern;
 
 
@@ -30,7 +31,7 @@ class PatternSelectField extends Pattern
 
 		// Generate options
 		$strGroup = 'default';
-		foreach (deserialize($this->options) as $arrOption)
+		foreach (StringUtil::deserialize($this->options) as $arrOption)
 		{
 			if ($arrOption['group'])
 			{
@@ -78,8 +79,7 @@ class PatternSelectField extends Pattern
 		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
 
-		$options = deserialize($this->options);
-		foreach (deserialize($this->options) as $option)
+		foreach (StringUtil::deserialize($this->options) as $option)
 		{
 			if ($option['group'])
 			{
@@ -88,12 +88,12 @@ class PatternSelectField extends Pattern
 					$strPreview .= '</optgroup>';
 				}
 				
-				$strPreview .= '<optgroup label="&nbsp;' . specialchars($option['label']) . '">';
+				$strPreview .= '<optgroup label="&nbsp;' . StringUtil::specialchars($option['label']) . '">';
 				$blnOpenGroup = true;
 				continue;
 			}
 					
-			$strPreview .= '<option value="' . specialchars($option['value']) . '"' . (($option['default']) ? ' selected' : '') . '>' . specialchars($option['label']) . '</option>';
+			$strPreview .= '<option value="' . StringUtil::specialchars($option['value']) . '"' . (($option['default']) ? ' selected' : '') . '>' . StringUtil::specialchars($option['label']) . '</option>';
 		}
 
 		if ($blnOpenGroup)

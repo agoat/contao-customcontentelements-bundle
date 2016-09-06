@@ -10,6 +10,9 @@
 
 namespace Agoat\ContentBlocks;
 
+use Patchwork\Utf8;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 
 
 /**
@@ -43,6 +46,9 @@ class Theme extends \Backend
 
 		if (\Input::post('FORM_SUBMIT') == 'tl_theme_import')
 		{
+			/** @var SessionInterface $objSession */
+			$objSession = \System::getContainer()->get('session');
+			
 			if (!\Input::post('confirm'))
 			{
 				$arrUploaded = $objUploader->uploadTo('system/tmp');
@@ -78,7 +84,7 @@ class Theme extends \Backend
 			}
 			else
 			{
-				$arrFiles = explode(',', $this->Session->get('uploaded_themes'));
+				$arrFiles = explode(',', $objSession->get('uploaded_themes'));
 			}
 
 			// Check whether there are any files
@@ -110,7 +116,7 @@ class Theme extends \Backend
 			}
 			else
 			{
-				$this->Session->set('uploaded_themes', implode(',', $arrFiles));
+				$objSession->set('uploaded_themes', implode(',', $arrFiles));
 
 				return $this->compareThemeFiles($arrFiles, $arrDbFields);
 			}
@@ -722,8 +728,12 @@ class Theme extends \Backend
 		}
 
 		\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-		$this->Session->remove('uploaded_themes');
-
+		
+		/** @var SessionInterface $objSession */
+		$objSession = \System::getContainer()->get('session');
+		
+		$objSession->remove('uploaded_themes');
+		
 		// Redirect
 		$this->redirect(str_replace('&key=importTheme', '', \Environment::get('request')));
 	}
@@ -747,7 +757,7 @@ class Theme extends \Backend
 		}
 
 		// Romanize the name
-		$strName = utf8_romanize($objTheme->name);
+		$strName = Utf8::toAscii($objTheme->name);
 		$strName = strtolower(str_replace(' ', '_', $strName));
 		$strName = preg_replace('/[^A-Za-z0-9._-]/', '', $strName);
 		$strName = basename($strName);

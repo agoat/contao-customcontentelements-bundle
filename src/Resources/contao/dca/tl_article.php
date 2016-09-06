@@ -66,12 +66,11 @@ class tl_article_contentblocks extends tl_article
 			return;
 		}
 
-		$db = \Contao\Database::getInstance();
 		// get the undo database row
-		$objUndo = $db	->prepare("SELECT data FROM tl_undo WHERE id=?")
-						->execute($intUndoId) ;
+		$objUndo = $this->database	->prepare("SELECT data FROM tl_undo WHERE id=?")
+									->execute($intUndoId) ;
 
-		$arrData = deserialize($objUndo->fetchAssoc()[data]);
+		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 
 		
 		foreach ($colContent as $objContent)
@@ -95,8 +94,8 @@ class tl_article_contentblocks extends tl_article
 
 	
 		// save to the undo database row
-		$db	->prepare("UPDATE tl_undo SET data=? WHERE id=?")
-			->execute(serialize($arrData), $intUndoId);
+		$this->database	->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+						->execute(serialize($arrData), $intUndoId);
 
 	}
 

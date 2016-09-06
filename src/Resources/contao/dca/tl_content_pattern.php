@@ -11,9 +11,6 @@
  * @license	  LGPL-3.0+
  */
 
-use Contao\System;
-use Contao\Database;
-use Agoat\ContentBlocks\Pattern;
 
  
 /**
@@ -392,7 +389,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['size'],
 			'exclude'                 => true,
 			'inputType'               => 'imageSize',
-			'options'                 => System::getImageSizes(),
+			'options'                 => \System::getContainer()->get('contao.image.image_sizes')->getAllOptions(),
 			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
 			'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50 clr'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
@@ -656,7 +653,7 @@ class tl_content_pattern extends Backend
 		$objPattern = new ContentPatternModel();
 		$objPattern->setRow($arrRow);
 		
-		$strClass = Pattern::findClass($objPattern->type);
+		$strClass = \Agoat\ContentBlocks\Pattern::findClass($objPattern->type);
 				
 		if (!class_exists($strClass))
 		{
@@ -683,7 +680,6 @@ class tl_content_pattern extends Backend
 	 */
 	public function setPickerOptions($value, $dc)
 	{
-		$db = \Contao\Database::getInstance();
 
 		switch ($value)
 		{
@@ -691,14 +687,14 @@ class tl_content_pattern extends Backend
 				if (!in_array($dc->activeRecord->rgxp, array('date', 'time', 'datim')))
 				{
 					// change rgxp in database
-					$db	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
-						->execute('date', $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+									->execute('date', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$db	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
-						->execute('', $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+									->execute('', $dc->activeRecord->id);
 				}
 				break;
 	
@@ -706,8 +702,8 @@ class tl_content_pattern extends Backend
 				if (!in_array($dc->activeRecord->rgxp, array('alnum', 'extnd')))
 				{
 					// change rgxp in database
-					$db	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
-						->execute('', $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+									->execute('', $dc->activeRecord->id);
 				}
 				break;
 				
@@ -715,14 +711,14 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->rgxp != 'url')
 				{
 					// change rgxp in database
-					$db	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
-						->execute('url', $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+									->execute('url', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$db	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
-						->execute('', $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+									->execute('', $dc->activeRecord->id);
 				}
 				break;
 				
@@ -730,14 +726,14 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->maxLength > 200)
 				{
 					// change maxLength in database
-					$db	->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
-						->execute(200, $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+									->execute(200, $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// change multiple in database
-					$db	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
-						->execute('', $dc->activeRecord->id);
+					$this->database	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+									->execute('', $dc->activeRecord->id);
 				}
 				break;
 
@@ -755,13 +751,11 @@ class tl_content_pattern extends Backend
 	 */
 	public function setMultipleOptions($value, $dc)
 	{
-		$db = \Contao\Database::getInstance();
-
 		if ($value > 0 && $dc->activeRecord->maxLength > 255/$value-16)
 		{
 			// change rgxp in database
-			$db	->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
-				->execute(round(255/$value-16), $dc->activeRecord->id);
+			$this->database	->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+							->execute(round(255/$value-16), $dc->activeRecord->id);
 		}
 		
 		return $value;
@@ -777,27 +771,25 @@ class tl_content_pattern extends Backend
 	 */
 	public function setSourceOptions($value, $dc)
 	{
-		$db = \Contao\Database::getInstance();
-
 		if ($value == 'video' || $value == 'audio')
 		{
 			if (!$dc->activeRecord->multiSource)
 			{
 				// change multiSource in database
-				$db	->prepare("UPDATE tl_content_pattern SET multiSource=? WHERE id=?")
-					->execute(1, $dc->activeRecord->id);
+				$this->database	->prepare("UPDATE tl_content_pattern SET multiSource=? WHERE id=?")
+								->execute(1, $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->sortBy != 'html5media')
 			{
 				// change sortBy in database
-				$db	->prepare("UPDATE tl_content_pattern SET sortBy=? WHERE id=?")
-					->execute('html5media', $dc->activeRecord->id);
+				$this->database	->prepare("UPDATE tl_content_pattern SET sortBy=? WHERE id=?")
+								->execute('html5media', $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->canChangeSortBy)
 			{
 				// change canChangeSortBy in database
-				$db	->prepare("UPDATE tl_content_pattern SET canChangeSortBy=? WHERE id=?")
-					->execute(0, $dc->activeRecord->id);
+				$this->database	->prepare("UPDATE tl_content_pattern SET canChangeSortBy=? WHERE id=?")
+								->execute(0, $dc->activeRecord->id);
 			}
 		}
 		
@@ -835,7 +827,7 @@ class tl_content_pattern extends Backend
 	 */
 	public function getImageSizeList()
 	{
-		return \System::getImageSizes()['image_sizes'];
+		return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
 
 	}
 
@@ -853,8 +845,8 @@ class tl_content_pattern extends Backend
 			return serialize(array_keys($this->getImageSizeList()));
 		}
 
-		$intNeededSize = deserialize($dc->activeRecord->size)[2];
-		$arrSelectedSizes = deserialize($value);
+		$intNeededSize = \StringUtil::deserialize($dc->activeRecord->size)[2];
+		$arrSelectedSizes = \StringUtil::deserialize($value);
 		
 		if (!in_array($neededSize, $arrSelectedSizes))
 		{
@@ -901,7 +893,7 @@ class tl_content_pattern extends Backend
 	 */
 	public function showAlreadyUsedHint(DataContainer $dc)
 	{
-		if ($_POST || Input::get('act') != 'edit')
+		if ($_POST || \Input::get('act') != 'edit')
 		{
 			return;
 		}
@@ -918,7 +910,7 @@ class tl_content_pattern extends Backend
 		
 		if (\ContentModel::countBy('type', $objContentBlock->alias) > 0)
 		{
-			Message::addInfo('Be aware on changes. The content block element is already in use!!');
+			\Message::addInfo('Be aware on changes. The content block element is already in use!!');
 		}
 
 	}
@@ -938,9 +930,9 @@ class tl_content_pattern extends Backend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		if (strlen(Input::get('tid')))
+		if (strlen(\Input::get('tid')))
 		{
-			$this->toggleVisibility(Input::get('tid'), (Input::get('state') == 1), (@func_get_arg(12) ?: null));
+			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1), (@func_get_arg(12) ?: null));
 			$this->redirect($this->getReferer());
 		}
 		
@@ -950,14 +942,14 @@ class tl_content_pattern extends Backend
 			return '';
 		}
 		
-		$href .= '&amp;id='.Input::get('id').'&amp;tid='.$row['id'].'&amp;state='.$row['invisible'];
+		$href .= '&amp;id='.\Input::get('id').'&amp;tid='.$row['id'].'&amp;state='.$row['invisible'];
 		
 		if ($row['invisible'])
 		{
 			$icon = 'invisible.gif';
 		}
 		
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
 	}
 	
 	
@@ -971,8 +963,8 @@ class tl_content_pattern extends Backend
 	public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null)
 	{
 		// Set the ID and action
-		Input::setGet('id', $intId);
-		Input::setGet('act', 'toggle');
+		\Input::setGet('id', $intId);
+		\Input::setGet('act', 'toggle');
 		
 		if ($dc)
 		{
@@ -1071,7 +1063,7 @@ class tl_content_pattern extends Backend
 	 */
 	public function editForm(DataContainer $dc)
 	{
-		return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=form&amp;table=tl_form_field&amp;id=' . $dc->value . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_content']['editalias'][1]), $dc->value) . '" style="padding-left:3px" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'' . StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_content']['editalias'][1], $dc->value))) . '\',\'url\':this.href});return false">' . Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_content']['editalias'][0]) . '</a>';
+		return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=form&amp;table=tl_form_field&amp;id=' . $dc->value . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_content']['editalias'][1]), $dc->value) . '" style="padding-left:3px" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'' . \StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_content']['editalias'][1], $dc->value))) . '\',\'url\':this.href});return false">' . \Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_content']['editalias'][0]) . '</a>';
 	}
 
 
@@ -1114,7 +1106,7 @@ class tl_content_pattern extends Backend
 	 */
 	public function editModule(DataContainer $dc)
 	{
-		return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $dc->value . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_content']['editalias'][1]), $dc->value) . '" style="padding-left:3px" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'' . StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_content']['editalias'][1], $dc->value))) . '\',\'url\':this.href});return false">' . Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_content']['editalias'][0]) . '</a>';
+		return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $dc->value . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_content']['editalias'][1]), $dc->value) . '" style="padding-left:3px" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'' . \StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_content']['editalias'][1], $dc->value))) . '\',\'url\':this.href});return false">' . \Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_content']['editalias'][0]) . '</a>';
 	}
 
 	

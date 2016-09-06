@@ -17,7 +17,7 @@ namespace Agoat\ContentBlocks;
 use Contao\Controller;
 use Contao\Input;
 use Contao\File;
-
+use Contao\StringUtil;
 
 class Controller extends Controller
 {
@@ -62,14 +62,14 @@ class Controller extends Controller
 				}
 				
 				// add backend CSS
-				$arrBackendCSS = deserialize($objLayout->backendCSS);
+				$arrBackendCSS = StringUtil::deserialize($objLayout->backendCSS);
 				
 				if (!empty($arrBackendCSS) && is_array($arrBackendCSS))
 				{
 					// Consider the sorting order (see #5038)
 					if ($objLayout->orderBackendCSS != '')
 					{
-						$tmp = deserialize($objLayout->orderBackendCSS);
+						$tmp = StringUtil::deserialize($objLayout->orderBackendCSS);
 						
 						if (!empty($tmp) && is_array($tmp))
 						{
@@ -116,14 +116,14 @@ class Controller extends Controller
 				}
 				
 				// add backend JS
-				$arrBackendJS = deserialize($objLayout->backendJS);
+				$arrBackendJS = StringUtil::deserialize($objLayout->backendJS);
 				
 				if (!empty($arrBackendJS) && is_array($arrBackendJS))
 				{
 					// Consider the sorting order (see #5038)
 					if ($objLayout->orderBackendJS != '')
 					{
-						$tmp = deserialize($objLayout->orderBackendJS);
+						$tmp = StringUtil::deserialize($objLayout->orderBackendJS);
 						
 						if (!empty($tmp) && is_array($tmp))
 						{
@@ -256,14 +256,14 @@ class Controller extends Controller
 	
 	public function addLayoutJS ($objPage, $objLayout)
 	{
-		$arrExternalJS = deserialize($objLayout->externalJS);
+		$arrExternalJS = StringUtil::deserialize($objLayout->externalJS);
 		
 		if (!empty($arrExternalJS) && is_array($arrExternalJS))
 		{
 			// Consider the sorting order (see #5038)
 			if ($objLayout->orderBackendJS != '')
 			{
-				$tmp = deserialize($objLayout->orderExternalJS);
+				$tmp = StringUtil::deserialize($objLayout->orderExternalJS);
 				
 				if (!empty($tmp) && is_array($tmp))
 				{

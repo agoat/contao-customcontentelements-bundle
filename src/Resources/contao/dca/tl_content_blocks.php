@@ -286,7 +286,7 @@ class tl_content_blocks extends Backend
 	public function generateAlias (DataContainer $dc)
 	{
 		// generate the alias from the title
-		$alias = StringUtil::generateAlias($dc->activeRecord->title.'-'.$dc->activeRecord->id);
+		$alias = \StringUtil::generateAlias($dc->activeRecord->title.'-'.$dc->activeRecord->id);
 
 		if ($alias != $dc->activeRecord->alias)
 		{
@@ -324,7 +324,7 @@ class tl_content_blocks extends Backend
 	 */
 	public function showAlreadyUsedHint(DataContainer $dc)
 	{
-		if ($_POST || Input::get('act') != 'edit')
+		if ($_POST || \Input::get('act') != 'edit')
 		{
 			return;
 		}
@@ -340,7 +340,7 @@ class tl_content_blocks extends Backend
 		
 		if (\ContentModel::countBy('type', $objContentBlock->alias) > 0)
 		{
-			Message::addInfo('Be aware on changes. The content block element is already in use!!');
+			\Message::addInfo('Be aware on changes. The content block element is already in use!!');
 		}
 
 	}
@@ -367,7 +367,7 @@ class tl_content_blocks extends Backend
 				return '';
 			
 			case 'element':
-				return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
+				return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 		}
 		
 	}	
@@ -391,9 +391,9 @@ class tl_content_blocks extends Backend
 			return '';
 		}
 
-		if (strlen(Input::get('tid')))
+		if (strlen(\Input::get('tid')))
 		{
-			$this->toggleVisibility(Input::get('tid'), (Input::get('state') == 1), (@func_get_arg(12) ?: null));
+			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1), (@func_get_arg(12) ?: null));
 			$this->redirect($this->getReferer());
 		}
 		
@@ -403,14 +403,14 @@ class tl_content_blocks extends Backend
 			return '';
 		}
 		
-		$href .= '&amp;id='.Input::get('id').'&amp;tid='.$row['id'].'&amp;state='.$row['invisible'];
+		$href .= '&amp;id='.\Input::get('id').'&amp;tid='.$row['id'].'&amp;state='.$row['invisible'];
 		
 		if ($row['invisible'])
 		{
 			$icon = 'invisible.gif';
 		}
 		
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
 	}	
 
 	/**
@@ -423,8 +423,8 @@ class tl_content_blocks extends Backend
 	public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null)
 	{
 		// Set the ID and action
-		Input::setGet('id', $intId);
-		Input::setGet('act', 'toggle');
+		\Input::setGet('id', $intId);
+		\Input::setGet('act', 'toggle');
 		
 		if ($dc)
 		{

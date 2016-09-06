@@ -14,7 +14,7 @@
 namespace Agoat\ContentBlocks;
 
 use Agoat\ContentBlocks\Pattern;
-
+use Contao\StringUtil;
 
 class PatternListWizard extends Pattern
 {
@@ -67,7 +67,7 @@ class PatternListWizard extends Pattern
 	public function compile()
 	{
 		
-		$this->writeToTemplate(deserialize($this->Value->listItems));
+		$this->writeToTemplate(StringUtil::deserialize($this->Value->listItems));
 		
 	}
 	

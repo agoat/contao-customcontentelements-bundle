@@ -14,7 +14,7 @@
 namespace Agoat\ContentBlocks;
 
 use Agoat\ContentBlocks\Pattern;
-
+use Contao\StringUtil;
 
 class PatternTextField extends Pattern
 {
@@ -37,7 +37,7 @@ class PatternTextField extends Pattern
 		if (($this->picker == 'unit'))
 		{
 			$options = array();
-			foreach (deserialize($this->units) as $arrOption)
+			foreach (StringUtil::deserialize($this->units) as $arrOption)
 			{
 				$options[$arrOption['value']] = $arrOption['label'];
 			}
@@ -81,7 +81,7 @@ class PatternTextField extends Pattern
 			$strPreview .= '<input class="tl_text_unit" value="' . $this->defaultValue . '" type="text">';
 			$strPreview .= ' <select class="tl_select_unit">';
 
-			$units = deserialize($this->units);
+			$units = StringUtil::deserialize($this->units);
 			foreach ($units as $unit)
 			{
 				$strPreview .= '<option value="' . $unit['value'] . '">' . $unit['label'] . '</option>';
@@ -132,7 +132,7 @@ class PatternTextField extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? deserialize($this->Value->multiField) : $this->Value->textField : deserialize($this->Value->inputUnit));	
+		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->Value->multiField) : $this->Value->textField : StringUtil::deserialize($this->Value->inputUnit));	
 	}
 	
 }

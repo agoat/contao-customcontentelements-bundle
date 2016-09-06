@@ -66,7 +66,7 @@ class tl_news_contentblocks extends Backend
 		$objUndo = $this->Database->prepare("SELECT data FROM tl_undo WHERE id=?")
 								  ->execute($intUndoId) ;
 
-		$arrData = deserialize($objUndo->fetchAssoc()[data]);
+		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 
 		
 		foreach ($colContent as $objContent)

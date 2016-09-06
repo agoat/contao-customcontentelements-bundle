@@ -79,7 +79,7 @@ class VisualSelectMenu extends \Widget
 				break;
 
 			case 'options':
-				$this->arrOptions = deserialize($varValue);
+				$this->arrOptions = \StringUtil::deserialize($varValue);
 				break;
 
 			default:
@@ -134,7 +134,7 @@ class VisualSelectMenu extends \Widget
 			if (isset($arrOption['value']))
 			{
 				$arrOptions[] = sprintf('<option value="%s"%s>%s</option>',
-										 specialchars($arrOption['value']),
+										 \StringUtil::specialchars($arrOption['value']),
 										 $this->isSelected($arrOption),
 										 $arrOption['label']);
 										 
@@ -155,7 +155,7 @@ class VisualSelectMenu extends \Widget
 				foreach ($arrOption as $arrOptgroup)
 				{
 					$arrOptgroups[] = sprintf('<option value="%s"%s>%s</option>',
-											   specialchars($arrOptgroup['value']),
+											   \StringUtil::specialchars($arrOptgroup['value']),
 											   $this->isSelected($arrOptgroup),
 											   $arrOptgroup['label']);
 
@@ -171,7 +171,7 @@ class VisualSelectMenu extends \Widget
 
 				}
 
-				$arrOptions[] = sprintf('<optgroup label="&nbsp;%s">%s</optgroup>', specialchars($strKey), implode('', $arrOptgroups));
+				$arrOptions[] = sprintf('<optgroup label="&nbsp;%s">%s</optgroup>', \StringUtil::specialchars($strKey), implode('', $arrOptgroups));
 				$count++;
 			}
 		}

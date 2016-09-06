@@ -13,6 +13,7 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\StringUtil;
 use Agoat\ContentBlocks\Pattern;
 
 
@@ -67,7 +68,7 @@ class PatternTableWizard extends Pattern
 	public function compile()
 	{
 		
-		$this->writeToTemplate(deserialize($this->Value->tableItems));
+		$this->writeToTemplate(StringUtil::deserialize($this->Value->tableItems));
 		
 	}
 	

@@ -17,6 +17,7 @@ use Contao\System;
 use Contao\Config;
 use Contao\Environment;
 use Contao\File;
+use Contao\StringUtil;
 use Agoat\ContentBlocks\Pattern;
 
 
@@ -210,7 +211,7 @@ class PatternFileTree extends Pattern
 			$strPreview .= '<h3 style="margin: 0; padding-top: 14px;"><label>' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][0] . '</label></h3><div class="tl_image_size"><select class="tl_select_interval">';
 	
 			$imgSizes = $this->getImageSizeList();
-			$size = deserialize($this->size);
+			$size = StringUtil::deserialize($this->size);
 
 			foreach ($imgSizes as $k=>$v)
 			{
@@ -218,18 +219,18 @@ class PatternFileTree extends Pattern
 				{
 					$selected = ((is_numeric($size[2])) ? $kk == $size[2] : $vv == $size[2]) ? ' selected' : '';
 					$label = ($GLOBALS['TL_LANG']['MSC'][$v]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$v])) ? $GLOBALS['TL_LANG']['MSC'][$v][0] : $GLOBALS['TL_LANG']['MSC'][$v] : $v;
-					$strPreview .= '<option value="' . specialchars($v) . '"' . $selected . '>' . $label . '</option>';
+					$strPreview .= '<option value="' . StringUtil::specialchars($v) . '"' . $selected . '>' . $label . '</option>';
 				}
 				else
 				{
 					$label = ($GLOBALS['TL_LANG']['MSC'][$k]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$k])) ? $GLOBALS['TL_LANG']['MSC'][$k][0] : $GLOBALS['TL_LANG']['MSC'][$k] : $k;
-					$strPreview .= '<optgroup label="&nbsp;' . specialchars($label) . '">';
+					$strPreview .= '<optgroup label="&nbsp;' . StringUtil::specialchars($label) . '">';
 					
 					$bolAssoc = array_is_assoc($v);
 					foreach ($v as $kk=>$vv)
 					{
 						$selected = ((is_numeric($size[2]) && $bolAssoc) ? $kk == $size[2] : $vv == $size[2]) ? ' selected' : '';
-						$strPreview .= '<option value="' . specialchars($vv) . '"' . $selected . '>' . (($GLOBALS['TL_LANG']['MSC'][$vv]) ? $GLOBALS['TL_LANG']['MSC'][$vv][0] : $vv) . '</option>';
+						$strPreview .= '<option value="' . StringUtil::specialchars($vv) . '"' . $selected . '>' . (($GLOBALS['TL_LANG']['MSC'][$vv]) ? $GLOBALS['TL_LANG']['MSC'][$vv][0] : $vv) . '</option>';
 					}
 
 					$strPreview .= '</optgroup>';
@@ -254,7 +255,7 @@ class PatternFileTree extends Pattern
 	
 		if ($this->multiSource)
 		{
-			$multiSRC = deserialize($this->Value->multiSRC);
+			$multiSRC = StringUtil::deserialize($this->Value->multiSRC);
 			
 			// Return if there are no files
 			if (!is_array($multiSRC) || empty($multiSRC))
@@ -371,7 +372,7 @@ class PatternFileTree extends Pattern
 				// Use the file name as title if none is given
 				if ($arrMeta['title'] == '')
 				{
-					$arrMeta['title'] = specialchars($objFile->basename);
+					$arrMeta['title'] = StringUtil::specialchars($objFile->basename);
 				}
 
 				$strHref = Environment::get('request');
@@ -475,7 +476,7 @@ class PatternFileTree extends Pattern
 					// Use the file name as title if none is given
 					if ($arrMeta['title'] == '')
 					{
-						$arrMeta['title'] = specialchars($objFile->basename);
+						$arrMeta['title'] = StringUtil::specialchars($objFile->basename);
 					}
 
 					$strHref = \Environment::get('request');
@@ -536,7 +537,7 @@ class PatternFileTree extends Pattern
 			case 'custom':
 				if ($this->Value->orderSRC != '')
 				{
-					$tmp = deserialize($this->Value->orderSRC);
+					$tmp = StringUtil::deserialize($this->Value->orderSRC);
 					
 					if (!empty($tmp) && is_array($tmp))
 					{
@@ -641,8 +642,8 @@ class PatternFileTree extends Pattern
 	 */
 	public function getImageSizeList()
 	{
-		$arrSizes = System::getImageSizes();
-		$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(deserialize($this->sizeList)));
+		$arrSizes = System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
+		$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(StringUtil::deserialize($this->sizeList)));
 		
 		if ($this->canEnterSize)
 		{
