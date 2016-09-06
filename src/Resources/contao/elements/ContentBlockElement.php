@@ -119,7 +119,7 @@ class ContentBlockElement extends ContentElement
 				'ptable' => $this->ptable,
 				'tstamp' => $this->tstamp,
 				'start' => $this->start,
-				'end' => $this->end,
+				'stop' => $this->stop,
 				'protected' => $this->protected,
 				'inColumn' => $this->strColumn
 			)
