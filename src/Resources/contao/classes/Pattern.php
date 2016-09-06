@@ -14,8 +14,11 @@
  
 namespace Agoat\ContentBlocks;
  
+use Contao\Config;
 use Contao\System;
 use Contao\File;
+use Contao\Image;
+use Contao\Picture;
 use Agoat\ContentBlocks\Controller;
 
 /**
@@ -49,8 +52,6 @@ abstract class Pattern extends Controller
 	 * Initialize the object
 	 *
 	 * @param \PatternModel $objPattern
-	 * @param \ElementModel $objElement
-	 * @param \SectionModel $objSection
 	*/
 	public function __construct($objPattern)
 	{
@@ -269,7 +270,7 @@ abstract class Pattern extends Controller
 		{
 			if ($intMaxWidth === null)
 			{
-				$intMaxWidth = \Config::get('maxImageWidth');
+				$intMaxWidth = Config::get('maxImageWidth');
 			}
 
 			// Adjust the image size
@@ -306,8 +307,8 @@ abstract class Pattern extends Controller
 
 		try
 		{
-			$src = \Image::create($arrItem['singleSRC'], $size)->executeResize()->getResizedPath();
-			$picture = \Picture::create($arrItem['singleSRC'], $size)->getTemplateData();
+			$src = Image::create($arrItem['singleSRC'], $size)->executeResize()->getResizedPath();
+			$picture = Picture::create($arrItem['singleSRC'], $size)->getTemplateData();
 
 			if ($src !== $arrItem['singleSRC'])
 			{

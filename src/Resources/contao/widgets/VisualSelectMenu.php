@@ -11,9 +11,8 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Contao;
 
-use Contao/Widget;
 
 
 /**
@@ -27,7 +26,7 @@ use Contao/Widget;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class VisualSelectMenu extends Widget
+class VisualSelectMenu extends \Widget
 {
 
 	/**
@@ -115,7 +114,7 @@ class VisualSelectMenu extends Widget
 	{
 		$arrOptions = array();
 		$strClass = 'tl_select';
-		$strStyle = '<style>.group-result {padding-top: 5px !important; line-height: 20px !important;} .group-result div {font-size: 1.2em !important; }';
+		$strStyle = '<style>.group-result {padding-top: 5px !important; line-height: 20px !important;}';
 		$count = 1;
 
 		if ($this->multiple)

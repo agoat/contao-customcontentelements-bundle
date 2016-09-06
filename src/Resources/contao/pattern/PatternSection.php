@@ -39,7 +39,7 @@ class PatternSection extends Pattern
 	 */
 	public function view()
 	{
-		return '<div style="padding-top:20px;"><fieldset id="pal_section_' . $this->id . '" class="tl_box" style="padding-bottom: 10px; border-width: 2px 0 0;"><legend>' . $this->label . '</legend></fieldset></div>';
+		return '<div style="padding-top:10px;"><fieldset id="pal_section_' . $this->id . '" class="tl_box" style="padding-top: 0;"><legend>' . $this->label . '</legend></fieldset></div>';
 	}
 
 

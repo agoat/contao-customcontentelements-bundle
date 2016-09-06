@@ -74,7 +74,7 @@ class PatternTextField extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="inline' . ((in_array($this->picker, array('datetime', 'color', 'page'))) ? ' wizard' : '') . '" style="padding-top:10px;"><h3><label>' . $this->label . '</label></h3>';
 
 		if ($this->picker == 'unit')
 		{
@@ -107,16 +107,16 @@ class PatternTextField extends Pattern
 		
 		switch ($this->picker)
 		{
-			case 'color':
-				$strPreview .=  ' <img src="system/themes/flexible/images/pickcolor.gif" alt="Page picker" style="vertical-align:top;cursor:pointer" height="21" width="16">';
-				break;
-			
-			case 'date':
-				$strPreview .=  ' <img src="assets/mootools/datepicker/2.2.0/icon.gif" alt="Page picker" style="vertical-align:top;cursor:pointer" height="20" width="20">';
+			case 'datetime':
+				$strPreview .=  ' <img src="assets/datepicker/images/icon.svg" height="20" width="20">';
 				break;
 
+			case 'color':
+				$strPreview .=  ' <img src="system/themes/flexible/icons/pickcolor.svg" height="16" width="16">';
+				break;
+			
 			case 'page':
-				$strPreview .=  ' <img src="system/themes/flexible/images/pickpage.gif" alt="Page picker" style="vertical-align:top;cursor:pointer" height="21" width="16">';
+				$strPreview .=  ' <img src="system/themes/flexible/icons/pickpage.svg" height="16" width="16">';
 				break;
 		}
 		

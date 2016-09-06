@@ -15,6 +15,7 @@
 namespace Agoat\ContentBlocks;
 
 use Contao\ContentElement;
+use Contao\TemplateLoader;
 use Agoat\ContentBlocks\Template;
 use Agoat\ContentBlocks\Pattern;
 
@@ -30,6 +31,7 @@ class ContentBlockElement extends ContentElement
 	
 	
 	protected $objElement;
+
 	protected $objBlock;
 	
 
@@ -79,10 +81,10 @@ class ContentBlockElement extends ContentElement
 			return;
 		}
 		
-		// register the template file (to find the custom templates)
-		if (!array_key_exists($this->objBlock->template, \TemplateLoader::getFiles()))
+		// register the custom template
+		if (!array_key_exists($this->objBlock->template, TemplateLoader::getFiles()))
 		{
-			\TemplateLoader::addFile($this->objBlock->template, $this->objBlock->getRelated('pid')->templates);
+			TemplateLoader::addFile($this->objBlock->template, $this->objBlock->getRelated('pid')->templates);
 		}
 		
 		// set the template file
@@ -108,14 +110,22 @@ class ContentBlockElement extends ContentElement
 		}
 
 		$this->Template = new Template($this->strTemplate);
-		$this->Template->setData($this->arrData);
-		$this->Template->inColumn = $this->strColumn;
+		
+		// deliver some general element data
+		$this->Template->setData(
+			array (
+				'id' => $this->id,
+				'pid' => $this->pid,
+				'ptable' => $this->ptable,
+				'tstamp' => $this->tstamp,
+				'start' => $this->start,
+				'end' => $this->end,
+				'protected' => $this->protected,
+				'inColumn' => $this->strColumn
+			)
+		);
 
-		if (!empty($this->objModel->classes) && is_array($this->objModel->classes))
-		{
-			$this->Template->class .= ' ' . implode(' ', $this->objModel->classes);
-		}
-
+		// get pattern and values
 		$this->compile();
 		
 		return $this->Template->parse();

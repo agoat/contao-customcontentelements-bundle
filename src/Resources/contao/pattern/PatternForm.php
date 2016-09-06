@@ -14,7 +14,7 @@
 namespace Agoat\ContentBlocks;
 
 use Agoat\ContentBlocks\Pattern;
-
+use Contao\Form;
 
 class PatternForm extends Pattern
 {
@@ -35,7 +35,7 @@ class PatternForm extends Pattern
 	 */
 	public function view()
 	{
-		$objForm = new \Form($this);
+		$objForm = new Form($this);
 		return '<span>' . $objForm->title . ' (ID ' . $objForm->id . ')</span>';
 	}
 
@@ -45,7 +45,7 @@ class PatternForm extends Pattern
 	public function compile()
 	{
 		// call the form class
-		$objForm = new \Form($this);
+		$objForm = new Form($this);
 		$objForm->formTemplate = $this->formTemplate;
 		
 		$this->writeToTemplate($objForm->generate());		

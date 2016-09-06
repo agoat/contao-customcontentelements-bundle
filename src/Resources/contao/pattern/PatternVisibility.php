@@ -25,7 +25,7 @@ class PatternVisibility extends Pattern
 	 */
 	public function construct()
 	{
-		// elements field so don´t use parent construct method
+		// element fields, so don´t use parent construct method
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',invisible';
 		$GLOBALS['TL_DCA']['tl_content']['fields']['invisible']['eval']['tl_class'] = 'clr'; // push to new row (clear)
 	
@@ -74,8 +74,7 @@ class PatternVisibility extends Pattern
 	public function compile()
 	{
 		// nothing to compile
-		return;
-		
+		return;		
 	}
 
 

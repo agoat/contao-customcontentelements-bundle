@@ -1,6 +1,6 @@
 <?php
- 
- /**
+
+/**
  * Contao Open Source CMS - ContentBlocks extension
  *
  * Copyright (c) 2016 Arne Stappen (aGoat)
@@ -11,9 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
-
-use Contao/Widget;
+namespace Contao;
 
 
 /**
@@ -26,7 +24,7 @@ use Contao/Widget;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class FileTree extends Widget
+class FileTree extends \Widget
 {
 
 	/**
@@ -70,6 +68,7 @@ class FileTree extends Widget
 			$this->strOrderId = $this->orderField . str_replace($this->strField, '', $this->strId);
 			$this->strOrderName = $this->orderField . str_replace($this->strField, '', $this->strName);
 
+			// Don´t load from database for filetree pattern
 			if (strpos($this->orderField,'_') === false)
 			{
 				// Retrieve the order value
@@ -77,10 +76,9 @@ class FileTree extends Widget
 										 ->limit(1)
 										 ->execute($this->activeRecord->id);
 
-				$tmp = deserialize($objRow->{$this->orderField});
+				$tmp = \StringUtil::deserialize($objRow->{$this->orderField});
 				$this->{$this->orderField} = (!empty($tmp) && is_array($tmp)) ? array_filter($tmp) : array();
 			}
-			
 		}
 	}
 
@@ -99,13 +97,17 @@ class FileTree extends Widget
 		{
 			$arrNew = array_map('StringUtil::uuidToBin', explode(',', \Input::post($this->strOrderName)));
 
-			// Only proceed if the value has changed
-			if ($arrNew !== $this->{$this->orderField} && strpos($this->orderField,'_') === false)
+			// Don´t load from database for filetree pattern
+			if (strpos($this->orderField,'_') === false)
 			{
-				$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
-							   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
+				// Only proceed if the value has changed
+				if ($arrNew !== $this->{$this->orderField})
+				{
+					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
+								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
 
-				$this->objDca->createNewVersion = true; // see #6285
+					$this->objDca->createNewVersion = true; // see #6285
+				}
 			}
 		}
 
@@ -148,7 +150,7 @@ class FileTree extends Widget
 		if (!empty($this->varValue)) // Can be an array
 		{
 			$objFiles = \FilesModel::findMultipleByUuids((array)$this->varValue);
-			$allowedDownload = trimsplit(',', strtolower(\Config::get('allowedDownload')));
+			$allowedDownload = \StringUtil::trimsplit(',', strtolower($this->extensions));
 
 			if ($objFiles !== null)
 			{
@@ -167,11 +169,11 @@ class FileTree extends Widget
 					{
 						if ($objFiles->type == 'folder')
 						{
-							$arrValues[$objFiles->uuid] = \Image::getHtml('folderC.gif') . ' ' . $objFiles->path;
+							$arrValues[$objFiles->uuid] = \Image::getHtml('folderC.svg') . ' ' . $objFiles->path;
 						}
 						else
 						{
-							$objFile = new \File($objFiles->path, true);
+							$objFile = new \File($objFiles->path);
 							$strInfo = $objFiles->path . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
 
 							if ($objFile->isImage)
@@ -183,7 +185,7 @@ class FileTree extends Widget
 									$image = \Image::get($objFiles->path, 80, 60, 'center_center');
 								}
 
-								$arrValues[$objFiles->uuid] = \Image::getHtml($image, '', 'class="gimage" title="' . specialchars($strInfo) . '"');
+								$arrValues[$objFiles->uuid] = \Image::getHtml($image, '', 'class="gimage" title="' . \StringUtil::specialchars($strInfo) . '"');
 							}
 							else
 							{
@@ -212,7 +214,7 @@ class FileTree extends Widget
 									continue;
 								}
 
-								$objFile = new \File($objSubfiles->path, true);
+								$objFile = new \File($objSubfiles->path);
 								$strInfo = '<span class="dirname">' . dirname($objSubfiles->path) . '/</span>' . $objFile->basename . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
 
 								if ($this->isGallery)
@@ -227,7 +229,7 @@ class FileTree extends Widget
 											$image = \Image::get($objSubfiles->path, 80, 60, 'center_center');
 										}
 
-										$arrValues[$objSubfiles->uuid] = \Image::getHtml($image, '', 'class="gimage" title="' . specialchars($strInfo) . '"');
+										$arrValues[$objSubfiles->uuid] = \Image::getHtml($image, '', 'class="gimage" title="' . \StringUtil::specialchars($strInfo) . '"');
 									}
 								}
 								else
@@ -242,7 +244,7 @@ class FileTree extends Widget
 						}
 						else
 						{
-							$objFile = new \File($objFiles->path, true);
+							$objFile = new \File($objFiles->path);
 							$strInfo = '<span class="dirname">' . dirname($objFiles->path) . '/</span>' . $objFile->basename . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
 
 							if ($this->isGallery)
@@ -257,7 +259,7 @@ class FileTree extends Widget
 										$image = \Image::get($objFiles->path, 80, 60, 'center_center');
 									}
 
-									$arrValues[$objFiles->uuid] = \Image::getHtml($image, '', 'class="gimage" title="' . specialchars($strInfo) . '"');
+									$arrValues[$objFiles->uuid] = \Image::getHtml($image, '', 'class="gimage removable" title="' . \StringUtil::specialchars($strInfo) . '"');
 								}
 							}
 							else
@@ -300,12 +302,9 @@ class FileTree extends Widget
 			}
 		}
 
-		// Load the fonts for the drag hint (see #4838)
-		\Config::set('loadGoogleFonts', true);
-
 		// Convert the binary UUIDs
 		$strSet = implode(',', array_map('StringUtil::binToUuid', $arrSet));
-		$strOrder = ($blnHasOrder) ? implode(',', array_map('StringUtil::binToUuid', $this->{$this->orderField})) : '';
+		$strOrder = $blnHasOrder ? implode(',', array_map('StringUtil::binToUuid', $this->{$this->orderField})) : '';
 
 		$return = '<input type="hidden" name="'.$this->strName.'" id="ctrl_'.$this->strId.'" value="'.$strSet.'">' . ($blnHasOrder ? '
   <input type="hidden" name="'.$this->strOrderName.'" id="ctrl_'.$this->strOrderId.'" value="'.$strOrder.'">' : '') . '
@@ -319,8 +318,8 @@ class FileTree extends Widget
 		}
 
 		$return .= '</ul>
-    <p><a href="contao/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;id='.$this->activeRecord->id.'&amp;value='.implode(',', array_keys($arrSet)).'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':768,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MSC']['filepicker'])).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . ($blnHasOrder ? '
-    <script>Backend.makeMultiSrcSortable("sort_'.$this->strId.'", "ctrl_'.$this->strOrderId.'")</script>' : '') . '
+    <p><a href="contao/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;id='.$this->activeRecord->id.'&amp;value='.implode(',', array_keys($arrSet)).'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':768,\'title\':\''.\StringUtil::specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MSC']['filepicker'])).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . ($blnHasOrder ? '
+    <script>Backend.makeMultiSrcSortable("sort_'.$this->strId.'", "ctrl_'.$this->strOrderId.'", "ctrl_'.$this->strId.'")</script>' : '') . '
   </div>';
 
 		if (!\Environment::get('isAjaxRequest'))

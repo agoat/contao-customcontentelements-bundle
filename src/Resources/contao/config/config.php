@@ -50,27 +50,27 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'textfield'		=> 'Agoat\ContentBlocks\PatternTextField',
 		'textarea'		=> 'Agoat\ContentBlocks\PatternTextArea',
-		'selectfield'	=> 'PatternSelectField',
-		'checkbox'		=> 'PatternCheckBox',
-		'filetree'		=> 'PatternFileTree',
-		'listwizard'	=> 'PatternListWizard',
-		'tablewizard'	=> 'PatternTableWizard',
-		'code'			=> 'PatternCode',
+		'selectfield'	=> 'Agoat\ContentBlocks\PatternSelectField',
+		'checkbox'		=> 'Agoat\ContentBlocks\PatternCheckBox',
+		'filetree'		=> 'Agoat\ContentBlocks\PatternFileTree',
+		'listwizard'	=> 'Agoat\ContentBlocks\PatternListWizard',
+		'tablewizard'	=> 'Agoat\ContentBlocks\PatternTableWizard',
+		'code'			=> 'Agoat\ContentBlocks\PatternCode',
 	),
 	'layout' => array
 	(
 		'section'		=> 'Agoat\ContentBlocks\PatternSection',
-		'explanation'	=> 'PatternExplanation',
+		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
 	),
 	'element' => array
 	(
-		'visibility'	=> 'PatternVisibility',
-		'protection'	=> 'PatternProtection',
+		'visibility'	=> 'Agoat\ContentBlocks\PatternVisibility',
+		'protection'	=> 'Agoat\ContentBlocks\PatternProtection',
 	),
 	'system' => array
 	(
-		'form'			=> 'PatternForm',
-		'module'		=> 'PatternModule',
+		'form'			=> 'Agoat\ContentBlocks\PatternForm',
+		'module'		=> 'Agoat\ContentBlocks\PatternModule',
 	),
 );
 

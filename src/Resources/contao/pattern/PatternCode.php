@@ -49,13 +49,13 @@ class PatternCode extends Pattern
 	{
 		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 
-		$selector = 'ctrl_textarea' . $this->id;
+		$this->selector = $selector = 'ctrl_textarea' . $this->id;
 		$type = strtolower($this->highlight);
 
 		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
 		ob_start();
-		include TL_ROOT . '/system/config/ace.php';
+		include(\TemplateLoader::getPath('be_ace', 'html5'));
 		$strPreview .= ob_get_contents();
 		ob_end_clean();
 			
@@ -72,7 +72,7 @@ class PatternCode extends Pattern
 	{
 		// prepare value(s)
 		
-		$this->writeToTemplate($this->Value->text);
+		$this->writeToTemplate(array('code' => $this->Value->text, 'highlight' => $this->highlight));
 	}
 	
 }

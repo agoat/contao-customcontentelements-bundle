@@ -14,7 +14,7 @@
 namespace Agoat\ContentBlocks;
 
 use Agoat\ContentBlocks\Pattern;
-
+use Contao\Module;
 
 class PatternModule extends Pattern
 {
@@ -51,7 +51,7 @@ class PatternModule extends Pattern
 			return;
 		}
 		
-		$strClass = \Module::findClass($objModule->type);
+		$strClass = Module::findClass($objModule->type);
 		
 		if (!class_exists($strClass))
 		{

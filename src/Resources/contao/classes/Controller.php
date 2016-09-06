@@ -16,6 +16,7 @@ namespace Agoat\ContentBlocks;
  
 use Contao\Controller;
 use Contao\Input;
+use Contao\File;
 
 
 class Controller extends Controller
@@ -212,7 +213,7 @@ class Controller extends Controller
 			// Write to a temporary file in the assets folder
 			if (!file_exists($strPath))
 			{
-				$objFile = new \File($strPath, true);
+				$objFile = new File($strPath, true);
 				$objFile->write($GLOBALS['TL_CTB_' . $strType]);
 				$objFile->close();
 			}
@@ -239,7 +240,7 @@ class Controller extends Controller
 		// Write to a temporary file in the assets folder
 		if (!file_exists($strPath))
 		{
-			$objFile = new \File($strPath, true);
+			$objFile = new File($strPath, true);
 			$objFile->write($GLOBALS['TL_CTB_JS']);
 			$objFile->close();
 		}
@@ -496,6 +497,24 @@ class Controller extends Controller
 	
 	}
 
+	/**
+	 * Export content blocks tables with template export
+	 */
+	public function exportContentBlocks ($xml, $objArchive, $objThemeId)
+	{
+		
+
+	}
+
+	
+	/**
+	 * Import content blocks tables with template import
+	 */
+	public function importContentBlocks ($xml, $objArchive, $intThemeId, $arrMapper)
+	{
+		
+
+	}
 
 
 	

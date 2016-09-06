@@ -25,14 +25,9 @@ class PatternProtection extends Pattern
 	 */
 	public function construct()
 	{
-		// elements field so don´t use parent construct method
+		// element fields, so don´t use parent construct method
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',protected';
 
-		// the groups field
-		if ($this->canChangeGuests)
-		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',guests';
-		}
 		// the groups field
 		if (!$this->canChangeGroups)
 		{
@@ -40,13 +35,20 @@ class PatternProtection extends Pattern
 				unset($GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][$key]);
 			}
 			unset($GLOBALS['TL_DCA']['tl_content']['subpalettes']['protected']);
+			
 			$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['submitOnChange'] = false;
 			$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['class'] = 'clr';
 	
-			// also copy pattern groups to content element groups field
+			// overwrite the elements groups with groups from the pattern
 			$this->import("Database");
 			$this->Database->prepare("UPDATE tl_content SET groups=? WHERE id=?")
 						   ->execute($this->groups, $this->cid);
+		}
+		
+		// the guests field
+		if ($this->canChangeGuests)
+		{
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',guests';
 		}
 	
 	}
@@ -73,9 +75,8 @@ class PatternProtection extends Pattern
 	 */
 	public function compile()
 	{
-		
+		// nothing to compile
 		return;		
-		
 	}
 
 

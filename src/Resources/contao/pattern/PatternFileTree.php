@@ -13,6 +13,10 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\System;
+use Contao\Config;
+use Contao\Environment;
+use Contao\File;
 use Agoat\ContentBlocks\Pattern;
 
 
@@ -57,7 +61,7 @@ class PatternFileTree extends Pattern
 				break;
 				
 			default:
-				$extensions = \Config::get('allowedDownload');
+				$extensions = Config::get('allowedDownload');
 				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = false;
 				$isDownloads = true;
@@ -85,11 +89,11 @@ class PatternFileTree extends Pattern
 				),
 				'load_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_element', 'prepareOrderSRCValue'),
+					array('tl_content_contentblocks', 'prepareOrderSRCValue'),
 				),
 				'save_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_element', 'saveOrderSRCValue'),
+					array('tl_content_contentblocks', 'saveOrderSRCValue'),
 				),
 			));
 			
@@ -133,7 +137,7 @@ class PatternFileTree extends Pattern
 				),
 				'load_callback'	=>	array
 				(
-					array('tl_content_element','defaultValue')
+					array('tl_content_contentblocks','defaultValue')
 				),
 			));	
 		}
@@ -162,7 +166,7 @@ class PatternFileTree extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul class="sortable ' . (($this->source == 'image') ? 'sgallery' : '') . '">';
+		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
 
 		switch ($this->source)
 		{
@@ -178,22 +182,22 @@ class PatternFileTree extends Pattern
 				break;
 				
 			case 'video':
-				$strPreview .= '<li><img src="assets/contao/images/iconVIDEO.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>videofile.mp4 <span class="tl_gray">(5.0 MiB)</span></li><li><img src="assets/contao/images/iconVIDEO.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>videofile.webm <span class="tl_gray">(4.9 MiB)</span></li><li><img src="assets/contao/images/iconVIDEO.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>videofile.ogv <span class="tl_gray">(5.4 MiB)</span></li>';				
+				$strPreview .= '<li><img src="assets/contao/images/iconVIDEO.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>videofile.mp4 <span class="tl_gray">(5.0 MiB)</span></li><li><img src="assets/contao/images/iconVIDEO.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>videofile.webm <span class="tl_gray">(4.9 MiB)</span></li><li><img src="assets/contao/images/iconVIDEO.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>videofile.ogv <span class="tl_gray">(5.4 MiB)</span></li>';				
 				break;
 				
 			case 'audio':
-				$strPreview .= '<li><img src="assets/contao/images/iconAUDIO.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>audiofile.mp3 <span class="tl_gray">(2.5 MiB)</span></li><li><img src="assets/contao/images/iconAUDIO.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>audiofile.wma <span class="tl_gray">(3.4 MiB)</span></li>';				
+				$strPreview .= '<li><img src="assets/contao/images/iconAUDIO.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>audiofile.mp3 <span class="tl_gray">(2.5 MiB)</span></li><li><img src="assets/contao/images/iconAUDIO.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>audiofile.wma <span class="tl_gray">(3.4 MiB)</span></li>';				
 				break;
 				
 			case 'custom':
 			default:
 				if ($this->multiSource)
 				{
-					$strPreview .= '<li><img src="assets/contao/images/iconPLAIN.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>selectedfile1.ext <span class="tl_gray">(128.0 KiB)</span></li><li><img src="assets/contao/images/iconPLAIN.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>selectedfile2.ext <span class="tl_gray">(2.0 MiB)</span></li><li><img src="assets/contao/images/iconPLAIN.gif" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>selectedfile3.ext <span class="tl_gray">(512.0 KiB)</span></li>';				
+					$strPreview .= '<li><img src="assets/contao/images/iconPLAIN.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>selectedfile1.ext <span class="tl_gray">(128.0 KiB)</span></li><li><img src="assets/contao/images/iconPLAIN.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>selectedfile2.ext <span class="tl_gray">(2.0 MiB)</span></li><li><img src="assets/contao/images/iconPLAIN.svg" width="18" height="18" alt=""> <span class="dirname">files/folder/</span>selectedfile3.ext <span class="tl_gray">(512.0 KiB)</span></li>';				
 				}
 				else
 				{
-					$strPreview .= '<li><img src="assets/contao/images/iconPLAIN.gif" width="18" height="18" alt=""> files/folder/selectedfile1.ext <span class="tl_gray">(2.5 MiB)</span></li>';				
+					$strPreview .= '<li><img src="assets/contao/images/iconPLAIN.svg" width="18" height="18" alt=""> files/folder/selectedfile1.ext <span class="tl_gray">(2.5 MiB)</span></li>';				
 				}
 				break;				
 		}
@@ -370,7 +374,7 @@ class PatternFileTree extends Pattern
 					$arrMeta['title'] = specialchars($objFile->basename);
 				}
 
-				$strHref = \Environment::get('request');
+				$strHref = Environment::get('request');
 				
 				// Remove an existing file parameter (see #5683)
 				if (preg_match('/(&(amp;)?|\?)file=/', $strHref))
@@ -378,7 +382,7 @@ class PatternFileTree extends Pattern
 					$strHref = preg_replace('/(&(amp;)?|\?)file=[^&]+/', '', $strHref);
 				}
 				
-				$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objFiles->path);
+				$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . System::urlEncode($objFiles->path);
 				
 				
 				// Add the file
@@ -491,7 +495,7 @@ class PatternFileTree extends Pattern
 						'id'        => $objFiles->id,
 						'uuid'      => $objFiles->uuid,
 						'name'      => $objFile->basename,
-						'path' 		=> $objFiles->path,
+						'path' 		=> $objFiles->path . '/' . $objFile->basename,
 						'size'		=> ($this->canChangeSize) ? $this->Value->size : $this->size,
 						'alt'       => $arrMeta['title'],
 						'title'     => $arrMeta['title'],

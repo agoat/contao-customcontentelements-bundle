@@ -13,7 +13,11 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\File;
+use Contao\TemplateLoader;
 use Contao\FrontendTemplate;
+use Contao\BackendTemplate;
+use Agoat\ContentBlocks\Controller;
 
 
 class Template extends FrontendTemplate
@@ -91,7 +95,7 @@ class Template extends FrontendTemplate
 			// Write to a temporary file in the assets folder
 			if (!file_exists($strPath))
 			{
-				$objFile = new \File($strPath, true);
+				$objFile = new File($strPath, true);
 				$objFile->write($strCSS);
 				$objFile->close();
 			}
@@ -127,7 +131,7 @@ class Template extends FrontendTemplate
 			// Write to a temporary file in the assets folder
 			if (!file_exists($strPath))
 			{
-				$objFile = new \File($strPath, true);
+				$objFile = new File($strPath, true);
 				$objFile->write($strCSS);
 				$objFile->close();
 			}
@@ -153,11 +157,11 @@ class Template extends FrontendTemplate
 	{
 		
 		// register the template file (to find the custom templates)
-		if (!array_key_exists($name, \TemplateLoader::getFiles()))
+		if (!array_key_exists($name, TemplateLoader::getFiles()))
 		{
-			$objTheme = \LayoutModel::findById(\ContentBlocks::getLayoutId($this->ptable, $this->pid))->getRelated('pid');
+			$objTheme = \LayoutModel::findById(Controller::getLayoutId($this->ptable, $this->pid))->getRelated('pid');
 			
-			\TemplateLoader::addFile($name, $objTheme->templates);
+			TemplateLoader::addFile($name, $objTheme->templates);
 		}
 
 		
@@ -168,11 +172,11 @@ class Template extends FrontendTemplate
 		}
 		elseif (TL_MODE == 'BE')
 		{
-			$tpl = new \BackendTemplate($name);
+			$tpl = new BackendTemplate($name);
 		}
 		else
 		{
-			$tpl = new \FrontendTemplate($name);
+			$tpl = new FrontendTemplate($name);
 		}
 		if ($data !== null)
 		{
