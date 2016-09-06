@@ -542,7 +542,6 @@ class tl_content_contentblocks extends tl_content
 		$id = explode('_', $dc->field);
 		$orderSRC = \StringUtil::deserialize($this->arrLoadedValues[$id[2]][$id[1]]['orderSRC']);
 		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderSRC_'.$id[1].'_'.$id[2]] = (is_array($orderSRC)) ? $orderSRC : array();
-	dump($GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]); 
 
 		return $value;
 	}
