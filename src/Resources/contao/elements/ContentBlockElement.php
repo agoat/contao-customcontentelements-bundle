@@ -14,6 +14,7 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\System;
 use Contao\ContentElement;
 use Contao\TemplateLoader;
 use Agoat\ContentBlocks\Template;
@@ -77,7 +78,7 @@ class ContentBlockElement extends ContentElement
 		// don´t show invisible content block elements
 		if ($this->objBlock->invisible)
 		{
-			static::log('Content block element "'.$this->type.'" with parent record "' . $this->ptable . '.id=' . $this->pid . '" is invisible and will not be shown', __METHOD__, TL_ERROR);
+			System::log('Content block element "'.$this->type.'" with parent record "' . $this->ptable . '.id=' . $this->pid . '" is invisible and will not be shown', __METHOD__, TL_ERROR);
 			return;
 		}
 		
@@ -165,7 +166,7 @@ class ContentBlockElement extends ContentElement
 				
 			if (!class_exists($strClass))
 			{
-				static::log('Pattern element class "'.$strClass.'" (pattern element "'.$objPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+				System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objPattern->type.'") does not exist', __METHOD__, TL_ERROR);
 			}
 			else
 			{

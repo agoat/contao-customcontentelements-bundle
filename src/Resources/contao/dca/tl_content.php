@@ -24,6 +24,7 @@ $GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = arra
 $GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_contentblocks', 'restoreRelatedValuesVersion');
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_contentblocks', 'addCteType');
+$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_contentblocks', 'addCteType');
 
 // remove some filter options
 $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
@@ -237,7 +238,7 @@ class tl_content_contentblocks extends tl_content
 				
 			if (!class_exists($strClass))
 			{
-				static::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
+				\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
 			}
 			else
 			{
@@ -283,7 +284,7 @@ class tl_content_contentblocks extends tl_content
 				
 						if (!class_exists($strClass))
 						{
-							static::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
+							\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
 						}
 						else
 						{
