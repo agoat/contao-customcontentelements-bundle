@@ -1,3 +1,11 @@
-# contentblocks-bundle
-Contao 4 extension to manage content block elements
+# Contao Content Blocks extension
+Contao 4 bundle
 
+___
+
+###Install
+
+Add to app/AppKernel.php (after ContaoCoreBundle)
+```
+new Agoat\ContentBlocksBundle\AgoatContentBlocksBundle()
+```
