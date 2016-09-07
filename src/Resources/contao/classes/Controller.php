@@ -173,11 +173,10 @@ class Controller extends Controller
 				// add content block template js
 				$this->addContentBlockJS();
 
-				// add jquery if active in layout
+				// add jquery to the backend if active in layout
 				if ($objLayout->addJQuery && $objLayout->backendJS)
 				{
-					//array_unshift($GLOBALS['TL_JAVASCRIPT'], 'system/modules/contentblocks/assets/jquery.noConflict.js|static');
-					array_unshift($GLOBALS['TL_JAVASCRIPT'], 'assets/jquery/core/' . $GLOBALS['TL_ASSETS']['JQUERY'] . '/jquery.min.js|static');
+					array_unshift($GLOBALS['TL_JAVASCRIPT'], 'assets/jquery/js/jquery.min.js|static');
 				}
 
 				
