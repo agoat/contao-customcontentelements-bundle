@@ -301,9 +301,9 @@ class PatternFileTree extends Pattern
 		}
 		
 		global $objPage;
-		$allowedDownload = trimsplit(',', strtolower(\Config::get('allowedDownload')));
-		$allowedVideo = trimsplit(',', strtolower(\Config::get('validVideoTypes')));
-		$allowedAudio = trimsplit(',', strtolower(\Config::get('validAudioTypes')));
+		$allowedDownload = StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
+		$allowedVideo = StringUtil::trimsplit(',', strtolower(\Config::get('validVideoTypes')));
+		$allowedAudio = StringUtil::trimsplit(',', strtolower(\Config::get('validAudioTypes')));
 		
 		$files = array();
 		$auxDate = array();
