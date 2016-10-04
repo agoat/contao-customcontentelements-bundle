@@ -5,7 +5,7 @@ ___
 
 ###Install
 
-Add to app/AppKernel.php (after ContaoCoreBundle)
+Add to app/AppKernel.php (after 'new Contao\CoreBundle\ContaoCoreBundle()')
 ```
 new Agoat\ContentBlocksBundle\AgoatContentBlocksBundle()
 ```
