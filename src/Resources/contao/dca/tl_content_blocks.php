@@ -273,11 +273,13 @@ class tl_content_blocks extends Backend
 
 	public function setDefaultType ($varValue, DataContainer $dc)
 	{
+		$db = Database::getInstance();
+		
 		if ($varValue)
 		{
 			// there can be only one default element
-			$this->Database->prepare("UPDATE tl_content_blocks SET defaultType='' WHERE NOT id=? AND pid=?")
-						   ->execute($dc->activeRecord->id, $dc->activeRecord->pid);
+			$db->prepare("UPDATE tl_content_blocks SET defaultType='' WHERE NOT id=? AND pid=?")
+			   ->execute($dc->activeRecord->id, $dc->activeRecord->pid);
 		}
 		
 		return $varValue;
@@ -286,20 +288,22 @@ class tl_content_blocks extends Backend
 	
 	public function generateAlias (DataContainer $dc)
 	{
+		$db = Database::getInstance();
+		
 		// generate the alias from the title
 		$alias = \StringUtil::generateAlias($dc->activeRecord->title.'-'.$dc->activeRecord->id);
 
 		if ($alias != $dc->activeRecord->alias)
 		{
 			// save alias to database
-			$this->Database->prepare("UPDATE tl_content_blocks SET alias=? WHERE id=?")
-						   ->execute($alias, $dc->activeRecord->id);
+			$db->prepare("UPDATE tl_content_blocks SET alias=? WHERE id=?")
+			   ->execute($alias, $dc->activeRecord->id);
 		
 			if ($dc->activeRecord->alias)
 			{
 				// also change the type
-				$this->Database->prepare("UPDATE tl_content SET type=? WHERE type=?")
-							   ->execute($alias, $dc->activeRecord->alias);
+				$db->prepare("UPDATE tl_content SET type=? WHERE type=?")
+				   ->execute($alias, $dc->activeRecord->alias);
 			}
 		}
 	}
@@ -423,6 +427,8 @@ class tl_content_blocks extends Backend
 	 */
 	public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null)
 	{
+		$db = Database::getInstance();
+		
 		// Set the ID and action
 		\Input::setGet('id', $intId);
 		\Input::setGet('act', 'toggle');
@@ -489,8 +495,8 @@ class tl_content_blocks extends Backend
 		}
 		
 		// Update the database
-		$this->Database->prepare("UPDATE tl_content_blocks SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
-					   ->execute($intId);
+		$db->prepare("UPDATE tl_content_blocks SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
+		   ->execute($intId);
 					   
 		$objVersions->create();
 		$this->log('A new version of record "tl_content_blocks.id='.$intId.'" has been created'.$this->getParentEntries('tl_content_blocks', $intId), __METHOD__, TL_GENERAL);

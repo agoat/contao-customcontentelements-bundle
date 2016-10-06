@@ -363,6 +363,8 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function deleteRelatedValues ($dc, $intUndoId)
 	{
+		$db = Database::getInstance();
+		
 		$colValues = \ContentValueModel::findByCid($dc->activeRecord->id);
 		
 		if ($colValues === null)
@@ -371,8 +373,8 @@ class tl_content_contentblocks extends tl_content
 		}
 
 		// get the undo database row
-		$objUndo = $this->Database->prepare("SELECT data FROM tl_undo WHERE id=?")
-								  ->execute($intUndoId) ;
+		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+					  ->execute($intUndoId) ;
 			
 		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 		
@@ -387,8 +389,8 @@ class tl_content_contentblocks extends tl_content
 		}
 	
 		// save to the undo database row
-		$this->Database->prepare("UPDATE tl_undo SET data=? WHERE id=?")
-					   ->execute(serialize($arrData), $intUndoId);
+		$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+		   ->execute(serialize($arrData), $intUndoId);
 
 	}
 
@@ -418,6 +420,8 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function createRelatedValuesVersion ($strTable, $intPid, $intVersion, $row)
 	{
+		$db = Database::getInstance();
+		
 		// get tl_content_values collection
 		$colValues = \ContentValueModel::findByCid($intPid);
 
@@ -430,11 +434,11 @@ class tl_content_contentblocks extends tl_content
 		
 		foreach ($colValues as $objValue)
 		{
-			$this->Database->prepare("UPDATE tl_version SET active='' WHERE pid=? AND fromTable=?")
-					   ->execute($objValue->id, 'tl_content_value');
+			$db->prepare("UPDATE tl_version SET active='' WHERE pid=? AND fromTable=?")
+			   ->execute($objValue->id, 'tl_content_value');
 					   
-			$this->Database->prepare("INSERT INTO tl_version (pid, tstamp, version, fromTable, username, userid, description, editUrl, active, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)")
-					   ->execute($objValue->id, time(), $intVersion, 'tl_content_value', $this->User->username, $this->User->id, '', '', serialize($objValue->row()));
+			$db->prepare("INSERT INTO tl_version (pid, tstamp, version, fromTable, username, userid, description, editUrl, active, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)")
+			   ->execute($objValue->id, time(), $intVersion, 'tl_content_value', $this->User->username, $this->User->id, '', '', serialize($objValue->row()));
 
 		} 			
 		
@@ -445,6 +449,8 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function restoreRelatedValuesVersion ($strTable, $intPid, $intVersion, $data)
 	{
+		$db = Database::getInstance();
+		
 		// get tl_content_values collection
 		$colValues = \ContentValueModel::findByCid($intPid);
 	
@@ -489,15 +495,15 @@ class tl_content_contentblocks extends tl_content
 			}
 		
 			
-			$this->Database->prepare("UPDATE tl_content_value %s WHERE id=?")
-							->set($data)
-							->execute($objValue->id);
+			$db->prepare("UPDATE tl_content_value %s WHERE id=?")
+			   ->set($data)
+			   ->execute($objValue->id);
 			
-			$this->Database->prepare("UPDATE tl_version SET active='' WHERE fromTable=? AND pid=?")
-							->execute('tl_content_value', $objValue->id);
+			$db->prepare("UPDATE tl_version SET active='' WHERE fromTable=? AND pid=?")
+			   ->execute('tl_content_value', $objValue->id);
 			
-			$this->Database->prepare("UPDATE tl_version SET active=1 WHERE fromTable=? AND pid=? AND version=?")
-							->execute('tl_content_value', $objValue->id, $intVersion);
+			$db->prepare("UPDATE tl_version SET active=1 WHERE fromTable=? AND pid=? AND version=?")
+			   ->execute('tl_content_value', $objValue->id, $intVersion);
 			
 			
 		}
@@ -528,6 +534,7 @@ class tl_content_contentblocks extends tl_content
 	{
 		$id = explode('_', $dc->field);
 		$this->arrModifiedValues[$id[2]][$id[1]][$id[0]] = $value;
+		
 		return null;
 	}
 
