@@ -40,7 +40,8 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'alias,invisible' => 'index'
+				'alias' => 'index',
+				'pid,invisible,sorting' => 'index'				
 			)
 		)
 	),

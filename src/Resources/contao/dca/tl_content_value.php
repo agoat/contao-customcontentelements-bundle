@@ -30,8 +30,7 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'cid' => 'index',
-				'pid' => 'index',
+				'cid,pid' => 'index'
 			)
 		)
 	),
