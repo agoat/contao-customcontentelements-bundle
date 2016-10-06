@@ -185,7 +185,13 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function buildPaletteAndFields ($dc)
 	{
-		// get content	
+		// build the content block elements palette and fields only when editing a content element (see #5)
+		if (\Input::get('act') != 'edit')
+		{
+			return;
+		}
+		
+		// get content element
 		$objContent = \ContentModel::findByPk($dc->id);
 	
 		if ($objContent === null)
@@ -534,7 +540,7 @@ class tl_content_contentblocks extends tl_content
 	{
 		$id = explode('_', $dc->field);
 		$this->arrModifiedValues[$id[2]][$id[1]][$id[0]] = $value;
-		
+	
 		return null;
 	}
 
