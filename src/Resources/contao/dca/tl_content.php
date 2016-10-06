@@ -24,7 +24,6 @@ $GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = arra
 $GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_contentblocks', 'restoreRelatedValuesVersion');
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_contentblocks', 'addCteType');
-$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_contentblocks', 'addCteType');
 
 // remove some filter options
 $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
