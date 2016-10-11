@@ -394,7 +394,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50 clr'),
 			'options_callback' => function ()
 			{
-				return \System::getContainer()->get('contao.image.image_sizes')->ggetAllOptions();
+				return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
 			},
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
@@ -411,8 +411,11 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['sizeList'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getImageSizeList'),
 			'eval'                    => array('multiple'=>true, 'includeBlankOption'=>true, 'size'=>10, 'tl_class'=>'w50 clr', 'chosen'=>true),
+			'options_callback' => function ()
+			{
+				return System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
+			},
 			'load_callback' => array
 			(
 				array ('tl_content_pattern','defaultSizes')
@@ -833,23 +836,12 @@ class tl_content_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getImageSizeList()
-	{
-		return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
-	}
-
-	
-	/**
-	 * Return a list of predefined images sizes
-	 *
-	 * @return array
-	 */
 	public function defaultSizes($value, $dc)
 	{
 		
 		if ($value == '')
 		{			
-			return serialize(array_keys($this->getImageSizeList()));
+			return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
 		}
 
 		$intNeededSize = \StringUtil::deserialize($dc->activeRecord->size)[2];
