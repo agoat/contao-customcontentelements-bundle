@@ -133,7 +133,6 @@ class PatternFileTree extends Pattern
 					'rgxp' =>' natural', 
 					'includeBlankOption' => false, 
 					'nospace' => true, 
-					'helpwizard' => true, 
 					'tl_class' => 'w50 clr',
 				),
 				'load_callback'	=>	array
