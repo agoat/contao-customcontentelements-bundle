@@ -184,8 +184,8 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function buildPaletteAndFields ($dc)
 	{
-		// build the content block elements palette and fields only when editing a content element (see #5)
-		if (\Input::get('act') != 'edit')
+		// build the content block elements palette and fields only when editing a content element (see #5 and #14)
+		if (\Input::get('act') != 'edit' && \Input::get('act') != 'show')
 		{
 			return;
 		}
