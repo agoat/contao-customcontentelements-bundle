@@ -16,7 +16,6 @@
  * Register back end module (tables, css, overwritten classes)
  */
 
-array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern');
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern', 'tl_content_subpattern', 'tl_content_multipattern');
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 
@@ -62,6 +61,8 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'section'		=> 'Agoat\ContentBlocks\PatternSection',
 		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
+		'subpattern'	=> 'Agoat\ContentBlocks\PatternSubPattern',
+		'multipattern'	=> 'Agoat\ContentBlocks\PatternMultiPattern',
 	),
 	'element' => array
 	(
@@ -80,7 +81,6 @@ $GLOBALS['TL_CTP'] = array
 /**
  * system pattern (with no values)
  */
-$GLOBALS['TL_SYS_PATTERN'] = array('explanation', 'visibility', 'protection');
 $GLOBALS['TL_SYS_PATTERN'] = array('section', 'explanation', 'visibility', 'protection');
 
 
