@@ -72,33 +72,33 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['edit'],
 				'href'                => 'table=tl_content_pattern',
-				'icon'                => 'edit.gif',
+				'icon'                => 'edit.svg',
 				'button_callback'     => array('tl_content_blocks', 'elementButtons')
 			),
 			'editheader' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['editheader'],
 				'href'                => 'act=edit',
-				'icon'                => 'header.gif',
+				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['copy'],
 				'href'                => 'act=copy',
-				'icon'                => 'copy.gif',
+				'icon'                => 'copy.svg',
 				'button_callback'     => array('tl_content_blocks', 'elementButtons')
 			),
 			'delete' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['delete'],
 				'href'                => 'act=delete',
-				'icon'                => 'delete.gif',
+				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['toggle'],
-				'icon'                => 'visible.gif',
+				'icon'                => 'visible.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
 				'button_callback'     => array('tl_content_blocks', 'toggleIcon')
 			),
@@ -106,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['show'],
 				'href'                => 'act=show',
-				'icon'                => 'show.gif'
+				'icon'                => 'show.svg'
 			)
 		)
 	),
@@ -123,7 +123,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 	(
 		'id' => array
 		(
-			'relation'                => array('type'=>'hasMany', 'load'=>'lazy', 'table'=>'tl_content_pattern', 'field'=>'pid'),
+		//	'relation'                => array('type'=>'hasMany', 'load'=>'lazy', 'table'=>'tl_content_pattern', 'field'=>'pid'),
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
 		),
 		'pid' => array
@@ -412,7 +412,7 @@ class tl_content_blocks extends Backend
 		
 		if ($row['invisible'])
 		{
-			$icon = 'invisible.gif';
+			$icon = 'invisible.svg';
 		}
 		
 		return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
