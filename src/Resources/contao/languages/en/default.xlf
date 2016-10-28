@@ -80,6 +80,18 @@
 			<trans-unit id="CTP.explanation.1">
 				<source>Insert an explanation.</source>
 			</trans-unit>
+			<trans-unit id="CTP.subpattern.0">
+				<source>Sub pattern</source>
+			</trans-unit>
+			<trans-unit id="CTP.subpattern.1">
+				<source>Insert a checkbox or select menu with sub fields.</source>
+			</trans-unit>
+			<trans-unit id="CTP.multipattern.0">
+				<source>Multi group</source>
+			</trans-unit>
+			<trans-unit id="CTP.multipattern.1">
+				<source>Insert a replicable group of sub fields.</source>
+			</trans-unit>
 
 			<trans-unit id="CTP.visibility.0">
 				<source>Visibility</source>

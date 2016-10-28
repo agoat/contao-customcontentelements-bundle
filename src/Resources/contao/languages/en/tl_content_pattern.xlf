@@ -499,10 +499,16 @@
 				<source>Show the details of block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.edit.0">
-				<source>Edit block pattern</source>
+				<source>Edit pattern</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.edit.1">
-				<source>Edit block pattern ID %s</source>
+				<source>Edit pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.editheader.0">
+				<source>Edit content pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.editheader.1">
+				<source>Edit content pattern settings</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.copy.0">
 				<source>Duplicate block pattern</source>

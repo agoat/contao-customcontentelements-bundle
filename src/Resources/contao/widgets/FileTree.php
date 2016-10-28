@@ -69,7 +69,7 @@ class FileTree extends \Widget
 			$this->strOrderName = $this->orderField . str_replace($this->strField, '', $this->strName);
 
 			// Don´t load from database for filetree pattern
-			if (strpos($this->orderField,'_') === false)
+			if (strpos($this->orderField,'-') === false)
 			{
 				// Retrieve the order value
 				$objRow = $this->Database->prepare("SELECT {$this->orderField} FROM {$this->strTable} WHERE id=?")
@@ -98,7 +98,7 @@ class FileTree extends \Widget
 			$arrNew = array_map('StringUtil::uuidToBin', explode(',', \Input::post($this->strOrderName)));
 
 			// Don´t load from database for filetree pattern
-			if (strpos($this->orderField,'_') === false)
+			if (strpos($this->orderField,'-') === false)
 			{
 				// Only proceed if the value has changed
 				if ($arrNew !== $this->{$this->orderField})

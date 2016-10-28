@@ -50,7 +50,7 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'rid' => array	// replica id
+		'rid' => array	// recursive id
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),

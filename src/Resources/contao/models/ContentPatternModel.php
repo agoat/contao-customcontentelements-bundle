@@ -50,22 +50,27 @@ class ContentPatternModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findPublishedByPid($varPid, array $arrOptions=array())
+	public static function findPublishedByPidAndTable($intPid, $strParentTable, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
-		$arrOptions = array_merge
-		(		
-			array
-			(
-				'column'	=>	array("$t.pid=?", "$t.invisible=?"),
-				'value'		=>	array($varPid, ''),
-				'order'		=>	"$t.sorting ASC",
-			),
-			$arrOptions
-		);
+		
+		// Also handle empty ptable fields
+		if ($strParentTable == 'tl_content_blocks')
+		{
+			$arrColumns = array("$t.pid=? AND ($t.ptable=? OR $t.ptable='') AND $t.invisible=''");
+		}
+		else
+		{
+			$arrColumns = array("$t.pid=? AND $t.ptable=? AND $t.invisible=''");
+		}
+		
+		if (!isset($arrOptions['order']))
+		{
+			$arrOptions['order'] = "$t.sorting";
+		}
 
-		return static::find($arrOptions);
+		return static::findBy($arrColumns, array($intPid, $strParentTable), $arrOptions);
 	}
 
 
