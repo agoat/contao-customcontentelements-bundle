@@ -614,11 +614,11 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objSubPattern->ptable;
 
 
-		// in edit mode set the ptable in case of
+		// in edit mode set the ptable in case ..
 		if (\Input::get('act') !== null)
 		{
 			// if spid reference to a sub pattern set ptable always to tl_content_subpattern
-			if (in_array($objSubPattern->type, array('subpattern', 'multipattern')) && \Input::get('id') != \Input::get('spid'))
+			if (in_array($objSubPattern->type, $GLOBALS['TL_CTP_SUB']) && \Input::get('id') != \Input::get('spid'))
 			{
 					$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
 			}
@@ -681,9 +681,8 @@ class tl_content_pattern extends Backend
 	 */
 	public function patternButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		if ($row['type'] == 'subpattern' || $row['type'] == 'multipattern')
+		if (in_array($row['type'], $GLOBALS['TL_CTP_SUB']))
 		{
-			dump($href);
 			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;spid='.$row['id'],true, array('act','mode')).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 		}
 		

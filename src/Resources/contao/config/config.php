@@ -76,11 +76,16 @@ $GLOBALS['TL_CTP'] = array
 	),
 );
 
+/**
+ * Sub pattern
+ */
+$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multipattern');
 
 
 /**
- * system pattern (with no values)
+ * System pattern (with no values)
  */
+$GLOBALS['TL_CTP_SYS'] = array('section', 'explanation', 'visibility', 'protection');
 $GLOBALS['TL_SYS_PATTERN'] = array('section', 'explanation', 'visibility', 'protection');
 
 

@@ -65,7 +65,7 @@ class PatternSubPattern extends Pattern
 					'submitOnChange'	=>	true
 				),
 			));
-			
+
 			// add the pattern to palettes
 			$colSubPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern', array('order'=>'sorting ASC'));
 			
@@ -126,7 +126,6 @@ class PatternSubPattern extends Pattern
 					'onclick'			=>	'Backend.autoSubmit(\'tl_content\')',
 				)
 			));
-			
 			
 			$objValue = \ContentValueModel::findByCidandPidandRid($this->cid, $this->id, $this->rid);
 			
