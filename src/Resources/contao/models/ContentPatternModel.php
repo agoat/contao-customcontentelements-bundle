@@ -50,7 +50,7 @@ class ContentPatternModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findPublishedByPidAndTable($intPid, $strParentTable, array $arrOptions=array())
+	public static function findPublishedByPidAndTable($intPid, $strParentTable='tl_content_blocks', array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
