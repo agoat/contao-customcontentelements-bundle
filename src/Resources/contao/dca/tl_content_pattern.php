@@ -25,7 +25,6 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'switchToEdit'                => false,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_content_blocks',
-	//	'ctable'                      => array('tl_content_subpattern'),
 		'dynamicPtable'				  => true,
 		'onload_callback' => array
 		(
@@ -594,35 +593,48 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
  * Dynamically change parent table when editing sub- or multipattern
  */
 
-if (\Input::get('pid') != null)
+if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 {
-	$objParent = \ContentPatternModel::findById(\Input::get('pid'));
 
-	if ($objParent !== null)
+	// use the parent id of the parent to check for a sub pattern
+	if (\Input::get('spid') === null)
 	{
+		$objSubPattern = \ContentPatternModel::findById(\ContentPatternModel::findById(\Input::get('pid'))->pid);
+	}
+	else
+	{
+		$objSubPattern = \ContentPatternModel::findById(\Input::get('spid'));
+		
+	}
+
+	if ($objSubPattern !== null)
+	{
+
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  ($objParent->type == 'multipattern') ? array('type','alias','maxCount') : array('type','alias','subType');
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objSubPattern->ptable;
+
+
 		// in edit mode set the ptable in case of
-		if (\Input::get('act') == 'edit' || \Input::get('act') == 'create')
+		if (\Input::get('act') !== null)
 		{
-			// if pid reference to 
-			if (in_array($objParent->type, array('subpattern', 'multipattern')) && \Input::get('mode') != 1 && \Input::get('id') != \Input::get('pid'))
+			// if spid reference to a sub pattern set ptable always to tl_content_subpattern
+			if (in_array($objSubPattern->type, array('subpattern', 'multipattern')) && \Input::get('id') != \Input::get('spid'))
 			{
 					$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
-			}
-			else
-			{
-				$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objParent->ptable;
 			}
 		
 		}
 		// in table view set ptable always
-		else if (\Input::get('id') == \Input::get('pid'))
+		else if (\Input::get('id') == \Input::get('spid'))
 		{
 			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  ($objParent->type == 'multipattern') ? array('type','alias','maxCount') : array('type','alias','subType');
 		}
 	
+
+
 	
-		if ($objParent->type == 'subpattern' && $objParent->subType == 'option')
+		// set the filter for the subpattern option
+		if ($objSubPattern->type == 'subpattern' && $objSubPattern->subType == 'option')
 		{
 			// get value for sub pattern to know the selected option
 			
@@ -630,7 +642,6 @@ if (\Input::get('pid') != null)
 		//	$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter'] = array(array('subType=?', 'test'));
 		}
 	}
-	
 }
 //dump($GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable']);
 
@@ -672,7 +683,8 @@ class tl_content_pattern extends Backend
 	{
 		if ($row['type'] == 'subpattern' || $row['type'] == 'multipattern')
 		{
-			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;pid='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+			dump($href);
+			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;spid='.$row['id'],true, array('act','mode')).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 		}
 		
 	}	
@@ -693,13 +705,6 @@ class tl_content_pattern extends Backend
 		switch ($arrRow['type'])
 		{
 			case 'section':
-				if ($arrRow['replicable'])
-				{
-					$options = ' <span style="color :#b3b3b3 ;padding-left: 3px"> (Template alias: $this->' . $arrRow['alias'] . '->...)</span>';		
-					$type = $GLOBALS['TL_LANG']['CTP']['multisection'][0];
-				}
-				break;
-			
 			case 'explanation':
 			case 'protection':
 			case 'visibility':
