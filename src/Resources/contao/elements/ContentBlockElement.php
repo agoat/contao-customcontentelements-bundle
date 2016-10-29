@@ -83,11 +83,11 @@ class ContentBlockElement extends ContentElement
 		}
 		
 		// register the custom template
-		//if (!array_key_exists($this->objBlock->template, TemplateLoader::getFiles()))
-		//{
+		if (!array_key_exists($this->objBlock->template, TemplateLoader::getFiles()))
+		{
 			TemplateLoader::addFile($this->objBlock->template, $this->objBlock->getRelated('pid')->templates);
-		//}
-		
+		}
+
 		// set the template file
 		$this->strTemplate = $this->objBlock->template;
 		
