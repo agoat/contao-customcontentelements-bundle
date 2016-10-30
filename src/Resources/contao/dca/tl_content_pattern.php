@@ -25,6 +25,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'switchToEdit'                => false,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_content_blocks',
+		'ctable'                      => array('tl_content_subpattern'),
 		'dynamicPtable'				  => true,
 		'onload_callback' => array
 		(
@@ -620,6 +621,7 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objParent->ptable;
 		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
 		
+		// add extra info for the sub pattern types
 		if ($objParent->type == 'subpattern')
 		{
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subType';
