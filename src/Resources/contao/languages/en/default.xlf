@@ -81,16 +81,16 @@
 				<source>Insert an explanation.</source>
 			</trans-unit>
 			<trans-unit id="CTP.subpattern.0">
-				<source>Sub pattern</source>
+				<source>Sub pattern (experimental)</source>
 			</trans-unit>
 			<trans-unit id="CTP.subpattern.1">
-				<source>Insert a checkbox or select menu with sub fields.</source>
+				<source>Insert a checkbox or select menu with related sub pattern.</source>
 			</trans-unit>
-			<trans-unit id="CTP.multipattern.0">
-				<source>Multi group</source>
+			<trans-unit id="CTP.multigroup.0">
+				<source>Multi group (experimental)</source>
 			</trans-unit>
-			<trans-unit id="CTP.multipattern.1">
-				<source>Insert a replicable group of sub fields.</source>
+			<trans-unit id="CTP.multigroup.1">
+				<source>Insert a duplicatable group of sub pattern..</source>
 			</trans-unit>
 
 			<trans-unit id="CTP.visibility.0">

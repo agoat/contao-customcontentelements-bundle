@@ -45,18 +45,22 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 		),
 		'type' => array
 		(
+			//'foreignKey'			  => 'tl_content_pattern.type',
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'alias' => array
 		(
+			//'foreignKey'			  => 'tl_content_pattern.alias',
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'subType' => array
 		(
+			//'foreignKey'			  => 'tl_content_pattern.subType',
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'maxCount' => array
 		(
+			//'foreignKey'			  => 'tl_content_pattern.maxCount',
 			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
 		)
 	)

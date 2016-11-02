@@ -243,11 +243,13 @@ class tl_content_contentblocks extends tl_content
 			{
 				$objPatternClass = new $strClass($colPattern->current());
 				$objPatternClass->cid = $objContent->id;
+				$objPatternClass->rid = 0;
 				$objPatternClass->alias = $objBlock->alias;			
 
 				$objPatternClass->construct();
 			}
 		}
+
 	}	
 
 
@@ -473,7 +475,7 @@ class tl_content_contentblocks extends tl_content
 	{
 		$id = explode('-', $dc->field);
 		$this->arrModifiedValues[$id[1]][$id[2]][$id[0]] = $value;
-	
+
 		return null;
 	}
 

@@ -181,6 +181,7 @@ class ContentBlockElement extends ContentElement
 			{
 				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->cid = $intCid;
+				$objPatternClass->rid = 0;
 				$objPatternClass->Template = $this->Template;
 				$objPatternClass->arrValues = $arrValues;
 				$objPatternClass->Value = $arrValues[$objPattern->id][0];

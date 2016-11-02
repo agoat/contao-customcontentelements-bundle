@@ -30,7 +30,9 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'cid,pid' => 'index'
+				'cid' => 'index',
+				'cid,pid' => 'index',
+				'cid,pid,rid' => 'index'
 			)
 		)
 	),
@@ -111,6 +113,10 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		'size' => array
 		(
 			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'groupCount' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '1'"
 		),
 
 

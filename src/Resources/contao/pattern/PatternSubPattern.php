@@ -192,18 +192,7 @@ class PatternSubPattern extends Pattern
 			{
 				return;
 			}
-/*
-			// get values for content block
-			$colValues = \ContentValueModel::findByCid($this->cid);
 
-			if ($colValues !== null)
-			{
-				foreach ($colValues as $objValue)
-				{
-					$arrValues[$objValue->pid][$objValue->rid] = $objValue;
-				}							
-			}
-*/
 			// add new alias to the value mapper
 			$this->arrMapper[] = $this->alias;
 			
@@ -232,7 +221,7 @@ class PatternSubPattern extends Pattern
 					$objPatternClass->arrMapper = $this->arrMapper;
 					$objPatternClass->arrValues = $this->arrValues;
 					$objPatternClass->Value = $this->arrValues[$objPattern->id][$this->rid];
-
+					
 					$objPatternClass->compile();
 				}
 			}

@@ -37,7 +37,10 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			array('tl_content_pattern', 'correctGroups'),
 			array('tl_content_pattern', 'saveSubPattern'),
 		),
-		// ondelete_callback to delete related row in tl_content_subpattern
+		'ondelete_callback'			  => array
+		(
+			array('tl_content_pattern', 'deleteSubPattern'),
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -137,7 +140,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
 		'subpattern'				  => '{type_legend},type;{subpattern_legend},subType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
-		'multipattern'				  => '{type_legend},type;{multipattern_legend},maxCount;{pattern_legend},alias;{invisible_legend},invisible',
+		'multigroup'				  => '{type_legend},type;{multipattern_legend},maxCount;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
 		// element
 		'visibility'				  => '{type_legend},type;{visibility_legend},canChangeStart,canChangeStop;{invisible_legend},invisible',
 		'protection'				  => '{type_legend},type;{protection_legend},groups,canChangeGroups;{invisible_legend},invisible',
@@ -186,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getElementPattern'),
+			'options_callback'        => array('tl_content_pattern', 'getPatternForContentBlock'),
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
 			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true),
 			'sql'                     => "varchar(32) NOT NULL default ''"
@@ -260,9 +263,9 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['maxCount'],
 			'exclude'                 => true,
-			'default'				  => 0,
+			'default'				  => 100,
 			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'tl_class'=>'w50 clr'),
+			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'minval'=>1, 'maxval'=>100, 'tl_class'=>'w50 clr'),
 			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
 		),
 		'mandatory' => array
@@ -614,7 +617,7 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		$objParent = \ContentPatternModel::findById(\Input::get('spid'));
 		
 	}
-
+	
 	if ($objParent !== null)
 	{
 
@@ -625,13 +628,15 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		if ($objParent->type == 'subpattern')
 		{
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subType';
+			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] =array('tl_content_pattern', 'getPatternForSubPattern');
 			
 		}
-		else if ($objParent->type == 'multipattern')
+		else if ($objParent->type == 'multigroup')
 		{
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'maxCount';
+			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiGroup');
 		}
-
+		
 		
 		// in edit mode set the ptable in case ..
 		if (\Input::get('act') !== null)
@@ -897,16 +902,66 @@ class tl_content_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getElementPattern()
+	public function getPatternForContentBlock()
 	{
-
+	
 		$pattern = array();
 		
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{
 			foreach (array_keys($v) as $kk)
 			{
-				$pattern[$k][] = $kk;
+				$pattern[$k][] = $kk;					
+			}
+		}
+		
+		return $pattern;
+	}
+	
+	/**
+	 * Return all content pattern as array
+	 *
+	 * @return array
+	 */
+	public function getPatternForSubPattern()
+	{
+	
+		$pattern = array();
+		
+		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
+		{
+			foreach (array_keys($v) as $kk)
+			{
+				// exclude pattern not allowed in sub pattern
+				if (!in_array($kk, $GLOBALS['TL_CTP_NA']['subpattern']))
+				{
+					$pattern[$k][] = $kk;					
+				}
+			}
+		}
+		
+		return $pattern;
+	}
+
+	/**
+	 * Return all content pattern as array
+	 *
+	 * @return array
+	 */
+	public function getPatternForMultiGroup()
+	{
+	
+		$pattern = array();
+		
+		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
+		{
+			foreach (array_keys($v) as $kk)
+			{
+				// exclude pattern not allowed in multigroup
+				if (!in_array($kk, $GLOBALS['TL_CTP_NA']['multigroup']))
+				{
+					$pattern[$k][] = $kk;					
+				}
 			}
 		}
 		
@@ -953,7 +1008,7 @@ class tl_content_pattern extends Backend
 
 	
 
-	public function correctGroups (DataContainer $dc)
+	public function correctGroups ($dc)
 	{
 		$db = Database::getInstance();
 					
@@ -971,7 +1026,7 @@ class tl_content_pattern extends Backend
 	}
 
 
-	public function saveSubPattern (DataContainer $dc)
+	public function saveSubPattern ($dc)
 	{
 		$db = Database::getInstance();
 
@@ -997,6 +1052,42 @@ class tl_content_pattern extends Backend
 		{
 			$db->prepare("UPDATE tl_content_pattern SET subTypeOption=? WHERE id=?")
 			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter'][0][1], $dc->activeRecord->id);
+		}
+	}
+
+	public function deleteSubPattern ($dc, $intUndoId)
+	{
+		$db = Database::getInstance();
+
+		// save changes to subpattern table
+		if (in_array($dc->activeRecord->type, $GLOBALS['TL_CTP_SUB']))
+		{			
+			$colPattern = \ContentPatternModel::findByPidAndTable($dc->activeRecord->id, 'tl_content_subpattern');
+		
+			if ($colPattern === null)
+			{
+				return;
+			}
+
+			// get the undo database row
+			$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+						  ->execute($intUndoId) ;
+				
+			$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
+			
+
+			foreach ($colPattern as $objPattern)
+			{
+				
+				// get value row(s)
+				$arrData['tl_content_value'][] = $objPattern->row();
+
+				$objPattern->delete();
+			}
+		
+			// save to the undo database row
+			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+			   ->execute(serialize($arrData), $intUndoId);
 		}
 	}
 

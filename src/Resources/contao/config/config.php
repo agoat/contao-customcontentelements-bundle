@@ -62,7 +62,7 @@ $GLOBALS['TL_CTP'] = array
 		'section'		=> 'Agoat\ContentBlocks\PatternSection',
 		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
 		'subpattern'	=> 'Agoat\ContentBlocks\PatternSubPattern',
-		'multipattern'	=> 'Agoat\ContentBlocks\PatternMultiPattern',
+		'multigroup'	=> 'Agoat\ContentBlocks\PatternMultiGroup',
 	),
 	'element' => array
 	(
@@ -77,9 +77,30 @@ $GLOBALS['TL_CTP'] = array
 );
 
 /**
+ * Content pattern not allowed in sub pattern
+ */
+$GLOBALS['TL_CTP_NA'] = array
+(
+	'subpattern' => array
+	(
+		'section',
+		'visibility',
+		'protection',
+	),
+	'multigroup' => array
+	(
+		'section',
+		'visibility',
+		'protection',
+		'form',
+		'module',
+	),
+);
+
+/**
  * Sub pattern
  */
-$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multipattern');
+$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multigroup');
 
 
 /**
@@ -96,4 +117,7 @@ $GLOBALS['TL_SYS_PATTERN'] = array('section', 'explanation', 'visibility', 'prot
 $GLOBALS['BE_FFL']['explanation'] = 'Explanation';
 $GLOBALS['BE_FFL']['visualselect'] = 'VisualSelectMenu';
 
+$GLOBALS['BE_FFL']['multigroup'] = 'MultiGroup';
+$GLOBALS['BE_FFL']['multigroupstart'] = 'MultiGroupStart';
+$GLOBALS['BE_FFL']['multigroupstop'] = 'MultiGroupStop';
 
