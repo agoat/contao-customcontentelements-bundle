@@ -138,9 +138,8 @@ class ContentBlockElement extends ContentElement
 	 */
 	protected function compile()
 	{		
-		// get related pattern model collection
-		$colPattern = $this->objBlock->getRelated('id', array('order'=>'sorting ASC'));
-	
+		// get the pattern model collection
+		$colPattern = \ContentPatternModel::findPublishedByPid($this->objBlock->id);
 
 		if ($colPattern === null)
 		{
@@ -150,7 +149,7 @@ class ContentBlockElement extends ContentElement
 		foreach($colPattern as $objPattern)
 		{
 			// don´t show the invisible or system pattern
-			if ($objPattern->invisible || in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+			if (in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
 			{
 				continue;
 			}

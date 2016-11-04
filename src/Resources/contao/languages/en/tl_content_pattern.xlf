@@ -496,37 +496,37 @@
 				<source>Block pattern details</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.show.1">
-				<source>Show the details of block pattern element ID %s</source>
+				<source>Show the details of block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.edit.0">
 				<source>Edit block pattern</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.edit.1">
-				<source>Edit block block element ID %s</source>
+				<source>Edit block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.copy.0">
 				<source>Duplicate block pattern</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.copy.1">
-				<source>Duplicate block pattern element ID %s</source>
+				<source>Duplicate block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.cut.0">
 				<source>Move block pattern</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.cut.1">
-				<source>Move block pattern element ID %s</source>
+				<source>Move block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.delete.0">
 				<source>Delete block pattern</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.delete.1">
-				<source>Delete block pattern element ID %s</source>
+				<source>Delete block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.pasteafter.0">
 				<source>Paste after</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.pasteafter.1">
-				<source>Paste after block pattern element ID %s</source>
+				<source>Paste after block pattern ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.pasteinto.0">
 				<source>Paste into</source>
@@ -544,7 +544,7 @@
 				<source>Publish/unpublish block pattern</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.toggle.1">
-				<source>Publish/unpublish block pattern element ID %s</source>
+				<source>Publish/unpublish block pattern ID %s</source>
 			</trans-unit>
 		</body>
 	</file>

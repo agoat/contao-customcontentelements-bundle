@@ -60,7 +60,7 @@ class ContentPatternModel extends Model
 			(
 				'column'	=>	array("$t.pid=?", "$t.invisible=?"),
 				'value'		=>	array($varPid, ''),
-				'order'		=>	"$t.rid ASC",
+				'order'		=>	"$t.sorting ASC",
 			),
 			$arrOptions
 		);

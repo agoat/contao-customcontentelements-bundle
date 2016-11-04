@@ -39,7 +39,8 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'pid' => 'index'
+				'pid' => 'index',
+				'pid,invisible' => 'index'
 			)
 		)
 	),
@@ -410,8 +411,11 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['sizeList'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getImageSizeList'),
 			'eval'                    => array('multiple'=>true, 'includeBlankOption'=>true, 'size'=>10, 'tl_class'=>'w50 clr', 'chosen'=>true),
+			'options_callback' => function ()
+			{
+				return System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
+			},
 			'load_callback' => array
 			(
 				array ('tl_content_pattern','defaultSizes')
@@ -683,21 +687,22 @@ class tl_content_pattern extends Backend
 	 */
 	public function setPickerOptions($value, $dc)
 	{
-
+		$db = Database::getInstance();
+		
 		switch ($value)
 		{
 			case 'datetime':
 				if (!in_array($dc->activeRecord->rgxp, array('date', 'time', 'datim')))
 				{
 					// change rgxp in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
-									->execute('date', $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					   ->execute('date', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
-									->execute('', $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
 	
@@ -705,8 +710,8 @@ class tl_content_pattern extends Backend
 				if (!in_array($dc->activeRecord->rgxp, array('alnum', 'extnd')))
 				{
 					// change rgxp in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
-									->execute('', $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
 				
@@ -714,14 +719,14 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->rgxp != 'url')
 				{
 					// change rgxp in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
-									->execute('url', $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					   ->execute('url', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
-									->execute('', $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
 				
@@ -729,14 +734,14 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->maxLength > 200)
 				{
 					// change maxLength in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
-									->execute(200, $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+					   ->execute(200, $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// change multiple in database
-					$this->database	->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
-									->execute('', $dc->activeRecord->id);
+					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
 
@@ -754,11 +759,13 @@ class tl_content_pattern extends Backend
 	 */
 	public function setMultipleOptions($value, $dc)
 	{
+		$db = Database::getInstance();
+		
 		if ($value > 0 && $dc->activeRecord->maxLength > 255/$value-16)
 		{
 			// change rgxp in database
-			$this->database	->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
-							->execute(round(255/$value-16), $dc->activeRecord->id);
+			$db->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+			   ->execute(round(255/$value-16), $dc->activeRecord->id);
 		}
 		
 		return $value;
@@ -774,25 +781,27 @@ class tl_content_pattern extends Backend
 	 */
 	public function setSourceOptions($value, $dc)
 	{
+		$db = Database::getInstance();
+		
 		if ($value == 'video' || $value == 'audio')
 		{
 			if (!$dc->activeRecord->multiSource)
 			{
 				// change multiSource in database
-				$this->database	->prepare("UPDATE tl_content_pattern SET multiSource=? WHERE id=?")
-								->execute(1, $dc->activeRecord->id);
+				$db->prepare("UPDATE tl_content_pattern SET multiSource=? WHERE id=?")
+				   ->execute(1, $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->sortBy != 'html5media')
 			{
 				// change sortBy in database
-				$this->database	->prepare("UPDATE tl_content_pattern SET sortBy=? WHERE id=?")
-								->execute('html5media', $dc->activeRecord->id);
+				$db->prepare("UPDATE tl_content_pattern SET sortBy=? WHERE id=?")
+				   ->execute('html5media', $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->canChangeSortBy)
 			{
 				// change canChangeSortBy in database
-				$this->database	->prepare("UPDATE tl_content_pattern SET canChangeSortBy=? WHERE id=?")
-								->execute(0, $dc->activeRecord->id);
+				$db->prepare("UPDATE tl_content_pattern SET canChangeSortBy=? WHERE id=?")
+				   ->execute(0, $dc->activeRecord->id);
 			}
 		}
 		
@@ -817,7 +826,6 @@ class tl_content_pattern extends Backend
 				$pattern[$k][] = $kk;
 			}
 		}
-
 		
 		return $pattern;
 	}
@@ -828,24 +836,12 @@ class tl_content_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getImageSizeList()
-	{
-		return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
-
-	}
-
-	
-	/**
-	 * Return a list of predefined images sizes
-	 *
-	 * @return array
-	 */
 	public function defaultSizes($value, $dc)
 	{
 		
 		if ($value == '')
 		{			
-			return serialize(array_keys($this->getImageSizeList()));
+			return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
 		}
 
 		$intNeededSize = \StringUtil::deserialize($dc->activeRecord->size)[2];
@@ -876,7 +872,8 @@ class tl_content_pattern extends Backend
 
 	public function correctGroups (DataContainer $dc)
 	{
-			
+		$db = Database::getInstance();
+					
 		// change predefined groups
 		if ($dc->activeRecord->type == 'protection' && !$dc->activeRecord->canChangeGroups)
 		{
@@ -884,8 +881,8 @@ class tl_content_pattern extends Backend
 			$groups = is_array($dc->activeRecord->groups) ? serialize($dc->activeRecord->groups) : $dc->activeRecord->groups;
 			
 			// save alias to database
-			$this->Database->prepare("UPDATE tl_content SET groups=? WHERE type=(SELECT alias FROM tl_content_blocks WHERE id=?)")
-						   ->execute($groups, $dc->activeRecord->pid);
+			$db->prepare("UPDATE tl_content SET groups=? WHERE type=(SELECT alias FROM tl_content_blocks WHERE id=?)")
+			   ->execute($groups, $dc->activeRecord->pid);
 		
 		}
 	}
@@ -965,6 +962,8 @@ class tl_content_pattern extends Backend
 	 */
 	public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null)
 	{
+		$db = Database::getInstance();
+		
 		// Set the ID and action
 		\Input::setGet('id', $intId);
 		\Input::setGet('act', 'toggle');
@@ -1031,8 +1030,8 @@ class tl_content_pattern extends Backend
 		}
 		
 		// Update the database
-		$this->Database->prepare("UPDATE tl_content_pattern SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
-					   ->execute($intId);
+		$db->prepare("UPDATE tl_content_pattern SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
+		   ->execute($intId);
 					   
 		$objVersions->create();
 		$this->log('A new version of record "tl_content_pattern.id='.$intId.'" has been created'.$this->getParentEntries('tl_content_pattern', $intId), __METHOD__, TL_GENERAL);
