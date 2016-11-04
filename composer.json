@@ -38,11 +38,5 @@
         "psr-4": {
             "Agoat\\ContentBlocksBundle\\Test\\": "tests/"
         }
-    },
-    "scripts": {
-         "post-update-cmd": [
-            "Agoat\\ContentBlocks\\Composer\\ScriptHandler::updatePatternTable"
-        ]
     }
-
 }
