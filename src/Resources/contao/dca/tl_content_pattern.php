@@ -11,17 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-/**
- * Void BC break (update ptable column)
- *
- * TO BE REMOVED IN  NEXT VERSION !!!
- */
- 
-	$db = Database::getInstance();
-		
-	$db->prepare("UPDATE tl_content_pattern SET ptable='tl_content_blocks' WHERE ptable=''")->execute(); 
- 
- 
+
  
 /**
  * Table tl_content_pattern
