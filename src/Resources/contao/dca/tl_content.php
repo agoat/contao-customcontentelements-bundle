@@ -282,12 +282,11 @@ class tl_content_contentblocks extends tl_content
 					
 					if ($objValue->$k != $v)
 					{
-
 						$bolVersion = true;
 						$objValue->$k = $v;
 					}
 				}
-		
+				
 				$objValue->save();
 				
 				if ($bolVersion)

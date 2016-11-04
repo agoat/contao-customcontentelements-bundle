@@ -38,14 +38,14 @@ class PatternMultiGroup extends Pattern
 		{
 			$intNumberOfGroups = 1;
 		}
-
+		
 		// add multi group widget
 		$this->generateDCA('groupCount', array
 		(
 			'inputType' =>	'multigroup',
 			'eval'		=>	array
 			(
-				'maxGroups'			=>	$this->maxCount, 
+				'maxCount'			=>	$this->maxCount, 
 				'numberOfGroups'	=>	$intNumberOfGroups, 
 				'pid'				=>	$this->id, 
 				'rid'				=>	$this->rid, 
@@ -60,15 +60,21 @@ class PatternMultiGroup extends Pattern
 		{
 			
 			$this->rid = ($prid * 100) + $rid;
-			
+			dump($rid);
+			dump($this->maxCount);
 			// add multigroupstart widget (with add, delete and move buttons)
 			$this->generateDCA('multigroupstart', array
 			(
 				'inputType' =>	'multigroupstart',
 				'eval'		=>	array
 				(
-					'prid'			=>	$prid * 100, 
-					'irid'			=>	$rid, 
+					'title'			=>	$this->label, 
+					'desc'			=>	$this->description, 
+					'up'			=>	($rid != 0), 
+					'down'			=>	($rid != $intNumberOfGroups-1), 
+					'delete'		=>	($intNumberOfGroups > 1), 
+					'insert'		=>	($intNumberOfGroups < $this->maxCount), 
+					'cid'			=>	$this->rid, 
 					'strCommand'	=>	'cmd_multigroup-' . $this->id . '-' . $prid, 
 				)
 			), false);

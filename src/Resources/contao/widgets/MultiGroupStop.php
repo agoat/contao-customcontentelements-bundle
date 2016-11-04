@@ -43,11 +43,7 @@ class MultiGroupStop extends \Widget
 	public function generate()
 	{
 		
-		return '</div></div>
-				<div class="multigroup_header clr" style="margin: -8px 0 8px; text-align: right;">
-		<span class="insert"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;irid='.$this->irid.'&amp;prid='.$this->prid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Insert</a></span>
-		</div>
-';
+		return '</div></div>';
 							
 	}
 
