@@ -172,7 +172,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'ptable' => array
 		(
-			'sql'                     => "varchar(64) NOT NULL default ''"
+			'sql'                     => "varchar(64) NOT NULL default 'tl_content_blocks'"
 		),
 		'sorting' => array
 		(
