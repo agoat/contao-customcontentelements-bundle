@@ -52,7 +52,7 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'rid' => array	// recursive id
+		'rid' => array	// multi dimensional recursive id
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -114,9 +114,9 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
-		'groupCount' => array
+		'count' => array
 		(
-			'sql'                     => "int(10) unsigned NOT NULL default '1'"
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 
 

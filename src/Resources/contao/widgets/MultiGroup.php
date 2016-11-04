@@ -50,9 +50,9 @@ class MultiGroup extends \Widget
 	 */
 	protected function validator($varInput)
 	{
-		if ($varInput > $this->maxCount)
+		if ($varInput > $this->groupMax)
 		{
-			$varInput = $this->maxCount;
+			$varInput = $this->groupMax;
 		}
 		else if ($varInput < 1)
 		{
@@ -75,16 +75,18 @@ class MultiGroup extends \Widget
 		if (\Input::get($this->strCommand) && is_numeric(\Input::get('cid')) && \Input::get('id') == $this->currentRecord)
 		{
 			// make the value a number
-			if (is_null($this->varValue))
+			if ($this->varValue < 1)
 			{
 				$this->varValue = 1;
 			}
-
+dump($this->varValue);
+dump($this->groupMax);
+dump(\Input::get($this->strCommand));
 			// Correct and save group counter
 			switch(\Input::get($this->strCommand))
 			{
 				case 'insert':
-					if ($this->varValue < $this->maxCount)
+					if ($this->varValue < $this->groupMax)
 					{
 						$objValue = \ContentValueModel::findByCidandPidandRid($this->currentRecord, $this->pid, $this->rid);
 						
@@ -93,12 +95,13 @@ class MultiGroup extends \Widget
 							// if no dataset exist make a new one
 							$objValue = new ContentValueModel();
 						}
+dump(\Input::get($this->strCommand));
 						
 						$objValue->cid = $this->currentRecord;
 						$objValue->pid = $this->pid;
 						$objValue->rid = $this->rid;
 						$objValue->tstamp = time();
-						$objValue->groupCount = $this->varValue + 1;
+						$objValue->count = $this->varValue + 1;
 						
 						$objValue->save();
 						
@@ -129,7 +132,7 @@ class MultiGroup extends \Widget
 						$objValue->pid = $this->pid;
 						$objValue->rid = $this->rid;
 						$objValue->tstamp = time();
-						$objValue->groupCount = $this->varValue - 1;
+						$objValue->count = $this->varValue - 1;
 						
 						$objValue->save();
 						
@@ -144,11 +147,11 @@ class MultiGroup extends \Widget
 		
 		
 		// Add hidden input fields		
-		$return = '<input type="hidden" name="' . $this->strName . '" id="ctrl_' . $this->strId . '" value="' . $this->numberOfGroups . '">
+		$return = '<input type="hidden" name="' . $this->strName . '" id="ctrl_' . $this->strId . '" value="' . $this->groupCount . '">
 <div class="multigroup_header clr" style="margin: 0 0 8px;">';
 		
 		// Add insert above button
-		if ($this->numberOfGroups < $this->maxCount)
+		if ($this->groupCount < $this->groupMax)
 		{
 			$return .= '<div class="insert" style="margin: 14px 0 1px; float: right;"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.($this->rid*100-1).'&amp;&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Insert</a></div>';
 		}

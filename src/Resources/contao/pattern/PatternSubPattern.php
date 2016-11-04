@@ -27,90 +27,77 @@ class PatternSubPattern extends Pattern
 	public function construct()
 	{
 
-		if ($this->subpattern == 'options')
+		if ($this->subPatternType == 'options')
 		{
-			// Generate options
-			$strGroup = 'default';
+			
 			foreach (StringUtil::deserialize($this->options) as $arrOption)
 			{
-				if ($arrOption['group'])
-				{
-					$strGroup = $arrOption['label'];
-					continue;
-				}	
 				
-				if ($arrOption['default'])
-				{
-					$default = $arrOption['value'];
-				}	
-				
-				$arrOptions[$strGroup]['v'.$arrOption['value']] = $arrOption['label'];
+				$arrOptions['v'.$arrOption['value']] = $arrOption['label'];
 			}
-			
+		
+		
 			// no groups 
 			if (count($arrOptions) < 2)
 			{
 				$arrOptions = $arrOptions['default'];
 			}
-
-
+			
+			// generate DCA
 			$this->generateDCA('selectField', array
 			(
 				'inputType' 	=>	'select',
 				'label'			=>	array($this->label, $this->description),
-				'default'		=>	$default,
 				'options'		=>	$arrOptions,
 				'eval'			=>	array
 				(
-					'submitOnChange'	=>	true
-				),
+					'tl_class'			=>	'clr',
+					'onchange'			=>	'Backend.autoSubmit(\'tl_content\')',
+				)
 			));
-
-			// add the pattern to palettes
-			$colSubPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern', array('order'=>'sorting ASC'));
 			
+			
+			$objValue = \ContentValueModel::findByCidandPidandRid($this->cid, $this->id, $this->rid);
+			
+			if ($objValue !== null && $objValue->selectField)
+			{
+				$subOption = $objValue->selectField;
+			}
+			
+			// Set the to the first by default
+			if (!$subOption)
+			{
+				$subOption = array_keys($arrOptions)[0];
+			}
+			
+			// add the pattern to palettes
+			$colSubPattern = \ContentPatternModel::findPublishedByPidAndTableAndSubOption($this->id, 'tl_content_subpattern', substr($subOption, 1), array('order'=>'sorting ASC'));
+
 			if ($colSubPattern === null)
 			{
 				return;
 			}
 
-
-			while($colSubPattern->next())
+			foreach($colSubPattern as $objSubPattern)
 			{
-
-				// don´t load values for system pattern (because they have no ?? maybe a replica counter ??)
-				if (!in_array($colSubPattern->current()->type, array('section', 'explanation', 'visibility', 'protection')))
-				{
-					$colValue = \ContentValueModel::findByCidandPid($objContent->id, $colSubPattern->current()->id);
-				
-					if ($colValue !== null)
-					{
-						foreach ($colValue as $objValue)
-						{
-							$this->arrLoadedValues[$objValue->rid][$colSubPattern->current()->id] = $objValue->row();
-						}							
-					}
-
-				}
-			
 				// construct dca for pattern
-				$strClass = \Agoat\ContentBlocks\Pattern::findClass($colSubPattern->current()->type);
+				$strClass = \Agoat\ContentBlocks\Pattern::findClass($objSubPattern->type);
 					
 				if (!class_exists($strClass))
 				{
-					\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$colSubPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
+					\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objSubPattern->type.'") does not exist', __METHOD__, TL_ERROR);
 				}
 				else
 				{
-					$objPatternClass = new $strClass($colSubPattern->current());
-					$objPatternClass->cid = $objContent->id;
-				//	$objPatternClass->subpalette = true;
-					$objPatternClass->alias = $this->virtualFieldAlias . '_aa';			
-					
-					$objPatternClass->construct();
+					$objSubPatternClass = new $strClass($objSubPattern);
+					$objSubPatternClass->cid = $this->cid;
+					$objSubPatternClass->rid = $this->rid * 100;
+					$objSubPatternClass->alias = $this->alias;			
+
+					$objSubPatternClass->construct();
 				}
-				
 			}
+
 			
 		}
 		else
@@ -150,12 +137,12 @@ class PatternSubPattern extends Pattern
 					}
 					else
 					{
-						$objPatternClass = new $strClass($objSubPattern);
-						$objPatternClass->cid = $this->cid;
-						$objPatternClass->rid = $this->rid * 100;
-						$objPatternClass->alias = $this->alias;			
+						$objSubPatternClass = new $strClass($objSubPattern);
+						$objSubPatternClass->cid = $this->cid;
+						$objSubPatternClass->rid = $this->rid * 100;
+						$objSubPatternClass->alias = $this->alias;			
 
-						$objPatternClass->construct();
+						$objSubPatternClass->construct();
 					}
 				}
 			}
@@ -182,46 +169,103 @@ class PatternSubPattern extends Pattern
 	 */	
 	public function compile()
 	{
-		if ($this->subType == 'button' && $this->Value->checkBox)
+		if ($this->subPatternType == 'options')
 		{
-			// get the pattern model collection
-			$colPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern');
-
-			if ($colPattern === null)
+			if ($this->Value->selectField)
 			{
-				return;
-			}
+				// add new alias to the value mapper
+				$this->arrMapper[] = $this->alias;
+				
+				// write the option to the template
+				$alias = $this->alias;
+				$this->alias = 'option';
+				$this->writeToTemplate(substr($this->Value->selectField,1));
+				$this->alias = $alias;
 
-			// add new alias to the value mapper
-			$this->arrMapper[] = $this->alias;
+
+				// get the pattern model collection
+				$colSubPattern = \ContentPatternModel::findPublishedByPidAndTableAndSubOption($this->id, 'tl_content_subpattern', substr($this->Value->selectField, 1));
+
+				if ($colSubPattern === null)
+				{
+					return;
+				}
+				
+				// prepare values for every pattern
+				foreach($colSubPattern as $objSubPattern)
+				{
+					// don´t show the invisible or system pattern
+					if (in_array($objSubPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+					{
+						continue;
+					}
+
 			
-			// prepare values for every pattern
-			foreach($colPattern as $objPattern)
+					$strClass = Pattern::findClass($objSubPattern->type);
+						
+					if (!class_exists($strClass))
+					{
+						System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objSubPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+					}
+					else
+					{
+						$objSubPatternClass = new $strClass($objSubPattern);
+						$objSubPatternClass->cid = $this->cid;
+						$objSubPatternClass->rid = $this->rid * 100;
+						$objSubPatternClass->Template = $this->Template;
+						$objSubPatternClass->arrMapper = $this->arrMapper;
+						$objSubPatternClass->arrValues = $this->arrValues;
+						$objSubPatternClass->Value = $this->arrValues[$objSubPattern->id][$this->rid * 100];
+						
+						$objSubPatternClass->compile();
+					}
+				}
+			}
+			
+		}
+		else
+		{
+			if ($this->Value->checkBox)
 			{
-				// don´t show the invisible or system pattern
-				if (in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
-				{
-					continue;
-				}
+				// add new alias to the value mapper
+				$this->arrMapper[] = $this->alias;
 
-		
-				$strClass = Pattern::findClass($objPattern->type);
-					
-				if (!class_exists($strClass))
+				// get the pattern model collection
+				$colSubPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern');
+
+				if ($colSubPattern === null)
 				{
-					System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+					return;
 				}
-				else
+				
+				// prepare values for every pattern
+				foreach($colSubPattern as $objSubPattern)
 				{
-					$objPatternClass = new $strClass($objPattern);
-					$objPatternClass->cid = $this->cid;
-					$objPatternClass->rid = $this->rid * 100;
-					$objPatternClass->Template = $this->Template;
-					$objPatternClass->arrMapper = $this->arrMapper;
-					$objPatternClass->arrValues = $this->arrValues;
-					$objPatternClass->Value = $this->arrValues[$objPattern->id][$this->rid * 100];
-					
-					$objPatternClass->compile();
+					// don´t show the invisible or system pattern
+					if (in_array($objSubPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+					{
+						continue;
+					}
+
+			
+					$strClass = Pattern::findClass($objSubPattern->type);
+						
+					if (!class_exists($strClass))
+					{
+						System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objSubPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+					}
+					else
+					{
+						$objSubPatternClass = new $strClass($objSubPattern);
+						$objSubPatternClass->cid = $this->cid;
+						$objSubPatternClass->rid = $this->rid * 100;
+						$objSubPatternClass->Template = $this->Template;
+						$objSubPatternClass->arrMapper = $this->arrMapper;
+						$objSubPatternClass->arrValues = $this->arrValues;
+						$objSubPatternClass->Value = $this->arrValues[$objSubPattern->id][$this->rid * 100];
+						
+						$objSubPatternClass->compile();
+					}
 				}
 			}
 		}

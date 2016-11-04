@@ -86,10 +86,10 @@
 			<trans-unit id="CTP.subpattern.1">
 				<source>Insert a checkbox or select menu with related sub pattern.</source>
 			</trans-unit>
-			<trans-unit id="CTP.multigroup.0">
+			<trans-unit id="CTP.multipattern.0">
 				<source>Multi group (experimental)</source>
 			</trans-unit>
-			<trans-unit id="CTP.multigroup.1">
+			<trans-unit id="CTP.multipattern.1">
 				<source>Insert a duplicatable group of sub pattern..</source>
 			</trans-unit>
 

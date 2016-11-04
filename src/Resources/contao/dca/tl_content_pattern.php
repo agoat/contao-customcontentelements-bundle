@@ -1,6 +1,6 @@
 <?php
  
-/**
+ /**
  * Contao Open Source CMS - ContentBlocks extension
  *
  * Copyright (c) 2016 Arne Stappen (aGoat)
@@ -46,8 +46,8 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'pid' => 'index',
-				'pid,invisible' => 'index'
+				'pid,ptable,invisible,sorting' => 'index',
+				'pid,ptable,suboption,invisible,sorting' => 'index'
 			)
 		)
 	),
@@ -125,7 +125,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type','source','multiSource','picker','subType'),
+		'__selector__'                => array('type','source','multiSource','picker','subPatternType'),
 		'default'                     => '{type_legend},type',
 		// input
 		'textfield'					  => '{type_legend},type;{textfield_legend},minLength,maxLength,rgxp,defaultValue,multiple,picker;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr,classLong;{invisible_legend},invisible',
@@ -139,8 +139,8 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		// layout
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
-		'subpattern'				  => '{type_legend},type;{subpattern_legend},subType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
-		'multigroup'				  => '{type_legend},type;{multipattern_legend},maxCount;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
+		'subpattern'				  => '{type_legend},type;{subpattern_legend},subPatternType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
+		'multipattern'				  => '{type_legend},type;{multipattern_legend},multiPatternMax;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
 		// element
 		'visibility'				  => '{type_legend},type;{visibility_legend},canChangeStart,canChangeStop;{invisible_legend},invisible',
 		'protection'				  => '{type_legend},type;{protection_legend},groups,canChangeGroups;{invisible_legend},invisible',
@@ -157,7 +157,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore',
 		'picker_unit'				  => 'units',
 		'replicable'				  => 'maxReplicas',
-		'subType_options'			  => 'options',
+		'subPatternType_options'	  => 'options',
 	),
 	// Fields
 	'fields' => array
@@ -181,6 +181,10 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'tstamp' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'suboption' => array
+		(
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'type' => array
 		(
@@ -227,47 +231,6 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'long clr'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'explanation' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
-			'exclude'                 => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCE_explanation'),
-			'sql'                     => "mediumtext NULL"
-		),
-		'hidden' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['hidden'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'subType' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['subType'],
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'options'                 => array('button' => 'CheckBox', 'options' => 'Select field'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern'],
-			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(16) NOT NULL default ''"
-		),
-		'subTypeOption' => array
-		(
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'sql'                     => "varchar(32) NOT NULL default ''"
-		),
-		'maxCount' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['maxCount'],
-			'exclude'                 => true,
-			'default'				  => 100,
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'minval'=>1, 'maxval'=>100, 'tl_class'=>'w50 clr'),
-			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
-		),
 		'mandatory' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['mandatory'],
@@ -292,6 +255,41 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
 			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'subPatternType' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['subType'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'options'                 => array('button' => 'CheckBox', 'options' => 'Select field'),
+			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern'],
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(16) NOT NULL default ''"
+		),
+		'multiPatternMax' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiPatternMax'],
+			'exclude'                 => true,
+			'default'				  => 100,
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'minval'=>1, 'maxval'=>100, 'tl_class'=>'w50 clr'),
+			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
+		),
+		'hidden' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['hidden'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'explanation' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
+			'exclude'                 => true,
+			'inputType'               => 'textarea',
+			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCE_explanation'),
+			'sql'                     => "mediumtext NULL"
 		),
 		'style' => array
 		(
@@ -627,14 +625,14 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		// add extra info for the sub pattern types
 		if ($objParent->type == 'subpattern')
 		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subType';
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
 			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] =array('tl_content_pattern', 'getPatternForSubPattern');
 			
 		}
-		else if ($objParent->type == 'multigroup')
+		else if ($objParent->type == 'multipattern')
 		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'maxCount';
-			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiGroup');
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'multiPatternMax';
+			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiPattern');
 		}
 		
 		
@@ -655,15 +653,15 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		}
 	
 
-
 	
 		// set the filter for the subpattern option
-		if ($objParent->type == 'subpattern')
+		if ($objParent->type == 'subpattern' && $objParent->subPatternType == 'options')
 		{
-			// get value for sub pattern to know the selected option
-			
-			// use the same as in teaser extension to filter the list (but without blank option)
-		//	$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter'] = array(array('subTypeOption=?', 'test'));
+		// set callbacks and filter
+			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback'][] = array('tl_content_pattern', 'subPatternFilter');
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panel_callback']['subPatternFilter'] = array('tl_content_pattern', 'generatesubPatternFilter');
+
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
 		}
 	}
 }
@@ -696,6 +694,56 @@ class tl_content_pattern extends Backend
 		$this->import('BackendUser', 'User');
 	}
 
+	
+	// panel_callback
+	public function generatesubPatternFilter($dc) 
+	{ 
+		$session = $this->Session->getData();
+		$filter = 'tl_content_pattern'.CURRENT_ID;
+		
+		$return = '<div class="tl_filter tl_subpanel"><strong>' . $GLOBALS['TL_LANG']['tl_content_pattern']['suboption'] . '</strong>
+<select name="suboption" id="suboption" class="tl_select" onchange="this.form.submit()">';
+		
+		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
+		
+		if ($objPattern !== null)
+		{
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				$return .='<option value="' . $arrOption['value'] . '"' . (($session['filter'][$filter]['suboption'] == $arrOption['value'])? ' selected="selected"' : '') . '>' . $arrOption['label'] . '</option>';
+			}
+		}
+
+		$return .='</select></div>';
+
+
+		return $return;
+	}
+
+	
+	// onload_callback
+	public function subPatternFilter($dc) 
+	{ 
+		$session = $this->Session->getData();
+		$filter = 'tl_content_pattern'.CURRENT_ID;
+		
+		if (\Input::post('FORM_SUBMIT') == 'tl_filters')
+		{
+			// Validate the user input
+			if (\Input::post('suboption'))
+			{
+				$session['filter'][$filter]['suboption'] = \Input::Post('suboption');
+			}
+			else
+			{
+				unset($session['filter'][$filter]['suboption']);
+			}
+			
+			$this->Session->setData($session);
+		}
+
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
+	}
 
 	/**
 	 * Return the pattern edit button
@@ -948,7 +996,7 @@ class tl_content_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getPatternForMultiGroup()
+	public function getPatternForMultiPattern()
 	{
 	
 		$pattern = array();
@@ -958,7 +1006,7 @@ class tl_content_pattern extends Backend
 			foreach (array_keys($v) as $kk)
 			{
 				// exclude pattern not allowed in multigroup
-				if (!in_array($kk, $GLOBALS['TL_CTP_NA']['multigroup']))
+				if (!in_array($kk, $GLOBALS['TL_CTP_NA']['multipattern']))
 				{
 					$pattern[$k][] = $kk;					
 				}
@@ -1029,29 +1077,29 @@ class tl_content_pattern extends Backend
 	public function saveSubPattern ($dc)
 	{
 		$db = Database::getInstance();
-
+		
 		// save changes to subpattern table
 		if (in_array($dc->activeRecord->type, $GLOBALS['TL_CTP_SUB']))
 		{			
 			if ($db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
 			{
-				$db->prepare("UPDATE tl_content_subpattern SET pid=?,alias=?,type=?,subType=?,maxCount=? WHERE id=?")
-				   ->execute($dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subType, $dc->activeRecord->maxCount, $dc->activeRecord->id);
+				$db->prepare("UPDATE tl_content_subpattern SET pid=?,alias=?,type=?,subPatternType=?,multiPatternMax=? WHERE id=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->multiPatternMax, $dc->activeRecord->id);
 			}
 			else
 			{
-				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,alias=?,type=?,subType=?,maxCount=?")
-				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subType, $dc->activeRecord->maxCount);
+				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,alias=?,type=?,subPatternType=?,multiPatternMax=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->multiPatternMax);
 				
 			}
 
 		}
-		
+
 		// save the filter for subpattern
-		if ($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter'][0][0] == 'subTypeOption=?')
+		if (isset($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1]))
 		{
-			$db->prepare("UPDATE tl_content_pattern SET subTypeOption=? WHERE id=?")
-			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter'][0][1], $dc->activeRecord->id);
+			$db->prepare("UPDATE tl_content_pattern SET suboption=? WHERE id=?")
+			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1], $dc->activeRecord->id);
 		}
 	}
 

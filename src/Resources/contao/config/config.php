@@ -62,7 +62,7 @@ $GLOBALS['TL_CTP'] = array
 		'section'		=> 'Agoat\ContentBlocks\PatternSection',
 		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
 		'subpattern'	=> 'Agoat\ContentBlocks\PatternSubPattern',
-		'multigroup'	=> 'Agoat\ContentBlocks\PatternMultiGroup',
+		'multipattern'	=> 'Agoat\ContentBlocks\PatternMultiPattern',
 	),
 	'element' => array
 	(
@@ -87,7 +87,7 @@ $GLOBALS['TL_CTP_NA'] = array
 		'visibility',
 		'protection',
 	),
-	'multigroup' => array
+	'multipattern' => array
 	(
 		'section',
 		'visibility',
@@ -100,7 +100,7 @@ $GLOBALS['TL_CTP_NA'] = array
 /**
  * Sub pattern
  */
-$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multigroup');
+$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multipattern');
 
 
 /**
