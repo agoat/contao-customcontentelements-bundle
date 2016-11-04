@@ -129,7 +129,7 @@ class PatternSubPattern extends Pattern
 			
 			$objValue = \ContentValueModel::findByCidandPidandRid($this->cid, $this->id, $this->rid);
 			
-			if ($objValue->checkBox)
+			if ($objValue !== null && $objValue->checkBox)
 			{
 				// add the pattern to palettes
 				$colSubPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern', array('order'=>'sorting ASC'));
@@ -138,7 +138,6 @@ class PatternSubPattern extends Pattern
 				{
 					return;
 				}
-
 
 				foreach($colSubPattern as $objSubPattern)
 				{
@@ -153,7 +152,7 @@ class PatternSubPattern extends Pattern
 					{
 						$objPatternClass = new $strClass($objSubPattern);
 						$objPatternClass->cid = $this->cid;
-						$objPatternClass->rid = $this->rid;
+						$objPatternClass->rid = $this->rid * 100;
 						$objPatternClass->alias = $this->alias;			
 
 						$objPatternClass->construct();
@@ -216,11 +215,11 @@ class PatternSubPattern extends Pattern
 				{
 					$objPatternClass = new $strClass($objPattern);
 					$objPatternClass->cid = $this->cid;
-					$objPatternClass->rid = $this->rid;
+					$objPatternClass->rid = $this->rid * 100;
 					$objPatternClass->Template = $this->Template;
 					$objPatternClass->arrMapper = $this->arrMapper;
 					$objPatternClass->arrValues = $this->arrValues;
-					$objPatternClass->Value = $this->arrValues[$objPattern->id][$this->rid];
+					$objPatternClass->Value = $this->arrValues[$objPattern->id][$this->rid * 100];
 					
 					$objPatternClass->compile();
 				}

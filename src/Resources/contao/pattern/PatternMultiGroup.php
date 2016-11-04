@@ -60,8 +60,7 @@ class PatternMultiGroup extends Pattern
 		{
 			
 			$this->rid = ($prid * 100) + $rid;
-			dump($rid);
-			dump($this->maxCount);
+
 			// add multigroupstart widget (with add, delete and move buttons)
 			$this->generateDCA('multigroupstart', array
 			(
@@ -116,9 +115,8 @@ class PatternMultiGroup extends Pattern
 				'inputType' =>	'multigroupstop',
 				'eval'		=>	array
 				(
-					'prid'			=>	$prid * 100, 
-					'irid'			=>	$rid, 
-					'strCommand'	=>	'cmd_multigroup-' . $this->id . '-' . $prid, 
+					'pid'				=>	$this->id, 
+					'rid'				=>	$this->rid, 
 				)
 			), false);
 		

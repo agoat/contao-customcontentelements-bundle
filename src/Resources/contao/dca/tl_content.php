@@ -230,18 +230,18 @@ class tl_content_contentblocks extends tl_content
 			return;
 		}
 
-		while($colPattern->next())
+		foreach($colPattern as $objPattern)
 		{
 			// construct dca for pattern
-			$strClass = \Agoat\ContentBlocks\Pattern::findClass($colPattern->current()->type);
+			$strClass = \Agoat\ContentBlocks\Pattern::findClass($objPattern->type);
 				
 			if (!class_exists($strClass))
 			{
-				\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
+				\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objPattern->type.'") does not exist', __METHOD__, TL_ERROR);
 			}
 			else
 			{
-				$objPatternClass = new $strClass($colPattern->current());
+				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->cid = $objContent->id;
 				$objPatternClass->rid = 0;
 				$objPatternClass->alias = $objBlock->alias;			
