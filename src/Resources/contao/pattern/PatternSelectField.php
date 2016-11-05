@@ -41,7 +41,7 @@ class PatternSelectField extends Pattern
 			
 			if ($arrOption['default'])
 			{
-				$default = $arrOption['value'];
+				$default = 'v'.$arrOption['value'];
 			}	
 			
 			$arrOptions[$strGroup]['v'.$arrOption['value']] = $arrOption['label'];
@@ -50,7 +50,7 @@ class PatternSelectField extends Pattern
 		// no groups 
 		if (count($arrOptions) < 2)
 		{
-			$arrOptions = $arrOptions['default'];
+			$arrOptions = array_values($arrOptions)[0];
 		}
 
 
@@ -79,21 +79,21 @@ class PatternSelectField extends Pattern
 		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
 
-		foreach (StringUtil::deserialize($this->options) as $option)
+		foreach (StringUtil::deserialize($this->options) as $arrOption)
 		{
-			if ($option['group'])
+			if ($arrOption['group'])
 			{
 				if ($blnOpenGroup)
 				{
 					$strPreview .= '</optgroup>';
 				}
 				
-				$strPreview .= '<optgroup label="&nbsp;' . StringUtil::specialchars($option['label']) . '">';
+				$strPreview .= '<optgroup label="&nbsp;' . StringUtil::specialchars($arrOption['label']) . '">';
 				$blnOpenGroup = true;
 				continue;
 			}
 					
-			$strPreview .= '<option value="' . StringUtil::specialchars($option['value']) . '"' . (($option['default']) ? ' selected' : '') . '>' . StringUtil::specialchars($option['label']) . '</option>';
+			$strPreview .= '<option value="' . StringUtil::specialchars($arrOption['value']) . '"' . (($arrOption['default']) ? ' selected' : '') . '>' . StringUtil::specialchars($arrOption['label']) . '</option>';
 		}
 
 		if ($blnOpenGroup)
