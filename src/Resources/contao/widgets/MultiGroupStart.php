@@ -44,39 +44,33 @@ class MultiGroupStart extends \Widget
 	{
 		$strCommand = 'cmd_multigroup-' . $this->groupId . '-' . $this->rid;
 		
-		$return = '
-		
-		<div class="multigroup clr" data-rid="' . $this->rid . '" style="background: rgba(200,200,200,.15); margin: 0 -10px 8px; padding: 10px 10px 18px;">
-<div class="multigroup_header clr" style="margin: 0 0 8px;">
-<div class="multigroup_right" style="padding: 1px 0 1px; float: right; text-align: right;">';
+		$return = '<div class="tl_multigroup clr" data-rid="' . $this->rid . '">';
+		$return .= '<div class="tl_multigroup_right click2edit">';
 
 		if ($this->up)
 		{
-			$return .= '<span class="up"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=up&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Up</a></span>';
+			$return .= '<a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=up&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('up.svg', 'up', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_up'] . '"') . '</a>';
 
 		}
 		if ($this->down)
 		{
-			$return .= ' <span class="down"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=down&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Down</a></span>';
+			$return .= ' <a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=down&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('down.svg', 'down', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_down'] . '"') . '</a>';
 
 		}
 		if ($this->delete)
 		{
-			$return .= ' <span class="delete"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=delete&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Delete</a></span>';
+			$return .= ' <a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=delete&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_delete'] . '"') . '</a>';
 
 		}
 		if ($this->insert)
 		{
-				$return .= ' <span class="insert"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Insert</a></span>';
+			$return .= ' <a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['after'] . '"') . '</a>';
 		}
 		
-		$return .= '</div>
-<h3 style="padding-top:1px"><label>
-'.$this->title.'
-</label></h3>
-<p class="tl_help tl_tip" title="">'.$this->desc.'</p>
-</div>	
-		<div>';
+		$return .= '</div>';
+		$return .= '<h3><label>' . $this->title . '</label></h3>';
+		$return .= '<p class="tl_help tl_tip" title="">' . $this->desc . '</p>';	
+		$return .= '<div class="tl_multigroup_box">';
 					
 		return $return;
 	}

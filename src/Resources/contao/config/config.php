@@ -18,6 +18,7 @@
 
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern', 'tl_content_subpattern', 'tl_content_multipattern');
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
+$GLOBALS['BE_MOD']['content']['article']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 
 $GLOBALS['BE_MOD']['design']['themes']['importTheme'] = array('Agoat\\ContentBlocks\\Theme', 'importTheme');
 $GLOBALS['BE_MOD']['design']['themes']['exportTheme'] = array('Agoat\\ContentBlocks\\Theme', 'exportTheme');

@@ -173,26 +173,29 @@
 				<source>The section will be hidden by default.</source>
 			</trans-unit>
 
- 			<trans-unit id="tl_content_pattern.replica_legend">
-				<source>Replication settings</source>
+			
+ 			<trans-unit id="tl_content_pattern.subpattern_legend">
+				<source>Sub pattern settings</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.replicable.0">
-				<source>Activate replication</source>
+			<trans-unit id="tl_content_pattern.subPatternType.0">
+				<source>Sub pattern type</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.replicable.1">
-				<source>The field inside this section will be replicable.</source>
+			<trans-unit id="tl_content_pattern.subPatternType.1">
+				<source>Choose the type of sub pattern.</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.maxReplicas.0">
-				<source>Limit</source>
+			
+			<trans-unit id="tl_content_pattern.suboption">
+				<source>Sub pattern option:</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.maxReplicas.1">
-				<source>Enter a number to limit the replicas. Set to 0 to show all.</source>
+
+			<trans-unit id="tl_content_pattern.multipattern_legend">
+				<source>Multi group settings</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.sortReplicas.0">
-				<source>Order by</source>
+			<trans-unit id="tl_content_pattern.multiPatternMax.0">
+				<source>Total number of groups</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.sortReplicas.1">
-				<source>Choose the sort order.</source>
+			<trans-unit id="tl_content_pattern.multiPatternMax.1">
+				<source>Here you can limit the total number of groups (between 1 and 100).</source>
 			</trans-unit>
 
 			
@@ -343,6 +346,13 @@
 			</trans-unit>
 
 			
+			<trans-unit id="tl_content_pattern_subPatternType.button.0">
+				<source>CheckBox</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern_subPatternType.options.0">
+				<source>Select field</source>
+			</trans-unit>
+
 			<trans-unit id="tl_content_pattern_source.all.0">
 				<source>All files</source>
 			</trans-unit>

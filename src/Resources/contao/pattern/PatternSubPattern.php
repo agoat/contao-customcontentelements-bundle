@@ -30,24 +30,37 @@ class PatternSubPattern extends Pattern
 		if ($this->subPatternType == 'options')
 		{
 			
+			$strGroup = 'default';
 			foreach (StringUtil::deserialize($this->options) as $arrOption)
 			{
+				if ($arrOption['group'])
+				{
+					$strGroup = $arrOption['label'];
+					continue;
+				}	
 				
-				$arrOptions['v'.$arrOption['value']] = $arrOption['label'];
+				if ($arrOption['default'])
+				{
+					$default = 'v'.$arrOption['value'];
+				}	
+				
+				$arrOptions[$strGroup]['v'.$arrOption['value']] = $arrOption['label'];
 			}
 		
-		
-			// no groups 
-			if (count($arrOptions) < 2)
-			{
-				$arrOptions = $arrOptions['default'];
-			}
 			
+			// no groups 
+			if (count($arrOptions) < 2 )
+			{
+				$arrOptions = array_values($arrOptions)[0];
+			}
+				
+		
 			// generate DCA
 			$this->generateDCA('selectField', array
 			(
 				'inputType' 	=>	'select',
 				'label'			=>	array($this->label, $this->description),
+				'default'		=>	$default,
 				'options'		=>	$arrOptions,
 				'eval'			=>	array
 				(
@@ -58,20 +71,19 @@ class PatternSubPattern extends Pattern
 			
 			
 			$objValue = \ContentValueModel::findByCidandPidandRid($this->cid, $this->id, $this->rid);
-			
+
 			if ($objValue !== null && $objValue->selectField)
 			{
 				$subOption = $objValue->selectField;
 			}
 			
-			// Set the to the first by default
 			if (!$subOption)
 			{
-				$subOption = array_keys($arrOptions)[0];
+				$subOption = $default;
 			}
-			
+
 			// add the pattern to palettes
-			$colSubPattern = \ContentPatternModel::findPublishedByPidAndTableAndSubOption($this->id, 'tl_content_subpattern', substr($subOption, 1), array('order'=>'sorting ASC'));
+			$colSubPattern = \ContentPatternModel::findPublishedByPidAndTableAndSubOption($this->id, 'tl_content_subpattern', substr($subOption,1), array('order'=>'sorting ASC'));
 
 			if ($colSubPattern === null)
 			{
@@ -81,7 +93,7 @@ class PatternSubPattern extends Pattern
 			foreach($colSubPattern as $objSubPattern)
 			{
 				// construct dca for pattern
-				$strClass = \Agoat\ContentBlocks\Pattern::findClass($objSubPattern->type);
+				$strClass = Pattern::findClass($objSubPattern->type);
 					
 				if (!class_exists($strClass))
 				{
@@ -129,7 +141,7 @@ class PatternSubPattern extends Pattern
 				foreach($colSubPattern as $objSubPattern)
 				{
 					// construct dca for pattern
-					$strClass = \Agoat\ContentBlocks\Pattern::findClass($objSubPattern->type);
+					$strClass = Pattern::findClass($objSubPattern->type);
 						
 					if (!class_exists($strClass))
 					{
@@ -158,7 +170,111 @@ class PatternSubPattern extends Pattern
 	 */
 	public function view()
 	{
-		return '<div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
+		if ($this->subPatternType == 'options')
+		{
+			$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+			$strPreview .= '<select class="tl_select" style="width: 412px;" onchange="$$(\'.tl_select_container_' . $this->id . '\').hide();$$(\'.tl_select_container_' . $this->id . '_\' + this.options[this.selectedIndex].value).show();">';
+
+			foreach (StringUtil::deserialize($this->options) as $arrOption)
+			{
+				if ($arrOption['group'])
+				{
+					if ($blnOpenGroup)
+					{
+						$strPreview .= '</optgroup>';
+					}
+					
+					$strPreview .= '<optgroup label="&nbsp;' . StringUtil::specialchars($arrOption['label']) . '">';
+					$blnOpenGroup = true;
+					continue;
+				}
+						
+				$strPreview .= '<option value="' . StringUtil::specialchars($arrOption['value']) . '"' . (($arrOption['default']) ? ' selected' : '') . '>' . StringUtil::specialchars($arrOption['label']) . '</option>';
+			}
+
+			if ($blnOpenGroup)
+			{
+				$strPreview .= '</optgroup>';
+			}
+
+			$strPreview .= '</select><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
+
+			// add the sub pattern
+			foreach (StringUtil::deserialize($this->options) as $arrOption)
+			{
+				if (!$arrOption['group'])
+				{
+					$strPreview .=  '<div class="tl_select_container_' . $this->id . ' tl_select_container_' . $this->id . '_' . $arrOption['value'] . '" style="display: ' . (($arrOption['default']) ? 'block' : 'none'). ';">';	
+						
+					$colSubPattern = \ContentPatternModel::findPublishedByPidAndTableAndSubOption($this->id, 'tl_content_subpattern', $arrOption['value'], array('order'=>'sorting ASC'));
+					
+					if ($colSubPattern === null)
+					{
+						continue;
+					}
+
+					foreach($colSubPattern as $objSubPattern)
+					{
+						// construct dca for pattern
+						$strClass = Pattern::findClass($objSubPattern->type);
+							
+						if (!class_exists($strClass))
+						{
+							\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objSubPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+						}
+						else
+						{
+							$objSubPatternClass = new $strClass($objSubPattern);
+
+							$strPreview .= $objSubPatternClass->view();
+						}
+					}
+					
+					$strPreview .=  '</div>';	
+
+				}
+			}
+
+
+		}
+		else{
+			
+			$strPreview =  '<div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox" onclick="$$(\'.tl_checkbox_container_' . $this->id . '\').toggle();"> <label onclick="$$(\'.tl_checkbox_container_' . $this->id . '\').toggle();">' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
+			$strPreview .=  '<div class="tl_checkbox_container_' . $this->id . '" style="display: none;">';	
+
+			// add the sub pattern
+			$colSubPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern', array('order'=>'sorting ASC'));
+			
+			if ($colSubPattern !== null)
+			{
+				foreach($colSubPattern as $objSubPattern)
+				{
+					// construct dca for pattern
+					$strClass = Pattern::findClass($objSubPattern->type);
+						
+					if (!class_exists($strClass))
+					{
+						\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objSubPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+					}
+					else
+					{
+						$objSubPatternClass = new $strClass($objSubPattern);
+		
+						$strPreview .= $objSubPatternClass->view();
+					}
+				}
+			}
+
+			$strPreview .=  '</div>';	
+
+		}
+
+
+
+
+
+		return $strPreview;
+
 	}
 
 
@@ -173,14 +289,8 @@ class PatternSubPattern extends Pattern
 		{
 			if ($this->Value->selectField)
 			{
-				// add new alias to the value mapper
-				$this->arrMapper[] = $this->alias;
-				
-				// write the option to the template
-				$alias = $this->alias;
-				$this->alias = 'option';
-				$this->writeToTemplate(substr($this->Value->selectField,1));
-				$this->alias = $alias;
+				// add select option value (instead of the alias) to the value mapper
+				$this->arrMapper[] = substr($this->Value->selectField,1);
 
 
 				// get the pattern model collection
@@ -194,12 +304,11 @@ class PatternSubPattern extends Pattern
 				// prepare values for every pattern
 				foreach($colSubPattern as $objSubPattern)
 				{
-					// don´t show the invisible or system pattern
+					// don´t show system pattern
 					if (in_array($objSubPattern->type, $GLOBALS['TL_SYS_PATTERN']))
 					{
 						continue;
 					}
-
 			
 					$strClass = Pattern::findClass($objSubPattern->type);
 						
@@ -241,12 +350,11 @@ class PatternSubPattern extends Pattern
 				// prepare values for every pattern
 				foreach($colSubPattern as $objSubPattern)
 				{
-					// don´t show the invisible or system pattern
+					// don´t show system pattern
 					if (in_array($objSubPattern->type, $GLOBALS['TL_SYS_PATTERN']))
 					{
 						continue;
 					}
-
 			
 					$strClass = Pattern::findClass($objSubPattern->type);
 						

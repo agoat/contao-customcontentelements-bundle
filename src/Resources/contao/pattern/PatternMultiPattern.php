@@ -137,7 +137,56 @@ class PatternMultiPattern extends Pattern
 	 */
 	public function view()
 	{
-		//return '<div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
+		$strPreview = '<div class="tl_multigroup_header clr">';
+		$strPreview .= '<a href="javascript:void(0);" title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['mg_new']['label'] . '</a>';
+		$strPreview .= '</div>';
+
+		$strGroupPreview = '<div class="tl_multigroup clr">';
+		$strGroupPreview .= '<div class="tl_multigroup_right click2edit">';
+
+		$strGroupPreview .= '<a href="javascript:void(0);">' . \Image::getHtml('up.svg', 'up', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_up'] . '"') . '</a>';
+		$strGroupPreview .= ' <a href="javascript:void(0);">' . \Image::getHtml('down.svg', 'down', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_down'] . '"') . '</a>';
+		$strGroupPreview .= ' <a href="javascript:void(0);">' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_delete'] . '"') . '</a>';
+		$strGroupPreview .= ' <a href="javascript:void(0);">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['after'] . '"') . '</a>';
+
+		$strGroupPreview .= '</div>';
+		$strGroupPreview .= '<h3><label>' . $this->label . '</label></h3>';
+		$strGroupPreview .= '<p class="tl_help tl_tip" title="">' . $this->description . '</p>';	
+		$strGroupPreview .= '<div class="tl_multigroup_box">';
+		
+		// add the sub pattern
+		$colSubPattern = \ContentPatternModel::findPublishedByPidAndTable($this->id, 'tl_content_subpattern', array('order'=>'sorting ASC'));
+		
+		if ($colSubPattern !== null)
+		{
+			foreach($colSubPattern as $objSubPattern)
+			{
+				// construct dca for pattern
+				$strClass = Pattern::findClass($objSubPattern->type);
+					
+				if (!class_exists($strClass))
+				{
+					\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objSubPattern->type.'") does not exist', __METHOD__, TL_ERROR);
+				}
+				else
+				{
+					$objSubPatternClass = new $strClass($objSubPattern);
+	
+					$strGroupPreview .= $objSubPatternClass->view();
+				}
+			}
+		}
+
+		$strGroupPreview .=  '</div></div>';
+
+		// add the sub pattern twice
+		$strPreview .=  $strGroupPreview;	
+		$strPreview .=  $strGroupPreview;	
+
+			
+
+		return $strPreview;
+
 	}
 
 

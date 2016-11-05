@@ -258,11 +258,11 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'subPatternType' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['subType'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['subPatternType'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options'                 => array('button' => 'CheckBox', 'options' => 'Select field'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern'],
+			'options'                 => array('button', 'options'),
+			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_subPatternType'],
 			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(16) NOT NULL default ''"
 		),
@@ -549,6 +549,10 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'optionWizard',
 			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'clr'),
+			'save_callback'			  => array
+			(
+				array('tl_content_pattern', 'updateSubPatternOptions')
+			),
 			'sql'                     => "blob NULL"
 		),
 		'blankOption' => array
@@ -626,7 +630,7 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		if ($objParent->type == 'subpattern')
 		{
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
-			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] =array('tl_content_pattern', 'getPatternForSubPattern');
+			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForSubPattern');
 			
 		}
 		else if ($objParent->type == 'multipattern')
@@ -657,7 +661,7 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		// set the filter for the subpattern option
 		if ($objParent->type == 'subpattern' && $objParent->subPatternType == 'options')
 		{
-		// set callbacks and filter
+			// set callbacks and filter
 			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback'][] = array('tl_content_pattern', 'subPatternFilter');
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panel_callback']['subPatternFilter'] = array('tl_content_pattern', 'generatesubPatternFilter');
 
@@ -665,7 +669,7 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		}
 	}
 }
-//dump($GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable']);
+//dump($GLOBALS['TL_DCA']['tl_content_pattern']['fields']);
 
 
 
@@ -700,24 +704,42 @@ class tl_content_pattern extends Backend
 	{ 
 		$session = $this->Session->getData();
 		$filter = 'tl_content_pattern'.CURRENT_ID;
-		
-		$return = '<div class="tl_filter tl_subpanel"><strong>' . $GLOBALS['TL_LANG']['tl_content_pattern']['suboption'] . '</strong>
-<select name="suboption" id="suboption" class="tl_select" onchange="this.form.submit()">';
-		
+	
 		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
 		
 		if ($objPattern !== null)
 		{
+			$return = '<div class="tl_filter tl_subpanel"><strong>' . $GLOBALS['TL_LANG']['tl_content_pattern']['suboption'] . ' </strong>';
+			$return .= '<select name="suboption" id="suboption" class="tl_select" onchange="this.form.submit()">';
+
 			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
 			{
-				$return .='<option value="' . $arrOption['value'] . '"' . (($session['filter'][$filter]['suboption'] == $arrOption['value'])? ' selected="selected"' : '') . '>' . $arrOption['label'] . '</option>';
+				if ($arrOption['group'])
+				{
+					if ($blnOpenGroup)
+					{
+						$return .= '</optgroup>';
+					}
+					
+					$return .= '<optgroup label="&nbsp;' . StringUtil::specialchars($arrOption['label']) . '">';
+					$blnOpenGroup = true;
+					continue;
+				}
+				
+				$return .='<option value="' . $arrOption['value'] . '"' . (($GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'][1] == $arrOption['value'])? ' selected' : '') . '>' . StringUtil::specialchars($arrOption['label']) . '</option>';
 			}
+
+			if ($blnOpenGroup)
+			{
+				$return .= '</optgroup>';
+			}
+
+			$return .='</select></div>';
+		
+			return $return;
 		}
 
-		$return .='</select></div>';
-
-
-		return $return;
+		
 	}
 
 	
@@ -734,17 +756,29 @@ class tl_content_pattern extends Backend
 			{
 				$session['filter'][$filter]['suboption'] = \Input::Post('suboption');
 			}
-			else
-			{
-				unset($session['filter'][$filter]['suboption']);
-			}
 			
 			$this->Session->setData($session);
 		}
 
-		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
+		if ($session['filter'][$filter]['suboption'])
+		{
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
+		}
+		else
+		{
+			$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
+			
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				if ($arrOption['default'])
+				{
+					$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $arrOption['value']);
+				}	
+			}
+		}
 	}
 
+	
 	/**
 	 * Return the pattern edit button
 	 *
@@ -1139,7 +1173,36 @@ class tl_content_pattern extends Backend
 		}
 	}
 
+	/**
+	 * Return all content pattern as array
+	 *
+	 * @return array
+	 */
+	public function updateSubPatternOptions($varValue, $dc)
+	{
+		dump($varValue);
+		dump($dc);
+		
+		
+		// get new options values
+		// get old options values
+		
+		// PROBLEM !!! Can´t make a relation between new and old !!!
 
+		//  maybe check try to find differnet values for the label 
+		
+	/*	if ($objPattern !== null)
+		{
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				$return .='<option value="' . $arrOption['value'] . '"' . (($session['filter'][$filter]['suboption'] == $arrOption['value'])? ' selected="selected"' : '') . '>' . $arrOption['label'] . '</option>';
+			}
+		}
+	*/	
+		return $varValue;
+	}
+
+	
 
 	
 	/**

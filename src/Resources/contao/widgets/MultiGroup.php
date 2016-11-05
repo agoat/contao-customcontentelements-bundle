@@ -79,9 +79,7 @@ class MultiGroup extends \Widget
 			{
 				$this->varValue = 1;
 			}
-dump($this->varValue);
-dump($this->groupMax);
-dump(\Input::get($this->strCommand));
+
 			// Correct and save group counter
 			switch(\Input::get($this->strCommand))
 			{
@@ -95,7 +93,6 @@ dump(\Input::get($this->strCommand));
 							// if no dataset exist make a new one
 							$objValue = new ContentValueModel();
 						}
-dump(\Input::get($this->strCommand));
 						
 						$objValue->cid = $this->currentRecord;
 						$objValue->pid = $this->pid;
@@ -147,13 +144,13 @@ dump(\Input::get($this->strCommand));
 		
 		
 		// Add hidden input fields		
-		$return = '<input type="hidden" name="' . $this->strName . '" id="ctrl_' . $this->strId . '" value="' . $this->groupCount . '">
-<div class="multigroup_header clr" style="margin: 0 0 8px;">';
+		$return = '<input type="hidden" name="' . $this->strName . '" id="ctrl_' . $this->strId . '" value="' . $this->groupCount . '">';
+		$return .= '<div class="tl_multigroup_header clr">';
 		
-		// Add insert above button
+		// Add new button
 		if ($this->groupCount < $this->groupMax)
 		{
-			$return .= '<div class="insert" style="margin: 14px 0 1px; float: right;"><a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.($this->rid*100-1).'&amp;&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">Insert</a></div>';
+			$return .= '<a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.($this->rid*100-1).'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'" title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['mg_new']['label'] . '</a>';
 		}
 		
 		$return .= '</div>';

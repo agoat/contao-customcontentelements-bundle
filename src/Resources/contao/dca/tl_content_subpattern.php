@@ -45,22 +45,20 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 		),
 		'type' => array
 		(
-			//'foreignKey'			  => 'tl_content_pattern.type',
+			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'alias' => array
 		(
-			//'foreignKey'			  => 'tl_content_pattern.alias',
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'subPatternType' => array
 		(
-			//'foreignKey'			  => 'tl_content_pattern.subType',
+			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_subPatternType'],
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'multiPatternMax' => array
 		(
-			//'foreignKey'			  => 'tl_content_pattern.maxCount',
 			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
 		)
 	)
