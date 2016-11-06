@@ -191,10 +191,10 @@
 			<trans-unit id="tl_content_pattern.multipattern_legend">
 				<source>Multi group settings</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.multiPatternMax.0">
+			<trans-unit id="tl_content_pattern.numberOfGroups.0">
 				<source>Total number of groups</source>
 			</trans-unit>
-			<trans-unit id="tl_content_pattern.multiPatternMax.1">
+			<trans-unit id="tl_content_pattern.numberOfGroups.1">
 				<source>Here you can limit the total number of groups (between 1 and 100).</source>
 			</trans-unit>
 

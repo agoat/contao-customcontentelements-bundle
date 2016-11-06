@@ -50,9 +50,9 @@ class MultiGroup extends \Widget
 	 */
 	protected function validator($varInput)
 	{
-		if ($varInput > $this->groupMax)
+		if ($varInput > $this->numberOfGroups)
 		{
-			$varInput = $this->groupMax;
+			$varInput = $this->numberOfGroups;
 		}
 		else if ($varInput < 1)
 		{
@@ -84,7 +84,7 @@ class MultiGroup extends \Widget
 			switch(\Input::get($this->strCommand))
 			{
 				case 'insert':
-					if ($this->varValue < $this->groupMax)
+					if ($this->varValue < $this->numberOfGroups)
 					{
 						$objValue = \ContentValueModel::findByCidandPidandRid($this->currentRecord, $this->pid, $this->rid);
 						
@@ -148,7 +148,7 @@ class MultiGroup extends \Widget
 		$return .= '<div class="tl_multigroup_header clr">';
 		
 		// Add new button
-		if ($this->groupCount < $this->groupMax)
+		if ($this->groupCount < $this->numberOfGroups)
 		{
 			$return .= '<a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.($this->rid*100-1).'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'" title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['mg_new']['label'] . '</a>';
 		}

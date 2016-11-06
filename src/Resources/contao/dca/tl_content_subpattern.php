@@ -57,9 +57,9 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_subPatternType'],
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
-		'multiPatternMax' => array
+		'numberOfGroups' => array
 		(
-			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
+			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
 		)
 	)
 );

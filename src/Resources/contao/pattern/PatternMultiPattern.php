@@ -48,7 +48,7 @@ class PatternMultiPattern extends Pattern
 			'inputType' =>	'multigroup',
 			'eval'		=>	array
 			(
-				'groupMax'			=>	$this->multiPatternMax, 
+				'numberOfGroups'			=>	$this->numberOfGroups, 
 				'groupCount'		=>	$intGroupCount, 
 				'pid'				=>	$this->id, 
 				'rid'				=>	$this->rid, 
@@ -75,7 +75,7 @@ class PatternMultiPattern extends Pattern
 					'up'			=>	($rid != 0), 
 					'down'			=>	($rid != $intGroupCount-1), 
 					'delete'		=>	($intGroupCount > 1), 
-					'insert'		=>	($intGroupCount < $this->multiPatternMax), 
+					'insert'		=>	($intGroupCount < $this->numberOfGroups), 
 					'cid'			=>	$this->rid, 
 					'strCommand'	=>	'cmd_multigroup-' . $this->id . '-' . $prid, 
 				)

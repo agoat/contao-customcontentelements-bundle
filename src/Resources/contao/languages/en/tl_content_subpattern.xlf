@@ -11,7 +11,7 @@
 			<trans-unit id="tl_content_subpattern.subPatternType.0">
 				<source>Sub pattern type</source>
 			</trans-unit>
-			<trans-unit id="tl_content_subpattern.multiPatternMax.0">
+			<trans-unit id="tl_content_subpattern.numberOfGroups.0">
 				<source>Total number of groups</source>
 			</trans-unit>
 

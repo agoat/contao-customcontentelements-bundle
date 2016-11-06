@@ -140,7 +140,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
 		'subpattern'				  => '{type_legend},type;{subpattern_legend},subPatternType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
-		'multipattern'				  => '{type_legend},type;{multipattern_legend},multiPatternMax;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
+		'multipattern'				  => '{type_legend},type;{multipattern_legend},numberOfGroups;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
 		// element
 		'visibility'				  => '{type_legend},type;{visibility_legend},canChangeStart,canChangeStop;{invisible_legend},invisible',
 		'protection'				  => '{type_legend},type;{protection_legend},groups,canChangeGroups;{invisible_legend},invisible',
@@ -266,14 +266,14 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(16) NOT NULL default ''"
 		),
-		'multiPatternMax' => array
+		'numberOfGroups' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiPatternMax'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['numberOfGroups'],
 			'exclude'                 => true,
 			'default'				  => 100,
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'minval'=>1, 'maxval'=>100, 'tl_class'=>'w50 clr'),
-			'sql'                     => "smallint(4) unsigned NOT NULL default '0'"
+			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
 		),
 		'hidden' => array
 		(
@@ -635,7 +635,7 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		}
 		else if ($objParent->type == 'multipattern')
 		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'multiPatternMax';
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
 			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiPattern');
 		}
 		
@@ -669,7 +669,6 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 		}
 	}
 }
-//dump($GLOBALS['TL_DCA']['tl_content_pattern']['fields']);
 
 
 
