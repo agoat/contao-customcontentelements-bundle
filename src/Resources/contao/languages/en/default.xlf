@@ -49,6 +49,12 @@
 			<trans-unit id="CTP.filetree.1">
 				<source>Insert a file select input field with size selection.</source>
 			</trans-unit>
+			<trans-unit id="CTP.imagesize.0">
+				<source>Image size</source>
+			</trans-unit>
+			<trans-unit id="CTP.imagesize.1">
+				<source>Provides an image size (Can be used with $this->addImage($image, $size) in the template).</source>
+			</trans-unit>
 			<trans-unit id="CTP.listwizard.0">
 				<source>List Wizard</source>
 			</trans-unit>
@@ -110,19 +116,19 @@
 				<source>Form</source>
 			</trans-unit>
 			<trans-unit id="CTP.form.1">
-				<source>Insert a form.</source>
+				<source>Provides a form.</source>
 			</trans-unit>
 			<trans-unit id="CTP.comment.0">
 				<source>Comments</source>
 			</trans-unit>
 			<trans-unit id="CTP.comment.1">
-				<source>Insert comments.</source>
+				<source>Provides comments.</source>
 			</trans-unit>
 			<trans-unit id="CTP.module.0">
 				<source>Module</source>
 			</trans-unit>
 			<trans-unit id="CTP.module.1">
-				<source>Insert a module.</source>
+				<source>Provides a module.</source>
 			</trans-unit>
 	  
 
