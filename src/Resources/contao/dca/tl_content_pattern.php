@@ -549,10 +549,6 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'optionWizard',
 			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'clr'),
-			'save_callback'			  => array
-			(
-				array('tl_content_pattern', 'updateSubPatternOptions')
-			),
 			'sql'                     => "blob NULL"
 		),
 		'blankOption' => array
@@ -769,11 +765,13 @@ class tl_content_pattern extends Backend
 			
 			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
 			{
-				if ($arrOption['default'])
+				if ($arrOption['default'] || (!$default && !$arrOption['group']))
 				{
-					$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $arrOption['value']);
+					$default = $arrOption['value'];
 				}	
 			}
+		
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $default);		
 		}
 	}
 
@@ -1116,13 +1114,13 @@ class tl_content_pattern extends Backend
 		{			
 			if ($db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
 			{
-				$db->prepare("UPDATE tl_content_subpattern SET pid=?,alias=?,type=?,subPatternType=?,multiPatternMax=? WHERE id=?")
-				   ->execute($dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->multiPatternMax, $dc->activeRecord->id);
+				$db->prepare("UPDATE tl_content_subpattern SET pid=?,alias=?,type=?,subPatternType=?,numberOfGroups=? WHERE id=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups, $dc->activeRecord->id);
 			}
 			else
 			{
-				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,alias=?,type=?,subPatternType=?,multiPatternMax=?")
-				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->multiPatternMax);
+				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups);
 				
 			}
 
@@ -1172,36 +1170,6 @@ class tl_content_pattern extends Backend
 		}
 	}
 
-	/**
-	 * Return all content pattern as array
-	 *
-	 * @return array
-	 */
-	public function updateSubPatternOptions($varValue, $dc)
-	{
-		dump($varValue);
-		dump($dc);
-		
-		
-		// get new options values
-		// get old options values
-		
-		// PROBLEM !!! Can´t make a relation between new and old !!!
-
-		//  maybe check try to find differnet values for the label 
-		
-	/*	if ($objPattern !== null)
-		{
-			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
-			{
-				$return .='<option value="' . $arrOption['value'] . '"' . (($session['filter'][$filter]['suboption'] == $arrOption['value'])? ' selected="selected"' : '') . '>' . $arrOption['label'] . '</option>';
-			}
-		}
-	*/	
-		return $varValue;
-	}
-
-	
 
 	
 	/**

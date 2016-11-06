@@ -39,14 +39,18 @@ class PatternSubPattern extends Pattern
 					continue;
 				}	
 				
-				if ($arrOption['default'])
+				if ($arrOption['default'] || !$default)
 				{
 					$default = 'v'.$arrOption['value'];
-				}	
+				}
 				
 				$arrOptions[$strGroup]['v'.$arrOption['value']] = $arrOption['label'];
 			}
-		
+			
+			if (!$default)
+			{
+				$default = 'v'.$arrOptions[0]['value'];
+			}
 			
 			// no groups 
 			if (count($arrOptions) < 2 )
@@ -159,7 +163,6 @@ class PatternSubPattern extends Pattern
 				}
 			}
 		}
-
 	}
 
 
@@ -189,6 +192,11 @@ class PatternSubPattern extends Pattern
 					continue;
 				}
 						
+				if ($arrOption['default'] || !$default)
+				{
+					$default = $arrOption['value'];
+				}	
+
 				$strPreview .= '<option value="' . StringUtil::specialchars($arrOption['value']) . '"' . (($arrOption['default']) ? ' selected' : '') . '>' . StringUtil::specialchars($arrOption['label']) . '</option>';
 			}
 
@@ -199,12 +207,13 @@ class PatternSubPattern extends Pattern
 
 			$strPreview .= '</select><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
+
 			// add the sub pattern
 			foreach (StringUtil::deserialize($this->options) as $arrOption)
 			{
 				if (!$arrOption['group'])
 				{
-					$strPreview .=  '<div class="tl_select_container_' . $this->id . ' tl_select_container_' . $this->id . '_' . $arrOption['value'] . '" style="display: ' . (($arrOption['default']) ? 'block' : 'none'). ';">';	
+					$strPreview .=  '<div class="tl_select_container_' . $this->id . ' tl_select_container_' . $this->id . '_' . $arrOption['value'] . '" style="display: ' . (($arrOption['value'] == $default) ? 'block' : 'none'). ';">';	
 						
 					$colSubPattern = \ContentPatternModel::findPublishedByPidAndTableAndSubOption($this->id, 'tl_content_subpattern', $arrOption['value'], array('order'=>'sorting ASC'));
 					
@@ -269,12 +278,7 @@ class PatternSubPattern extends Pattern
 
 		}
 
-
-
-
-
 		return $strPreview;
-
 	}
 
 
