@@ -69,6 +69,7 @@ $GLOBALS['TL_CTP'] = array
 	),
 	'system' => array
 	(
+		'imagesize'		=> 'Agoat\ContentBlocks\PatternImageSize',
 		'form'			=> 'Agoat\ContentBlocks\PatternForm',
 		'module'		=> 'Agoat\ContentBlocks\PatternModule',
 	),
