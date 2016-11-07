@@ -17,7 +17,9 @@ use Contao\File;
 use Contao\TemplateLoader;
 use Contao\FrontendTemplate;
 use Contao\BackendTemplate;
+use Contao\StringUtil;
 use Agoat\ContentBlocks\Controller;
+use Agoat\ContentBlocks\Pattern;
 
 
 class Template extends FrontendTemplate
@@ -26,33 +28,30 @@ class Template extends FrontendTemplate
 	/**
 	 * Add Image to template
 	 *
-	 * @param object           $image The element or module as array
-	 * @param object|\Model    $imageSize The image size or image size item model
-	 * @param integer $width   An optional width of the image
-	 * @param integer $height  An optional height of the image
+	 * @param object $image The element or module as array
+	 * @param object|Model $size The image size as 
+	 * @param integer $width An optional width of the image
+	 * @param integer $height An optional height of the image
 	 *
 	 * @return object  new image
 	 */
-	public function addImage ($image, $mode, $width=0, $height=0)
+	public function addImage ($image, $size, $width=0, $height=0)
 	{
 		if (!is_array($image))
 		{
 			return;
 		}
 		
-		if (is_numeric($mode))
+		
+		if (@unserialize($size) === false)
 		{
-			$size = (int) $mode;
-		}
-		else
-		{
-			$size = array($width, $height, $mode);
+			$size = serialize(array((string)$width, (string)$height, $size));
 		}
 		
 		$image['size'] = $size;
 		$image['singleSRC'] = $image['path'];
 		
-		$this->addImageToTemplate($picture = new \stdClass(), $image);	
+		Pattern::addImageToTemplate($picture = new \stdClass(), $image);	
 		
 		$picture = $picture->picture;
 		$picture['imageUrl'] = $image['imageUrl'];
