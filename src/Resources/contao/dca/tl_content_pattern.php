@@ -602,58 +602,43 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 /**
  * Dynamically change parent table when editing subpattern
  */
-
 if (\Input::get('spid') !== null)
 {
+	$objParent = \ContentPatternModel::findById(\Input::get('spid'));
+}
+else if (\Input::get('act') == 'edit' && \Input::get('mode') == '1')
+{
+	// for the 'save and edit' function use the parent of the parent to check for a sub pattern
+	$objParent = \ContentPatternModel::findById(\ContentPatternModel::findById(\Input::get('pid'))->pid);
+}
+else
+{
+	$objParent = null;	
+}
 
-	// use the parent of the parent to check for a sub pattern
-	if (\Input::get('spid') !== null)
+if ($objParent !== null)
+{
+	if (\Input::get('id') == \Input::get('spid') && \Input::get('act') == 'edit')
 	{
-		$objParent = \ContentPatternModel::findById(\Input::get('spid'));
+		// when editing a sub pattern itself use the ptable of the sub pattern object
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objParent->ptable;
 	}
 	else
 	{
-		$objParent = \ContentPatternModel::findById(\ContentPatternModel::findById(\Input::get('pid'))->pid);
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
 	}
 	
-	if ($objParent !== null)
-	{
-
-		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objParent->ptable;
-		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
-		
-		// add extra info for the sub pattern types
-		if ($objParent->type == 'subpattern')
-		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
-			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForSubPattern');
-			
-		}
-		else if ($objParent->type == 'multipattern')
-		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
-			$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiPattern');
-		}
-		
-		
-		// in edit mode set the ptable in case ..
-		if (\Input::get('act') !== null)
-		{
-			// if spid reference to a sub pattern set ptable always to tl_content_subpattern
-			if (in_array($objParent->type, $GLOBALS['TL_CTP_SUB']) && \Input::get('id') != \Input::get('spid'))
-			{
-					$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
-			}
-		
-		}
-		// in table view set ptable always
-		else if (\Input::get('id') == \Input::get('spid'))
-		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
-		}
+	$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
 	
+
+	// Extra config for the sub pattern types
+	if ($objParent->type == 'subpattern')
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
+		$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForSubPattern');
+		
 		// set the filter for the subpattern option
-		if ($objParent->type == 'subpattern' && $objParent->subPatternType == 'options')
+		if ($objParent->subPatternType == 'options')
 		{
 			// set callbacks and filter
 			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback'][] = array('tl_content_pattern', 'subPatternFilter');
@@ -661,11 +646,14 @@ if (\Input::get('spid') !== null)
 
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
 		}
-
-	
 	}
-}
+	else if ($objParent->type == 'multipattern')
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
+		$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiPattern');
+	}
 
+}
 
 
 
