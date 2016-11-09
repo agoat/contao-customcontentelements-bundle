@@ -98,6 +98,19 @@ class tl_content_contentblocks extends tl_content
 		if (is_array($GLOBALS['TL_CTB']) && $objLayout)
 		{
 			$arrCTB = $GLOBALS['TL_CTB'][$objLayout->pid];
+			
+			// save the theme id for the type help wizard
+			$session = \Session::getInstance(); 
+			$session->set('ctb_theme_id', $objLayout->pid);
+		}
+		else
+		{
+			if (\Input::get('field') !== null)
+			{
+				// try to get the id from the session for the type help wizard
+				$session = \Session::getInstance(); 
+				$arrCTB = $GLOBALS['TL_CTB'][$session->get('ctb_theme_id')];
+			}
 		}
 		
 		// return an empty array if nothing found
@@ -115,14 +128,15 @@ class tl_content_contentblocks extends tl_content
 		{
 			$arrCTE = array_merge($arrCTB, $GLOBALS['TL_CTE_LEGACY']);
 		}
-
 		
 		// legacy support
 		if ($dc->value != '' && !in_array($dc->value, array_keys(array_reduce($arrCTE, 'array_merge', array()))))
 		{
 			return array($dc->value);
 		}
-	
+		
+		$groups = array();
+		
 		foreach ($arrCTE as $k=>$v)
 		{
 			foreach (array_keys($v) as $kk)
