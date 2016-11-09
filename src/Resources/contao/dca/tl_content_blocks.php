@@ -307,6 +307,7 @@ class tl_content_blocks extends Backend
 			}
 		}
 	}
+
 	
 	/**
 	 * Return all content element templates as array
@@ -316,10 +317,15 @@ class tl_content_blocks extends Backend
 	public function getElementTemplates(DataContainer $dc)
 	{
 		$theme = \ThemeModel::findById($dc->activeRecord->pid);
-		$arrTemplates = array_merge(preg_grep('/(\(.*(global|' . $theme->name . ').*\))/', $this->getTemplateGroup('cb_')) , array_combine(\TemplateLoader::getPrefixedFiles('cb_'), \TemplateLoader::getPrefixedFiles('cb_')));
 
-		ksort($arrTemplates);
-
+		foreach($this->getTemplateGroup('cb_') as $k=>$v)
+		{
+			if (strpos($v,'(') === false || strpos($v, $theme->name) || strpos($v, 'global'))
+			{
+				$arrTemplates[$k] = $v;
+			}
+		}
+		
 		return $arrTemplates;
 	}
 
