@@ -34,7 +34,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'onsubmit_callback'			  => array
 		(
-			array('tl_content_pattern', 'correctGroups'),
+			array('tl_content_pattern', 'saveGroups'),
 			array('tl_content_pattern', 'saveSubPattern'),
 		),
 		'ondelete_callback'			  => array
@@ -136,6 +136,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'listwizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
 		'tablewizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
 		'filetree'					  => '{type_legend},type;{source_legend},source;{multiSource_legend},multiSource;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
+		'imagesize'					  => '{type_legend},type;{source_legend},size;{pattern_legend},alias;{invisible_legend},invisible',
 		// layout
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
@@ -602,18 +603,17 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
  * Dynamically change parent table when editing subpattern
  */
 
-if (\Input::get('spid') !== null || \Input::get('pid') !== null)
+if (\Input::get('spid') !== null)
 {
 
 	// use the parent of the parent to check for a sub pattern
-	if (\Input::get('spid') === null)
+	if (\Input::get('spid') !== null)
 	{
-		$objParent = \ContentPatternModel::findById(\ContentPatternModel::findById(\Input::get('pid'))->pid);
+		$objParent = \ContentPatternModel::findById(\Input::get('spid'));
 	}
 	else
 	{
-		$objParent = \ContentPatternModel::findById(\Input::get('spid'));
-		
+		$objParent = \ContentPatternModel::findById(\ContentPatternModel::findById(\Input::get('pid'))->pid);
 	}
 	
 	if ($objParent !== null)
@@ -652,8 +652,6 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
 		}
 	
-
-	
 		// set the filter for the subpattern option
 		if ($objParent->type == 'subpattern' && $objParent->subPatternType == 'options')
 		{
@@ -663,9 +661,10 @@ if (\Input::get('spid') !== null || \Input::get('pid') !== null)
 
 			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
 		}
+
+	
 	}
 }
-
 
 
 
@@ -1087,7 +1086,7 @@ class tl_content_pattern extends Backend
 
 	
 
-	public function correctGroups ($dc)
+	public function saveGroups ($dc)
 	{
 		$db = Database::getInstance();
 					
