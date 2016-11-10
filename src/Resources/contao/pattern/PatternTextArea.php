@@ -47,7 +47,7 @@ class PatternTextArea extends Pattern
 			(
 				'mandatory'		=>	($this->mandatory) ? true : false, 
 				'tl_class'		=> 	'clr',
-				'rte'			=>	substr($this->rteTemplate, 3),
+				'rte'			=>	(array_key_exists($this->rteTemplate, TemplateLoader::getFiles())) ? substr($this->rteTemplate, 3) : 'tinyMCE',
 				'preserveTags'	=>	true,
 			)
 		));
@@ -80,10 +80,13 @@ class PatternTextArea extends Pattern
 			TemplateLoader::addFiles($arrTemplates);
 		}
 
-		ob_start();
-		include(\TemplateLoader::getPath($this->rteTemplate, 'html5'));
-		$strPreview .= ob_get_contents();
-		ob_end_clean();
+		if (array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
+		{
+			ob_start();
+			include(\TemplateLoader::getPath($this->rteTemplate, 'html5'));
+			$strPreview .= ob_get_contents();
+			ob_end_clean();
+		}
 			
 		$strPreview .= '<p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
 
