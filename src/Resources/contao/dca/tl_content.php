@@ -33,6 +33,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
 if (!\Config::get('disableVisualSelect'))
 {
 	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['inputType'] = 'visualselect';
+	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['eval']['helpwizard'] = false;
+	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['xlabel']['helpwizard'] = array('tl_content_contentblocks', 'addTypeHelpWizard');
 }
 
 // new options callback to get new content block elements
@@ -81,6 +83,13 @@ class tl_content_contentblocks extends tl_content
 
 	}
 	
+	/**
+	 * Add a custom help wirzard to the type field
+	 */
+	public function addTypeHelpWizard ($dc)
+	{
+		return ' <a href="contao/help.php?table='.$dc->table.'&amp;field='.$dc->field.'&amp;ptable='.$dc->parentTable.'&amp;pid='.$dc->activeRecord->pid.'" title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['helpWizard']) . '" onclick="Backend.openModalIframe({\'width\':735,\'title\':\''.\StringUtil::specialchars(str_replace("'", "\\'", $arrData['label'][0])).'\',\'url\':this.href});return false">'.\Image::getHtml('about.svg', $GLOBALS['TL_LANG']['MSC']['helpWizard'], 'style="vertical-align:text-bottom"').'</a>';
+	}
 	
 	
 	
@@ -89,28 +98,24 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function getContentBlockElements ($dc)
 	{
-		// try to get the theme id
-		$intLayoutId = \Agoat\ContentBlocks\Controller::getLayoutId($dc->activeRecord->ptable,  $dc->activeRecord->pid);
-	
-		$objLayout = \LayoutModel::findById($intLayoutId);	
-
-		// try to find content block elements for the theme
-		if (is_array($GLOBALS['TL_CTB']) && $objLayout)
+		if ($dc->activeRecord !== null)
 		{
-			$arrCTB = $GLOBALS['TL_CTB'][$objLayout->pid];
-			
-			// save the theme id for the type help wizard
-			$session = \Session::getInstance(); 
-			$session->set('ctb_theme_id', $objLayout->pid);
+			$ptable =  $dc->activeRecord->ptable;
+			$pid = $dc->activeRecord->pid;
 		}
 		else
 		{
-			if (\Input::get('field') !== null)
-			{
-				// try to get the id from the session for the type help wizard
-				$session = \Session::getInstance(); 
-				$arrCTB = $GLOBALS['TL_CTB'][$session->get('ctb_theme_id')];
-			}
+			// If no activeRecord try to use get parameters (submitted by the custom help wizard)
+			$ptable =  \Input::get('ptable');
+			$pid = \Input::get('pid');
+		}
+
+		// try to find content block elements for the theme
+		$objLayout = \LayoutModel::findById(\Agoat\ContentBlocks\Controller::getLayoutId($ptable, $pid));	
+
+		if (is_array($GLOBALS['TL_CTB']) && $objLayout)
+		{
+			$arrCTB = $GLOBALS['TL_CTB'][$objLayout->pid];
 		}
 		
 		// return an empty array if nothing found
