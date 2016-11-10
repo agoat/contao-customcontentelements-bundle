@@ -663,8 +663,7 @@ if ($objParent !== null)
 	}
 
 }
-dump($GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable']);
-dump($GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
+
 
 
 /**
@@ -740,7 +739,7 @@ class tl_content_pattern extends Backend
 	{ 
 		$session = $this->Session->getData();
 		$filter = 'tl_content_pattern'.CURRENT_ID;
-
+		
 		if (\Input::post('FORM_SUBMIT') == 'tl_filters')
 		{
 			// Validate the user input
@@ -751,7 +750,7 @@ class tl_content_pattern extends Backend
 			
 			$this->Session->setData($session);
 		}
-
+		
 		if (!$session['filter'][$filter]['suboption'])
 		{
 			$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
@@ -769,8 +768,7 @@ class tl_content_pattern extends Backend
 				$this->Session->setData($session);
 			}
 		}
-
-
+		
 		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
 	}
 
