@@ -609,7 +609,16 @@ if (\Input::get('spid') !== null)
 else if (\Input::get('act') == 'edit' && \Input::get('mode') == '1')
 {
 	// for the 'save and edit' function use the parent of the parent to check for a sub pattern
-	$objParent = \ContentPatternModel::findById(\ContentPatternModel::findById(\Input::get('pid'))->pid);
+	$objParent = \ContentPatternModel::findById(\Input::get('pid'));
+
+	if ($objParent->ptable == 'tl_content_subpattern')
+	{
+		$objParent = \ContentPatternModel::findById($objParent->pid);
+	}
+	else
+	{
+		$objParent = null;
+	}
 }
 else
 {
@@ -654,7 +663,8 @@ if ($objParent !== null)
 	}
 
 }
-
+dump($GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable']);
+dump($GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
 
 
 /**
@@ -730,7 +740,7 @@ class tl_content_pattern extends Backend
 	{ 
 		$session = $this->Session->getData();
 		$filter = 'tl_content_pattern'.CURRENT_ID;
-		
+
 		if (\Input::post('FORM_SUBMIT') == 'tl_filters')
 		{
 			// Validate the user input
@@ -742,24 +752,26 @@ class tl_content_pattern extends Backend
 			$this->Session->setData($session);
 		}
 
-		if ($session['filter'][$filter]['suboption'])
-		{
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
-		}
-		else
+		if (!$session['filter'][$filter]['suboption'])
 		{
 			$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
 			
-			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			if ($objPattern !== null)
 			{
-				if ($arrOption['default'] || (!$default && !$arrOption['group']))
+				foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
 				{
-					$default = $arrOption['value'];
-				}	
+					if ($arrOption['default'] || (!$session['filter'][$filter]['suboption'] && !$arrOption['group']))
+					{
+						$session['filter'][$filter]['suboption'] = $arrOption['value'];
+					}	
+				}
+				
+				$this->Session->setData($session);
 			}
-		
-			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $default);		
 		}
+
+
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
 	}
 
 	
