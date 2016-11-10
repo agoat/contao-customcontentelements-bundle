@@ -33,6 +33,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
 if (!\Config::get('disableVisualSelect'))
 {
 	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['inputType'] = 'visualselect';
+	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['eval']['helpwizard'] = false;
+	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['xlabel']['helpwizard'] = array('tl_content_contentblocks', 'addTypeHelpWizard');
 }
 
 // new options callback to get new content block elements
@@ -81,6 +83,13 @@ class tl_content_contentblocks extends tl_content
 
 	}
 	
+	/**
+	 * Add a custom help wirzard to the type field
+	 */
+	public function addTypeHelpWizard ($dc)
+	{
+		return ' <a href="contao/help.php?table='.$dc->table.'&amp;field='.$dc->field.'&amp;ptable='.$dc->parentTable.'&amp;pid='.$dc->activeRecord->pid.'" title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['helpWizard']) . '" onclick="Backend.openModalIframe({\'width\':735,\'title\':\''.\StringUtil::specialchars(str_replace("'", "\\'", $arrData['label'][0])).'\',\'url\':this.href});return false">'.\Image::getHtml('about.svg', $GLOBALS['TL_LANG']['MSC']['helpWizard'], 'style="vertical-align:text-bottom"').'</a>';
+	}
 	
 	
 	
@@ -89,12 +98,21 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function getContentBlockElements ($dc)
 	{
-		// try to get the theme id
-		$intLayoutId = \Agoat\ContentBlocks\Controller::getLayoutId($dc->activeRecord->ptable,  $dc->activeRecord->pid);
-	
-		$objLayout = \LayoutModel::findById($intLayoutId);	
+		if ($dc->activeRecord !== null)
+		{
+			$ptable =  $dc->activeRecord->ptable;
+			$pid = $dc->activeRecord->pid;
+		}
+		else
+		{
+			// If no activeRecord try to use get parameters (submitted by the custom help wizard)
+			$ptable =  \Input::get('ptable');
+			$pid = \Input::get('pid');
+		}
 
 		// try to find content block elements for the theme
+		$objLayout = \LayoutModel::findById(\Agoat\ContentBlocks\Controller::getLayoutId($ptable, $pid));	
+
 		if (is_array($GLOBALS['TL_CTB']) && $objLayout)
 		{
 			$arrCTB = $GLOBALS['TL_CTB'][$objLayout->pid];
@@ -115,14 +133,15 @@ class tl_content_contentblocks extends tl_content
 		{
 			$arrCTE = array_merge($arrCTB, $GLOBALS['TL_CTE_LEGACY']);
 		}
-
 		
 		// legacy support
 		if ($dc->value != '' && !in_array($dc->value, array_keys(array_reduce($arrCTE, 'array_merge', array()))))
 		{
 			return array($dc->value);
 		}
-	
+		
+		$groups = array();
+		
 		foreach ($arrCTE as $k=>$v)
 		{
 			foreach (array_keys($v) as $kk)
