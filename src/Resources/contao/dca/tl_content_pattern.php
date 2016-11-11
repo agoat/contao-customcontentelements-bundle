@@ -693,9 +693,6 @@ class tl_content_pattern extends Backend
 	// panel_callback
 	public function generatesubPatternFilter($dc) 
 	{ 
-		$session = $this->Session->getData();
-		$filter = 'tl_content_pattern'.CURRENT_ID;
-	
 		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
 		
 		if ($objPattern !== null)
@@ -737,41 +734,62 @@ class tl_content_pattern extends Backend
 	// onload_callback
 	public function subPatternFilter($dc) 
 	{ 
-		$session = $this->Session->getData();
-		$filter = 'tl_content_pattern'.CURRENT_ID;
+		/** @var SessionInterface $objSession */
+		$objSession = \System::getContainer()->get('session');
 		
-		if (\Input::post('FORM_SUBMIT') == 'tl_filters')
+		/** @var AttributeBagInterface $objSessionBag */
+		$objSessionBag = $objSession->getBag('contao_backend');
+		
+		$filter = $objSessionBag->get('filter');
+		$suboption = $filter['tl_content_pattern_'.CURRENT_ID]['suboption'];
+
+		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
+
+		$arrAllowedValues = array();
+		
+		foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+		{
+			if (!$arrOption['group'])
+			{
+				$arrAllowedValues[] = $arrOption['value'];
+			}
+		}
+
+		if (\Input::post('FORM_SUBMIT') == 'tl_filters' && in_array(\Input::post('suboption'), $arrAllowedValues))
 		{
 			// Validate the user input
 			if (\Input::post('suboption'))
 			{
-				$session['filter'][$filter]['suboption'] = \Input::Post('suboption');
+				$suboption = \Input::Post('suboption');
 			}
 			
-			$this->Session->setData($session);
+			$filter['tl_content_pattern_'.CURRENT_ID]['suboption'] = $suboption;
+			$objSessionBag->set('filter', $filter);
 		}
 		
-		if (!$session['filter'][$filter]['suboption'])
+		if (!$suboption)
 		{
-			$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
 			
 			if ($objPattern !== null)
 			{
 				foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
 				{
-					if ($arrOption['default'] || (!$session['filter'][$filter]['suboption'] && !$arrOption['group']))
+					if ($arrOption['default'] || (!$suboption && !$arrOption['group']))
 					{
-						$session['filter'][$filter]['suboption'] = $arrOption['value'];
+						$suboption = $arrOption['value'];
 					}	
 				}
 				
-				$this->Session->setData($session);
+			$filter['tl_content_pattern_'.CURRENT_ID]['suboption'] = $suboption;
+			$objSessionBag->set('filter', $filter);
 			}
 		}
-		
-		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $session['filter'][$filter]['suboption']);
-	}
 
+		// Set the filter option
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $suboption);
+	}
+	
+	
 	
 	/**
 	 * Return the pattern edit button
