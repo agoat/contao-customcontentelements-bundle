@@ -25,7 +25,6 @@ $GLOBALS['BE_MOD']['content']['article']['stylesheet'] = 'bundles/agoatcontentbl
 $GLOBALS['BE_MOD']['content']['news']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 
 
-
 /**
  * Hooks
  */
