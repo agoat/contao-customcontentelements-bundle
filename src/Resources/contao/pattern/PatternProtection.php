@@ -13,6 +13,7 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\Database;
 use Agoat\ContentBlocks\Pattern;
 
 
@@ -27,6 +28,7 @@ class PatternProtection extends Pattern
 	{
 		// element fields, so don´t use parent construct method
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',protected';
+		$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['class'] = 'clr';
 
 		// the groups field
 		if (!$this->canChangeGroups)
@@ -37,12 +39,11 @@ class PatternProtection extends Pattern
 			unset($GLOBALS['TL_DCA']['tl_content']['subpalettes']['protected']);
 			
 			$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['submitOnChange'] = false;
-			$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['class'] = 'clr';
-	
+			
 			// overwrite the elements groups with groups from the pattern
-			$this->import("Database");
-			$this->Database->prepare("UPDATE tl_content SET groups=? WHERE id=?")
-						   ->execute($this->groups, $this->cid);
+			$db = Database::getInstance();
+			$db->prepare("UPDATE tl_content SET groups=? WHERE id=?")
+			   ->execute($this->groups, $this->cid);
 		}
 		
 		// the guests field
@@ -50,7 +51,7 @@ class PatternProtection extends Pattern
 		{
 			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',guests';
 		}
-	
+		
 	}
 	
 
@@ -59,7 +60,7 @@ class PatternProtection extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">Protect element</label></div>';
+		$strPreview = '<div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">' . $GLOBALS['TL_LANG']['tl_content_pattern']['protected'][0] . '</label></div><p class="tl_help tl_tip" title="">' . $GLOBALS['TL_LANG']['tl_content_pattern']['protected'][1] . '</p>';
 		
 		if ($this->canChangeGroups)
 		{

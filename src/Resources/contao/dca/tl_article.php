@@ -58,6 +58,7 @@ class tl_article_contentblocks extends tl_article
 	 */
 	public function deleteRelatedValues ($dc, $intUndoId)
 	{
+		$db = Database::getInstance();
 		
 		$colContent = \ContentModel::findByPid($dc->activeRecord->id);
 		
@@ -67,8 +68,8 @@ class tl_article_contentblocks extends tl_article
 		}
 
 		// get the undo database row
-		$objUndo = $this->database	->prepare("SELECT data FROM tl_undo WHERE id=?")
-									->execute($intUndoId) ;
+		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+					  ->execute($intUndoId) ;
 
 		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 
@@ -94,8 +95,8 @@ class tl_article_contentblocks extends tl_article
 
 	
 		// save to the undo database row
-		$this->database	->prepare("UPDATE tl_undo SET data=? WHERE id=?")
-						->execute(serialize($arrData), $intUndoId);
+		$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+		   ->execute(serialize($arrData), $intUndoId);
 
 	}
 

@@ -247,13 +247,9 @@ abstract class Pattern extends Controller
 	 */
 	public static function addImageToTemplate($objTemplate, $arrItem, $intMaxWidth=null, $strLightboxId=null)
 	{
-		/** @var \PageModel $objPage */
-		global $objPage;
-
-
 		try
 		{
-			$objFile = new File($arrItem['singleSRC'], true);
+			$objFile = new File($arrItem['singleSRC']);
 		}
 		catch (\Exception $e)
 		{
@@ -271,46 +267,55 @@ abstract class Pattern extends Controller
 		}
 
 		$size = StringUtil::deserialize($arrItem['size']);
-		$arrMargin = (TL_MODE == 'BE') ? array() : StringUtil::deserialize($arrItem['imagemargin']);
-
-		if (is_array($size))
+		
+		if (is_numeric($size))
 		{
-			if ($intMaxWidth === null)
-			{
-				$intMaxWidth = Config::get('maxImageWidth');
-			}
-
-			// Adjust the image size
-			if ($intMaxWidth > 0 && $imgSize !== false)
-			{
-				// Subtract the margins before deciding whether to resize (see #6018)
-				if (is_array($arrMargin) && $arrMargin['unit'] == 'px')
-				{
-					$intMargin = $arrMargin['left'] + $arrMargin['right'];
-
-					// Reset the margin if it exceeds the maximum width (see #7245)
-					if ($intMaxWidth - $intMargin < 1)
-					{
-						$arrMargin['left'] = '';
-						$arrMargin['right'] = '';
-					}
-					else
-					{
-						$intMaxWidth = $intMaxWidth - $intMargin;
-					}
-				}
-
-				if ($size[0] > $intMaxWidth || (!$size[0] && !$size[1] && $imgSize[0] > $intMaxWidth))
-				{
-					// See #2268 (thanks to Thyon)
-					$ratio = ($size[0] && $size[1]) ? $size[1] / $size[0] : $imgSize[1] / $imgSize[0];
-
-					$size[0] = $intMaxWidth;
-					$size[1] = floor($intMaxWidth * $ratio);
-				}
-			}
-
+			$size = array(0, 0, (int) $size);
 		}
+		elseif (!is_array($size))
+		{
+			$size = array();
+		}
+		$size += array(0, 0, 'crop');
+
+
+		if ($intMaxWidth === null)
+		{
+			$intMaxWidth = Config::get('maxImageWidth');
+		}
+
+		$arrMargin = StringUtil::deserialize($arrItem['imagemargin']);
+
+		// Adjust the image size
+		if ($intMaxWidth > 0 && $imgSize !== false)
+		{
+			// Subtract the margins before deciding whether to resize (see #6018)
+			if (is_array($arrMargin) && $arrMargin['unit'] == 'px')
+			{
+				$intMargin = $arrMargin['left'] + $arrMargin['right'];
+
+				// Reset the margin if it exceeds the maximum width (see #7245)
+				if ($intMaxWidth - $intMargin < 1)
+				{
+					$arrMargin['left'] = '';
+					$arrMargin['right'] = '';
+				}
+				else
+				{
+					$intMaxWidth = $intMaxWidth - $intMargin;
+				}
+			}
+
+			if ($size[0] > $intMaxWidth || (!$size[0] && !$size[1] && $imgSize[0] > $intMaxWidth))
+			{
+				// See #2268 (thanks to Thyon)
+				$ratio = ($size[0] && $size[1]) ? $size[1] / $size[0] : $imgSize[1] / $imgSize[0];
+
+				$size[0] = $intMaxWidth;
+				$size[1] = floor($intMaxWidth * $ratio);
+			}
+		}
+
 
 		try
 		{
@@ -345,14 +350,7 @@ abstract class Pattern extends Controller
 		// Provide an ID for single lightbox images in HTML5 (see #3742)
 		if ($strLightboxId === null && $arrItem['fullsize'])
 		{
-			if ($objPage->outputFormat == 'xhtml')
-			{
-				$strLightboxId = 'lightbox';
-			}
-			else
-			{
-				$strLightboxId = 'lightbox[' . substr(md5($objTemplate->getName() . '_' . $arrItem['id']), 0, 6) . ']';
-			}
+			$strLightboxId = 'lightbox[' . substr(md5($objTemplate->getName() . '_' . $arrItem['id']), 0, 6) . ']';
 		}
 
 		// Float image
@@ -381,11 +379,11 @@ abstract class Pattern extends Controller
 						$objTemplate->$strHrefKey = TL_FILES_URL . System::urlEncode($arrItem['imageUrl']);
 					}
 
-					$objTemplate->attributes = ($objPage->outputFormat == 'xhtml') ? ' rel="' . $strLightboxId . '"' : ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
+					$objTemplate->attributes = ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
 				}
 				else
 				{
-					$objTemplate->attributes = ($objPage->outputFormat == 'xhtml') ? ' onclick="return !window.open(this.href)"' : ' target="_blank"';
+					$objTemplate->attributes = ' target="_blank"';
 				}
 			}
 		}
@@ -394,7 +392,7 @@ abstract class Pattern extends Controller
 		elseif ($arrItem['fullsize'] && TL_MODE == 'FE')
 		{
 			$objTemplate->$strHrefKey = TL_FILES_URL . System::urlEncode($arrItem['singleSRC']);
-			$objTemplate->attributes = ($objPage->outputFormat == 'xhtml') ? ' rel="' . $strLightboxId . '"' : ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
+			$objTemplate->attributes = ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
 		}
 
 		// Do not urlEncode() here because getImage() already does (see #3817)

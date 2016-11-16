@@ -490,6 +490,12 @@
 				<source>Checks whether the input is a valid URL.</source>
 			</trans-unit>
 	  
+			<trans-unit id="tl_content_pattern.protected.0">
+				<source>Protect element</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.protected.1">
+				<source>Show the content element to certain member groups only.</source>
+			</trans-unit>
 
 
 
