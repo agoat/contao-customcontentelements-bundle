@@ -19,8 +19,6 @@
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern');
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 
-$GLOBALS['BE_MOD']['design']['themes']['importTheme'] = array('Agoat\\ContentBlocks\\Theme', 'importTheme');
-$GLOBALS['BE_MOD']['design']['themes']['exportTheme'] = array('Agoat\\ContentBlocks\\Theme', 'exportTheme');
 
 
 
@@ -39,6 +37,10 @@ $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\
 $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentBlocks\\Controller','addLayoutJS');
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks\\Controller','hideContentValueVersions');
+
+$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentBlocks\\Theme','compareContentBlockTables');
+$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentBlocks\\Theme','importContentBlockTables');
+$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentBlocks\\Theme','exportContentBlockTables');
 
  
  
