@@ -5,6 +5,12 @@
       <trans-unit id="MOD.tl_content_blocks">
         <source>Content blocks</source>
       </trans-unit>
+     <trans-unit id="MOD.tl_content_pattern">
+        <source>Content pattern</source>
+      </trans-unit>
+    <trans-unit id="MOD.tl_content_subpattern">
+        <source>Content blocks</source>
+      </trans-unit>
  
      <trans-unit id="MOD.element.0">
         <source>Content elements</source>
