@@ -16,16 +16,21 @@
  * Register back end module (tables, css, overwritten classes)
  */
 
+// Extend the tables
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern', 'tl_content_subpattern', 'tl_content_multipattern');
+
+// Add additionally css
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 $GLOBALS['BE_MOD']['content']['article']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
+$GLOBALS['BE_MOD']['content']['news']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 
+// Overwrite the import/export Theme method
 $GLOBALS['BE_MOD']['design']['themes']['importTheme'] = array('Agoat\\ContentBlocks\\Theme', 'importTheme');
 $GLOBALS['BE_MOD']['design']['themes']['exportTheme'] = array('Agoat\\ContentBlocks\\Theme', 'exportTheme');
 
 
 
- /**
+/**
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentBlocks\\Controller','loadAndRegisterBlockElements');
