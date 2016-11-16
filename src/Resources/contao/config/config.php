@@ -28,9 +28,7 @@ $GLOBALS['BE_MOD']['content']['news']['stylesheet'] = 'bundles/agoatcontentblock
 $GLOBALS['BE_MOD']['design']['themes']['importTheme'] = array('Agoat\\ContentBlocks\\Theme', 'importTheme');
 $GLOBALS['BE_MOD']['design']['themes']['exportTheme'] = array('Agoat\\ContentBlocks\\Theme', 'exportTheme');
 
-
-
- /**
+/**
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentBlocks\\Controller','loadAndRegisterBlockElements');
