@@ -16,13 +16,12 @@
  * Register back end module (tables, css, overwritten classes)
  */
 
-// Extend the tables
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern', 'tl_content_subpattern');
 
-// Add additionally css
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 $GLOBALS['BE_MOD']['content']['article']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
 $GLOBALS['BE_MOD']['content']['news']['stylesheet'] = 'bundles/agoatcontentblocks/style.css';
+
 
 
  /**
