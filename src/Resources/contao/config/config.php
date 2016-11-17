@@ -56,6 +56,7 @@ $GLOBALS['TL_CTP'] = array
 		'selectfield'	=> 'Agoat\ContentBlocks\PatternSelectField',
 		'checkbox'		=> 'Agoat\ContentBlocks\PatternCheckBox',
 		'filetree'		=> 'Agoat\ContentBlocks\PatternFileTree',
+		'pagetree'		=> 'Agoat\ContentBlocks\PatternPageTree',
 		'listwizard'	=> 'Agoat\ContentBlocks\PatternListWizard',
 		'tablewizard'	=> 'Agoat\ContentBlocks\PatternTableWizard',
 		'code'			=> 'Agoat\ContentBlocks\PatternCode',

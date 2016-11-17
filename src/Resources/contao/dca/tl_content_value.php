@@ -92,6 +92,10 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "mediumblob NULL"
 		),
+		'pageSRC' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'singleSRC' => array
 		(
 			'sql'                     => "binary(16) NULL"
