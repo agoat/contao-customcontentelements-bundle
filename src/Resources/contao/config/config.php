@@ -94,6 +94,7 @@ $GLOBALS['TL_CTP_NA'] = array
 		'section',
 		'visibility',
 		'protection',
+		'imagesize',
 	),
 	'multipattern' => array
 	(
