@@ -194,7 +194,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getPatternForContentBlock'),
+			'options_callback'        => array('tl_content_pattern', 'getPattern'),
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
 			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true),
 			'sql'                     => "varchar(32) NOT NULL default ''"
@@ -644,7 +644,6 @@ if ($objParent !== null)
 	if ($objParent->type == 'subpattern')
 	{
 		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
-		$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForSubPattern');
 		
 		// set the filter for the subpattern option
 		if ($objParent->subPatternType == 'options')
@@ -659,7 +658,6 @@ if ($objParent !== null)
 	else if ($objParent->type == 'multipattern')
 	{
 		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
-		$GLOBALS['TL_DCA']['tl_content_pattern']['fields']['type']['options_callback'] = array('tl_content_pattern', 'getPatternForMultiPattern');
 	}
 
 }
@@ -996,71 +994,44 @@ class tl_content_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getPatternForContentBlock()
+	public function getPattern()
 	{
-	
-		$pattern = array();
-		
-		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
-		{
-			foreach (array_keys($v) as $kk)
-			{
-				$pattern[$k][] = $kk;					
-			}
-		}
-		
-		return $pattern;
-	}
-	
-	/**
-	 * Return all content pattern as array
-	 *
-	 * @return array
-	 */
-	public function getPatternForSubPattern()
-	{
-	
-		$pattern = array();
-		
-		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
-		{
-			foreach (array_keys($v) as $kk)
-			{
-				// exclude pattern not allowed in sub pattern
-				if (!in_array($kk, $GLOBALS['TL_CTP_NA']['subpattern']))
-				{
-					$pattern[$k][] = $kk;					
-				}
-			}
-		}
-		
-		return $pattern;
-	}
+		// Prepare the NotAllowed list for all parent sub pattern
+		$objPattern = \ContentPatternModel::findById(\Input::get('id'));
 
-	/**
-	 * Return all content pattern as array
-	 *
-	 * @return array
-	 */
-	public function getPatternForMultiPattern()
-	{
-	
+		$arrNA = array();
+		
+		if ($objPattern != null)
+		{
+			while($objPattern->ptable == 'tl_content_subpattern')
+			{
+				$objPattern = \ContentPatternModel::findById($objPattern->pid);
+				
+				if (in_array($objPattern->type, array_keys($GLOBALS['TL_CTP_NA'])))
+				{
+					$arrNA = array_merge($arrNA, $GLOBALS['TL_CTP_NA'][$objPattern->type]);
+				}
+			}
+		}
+			
+		$arrNA = array_unique($arrNA);
 		$pattern = array();
 		
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{
 			foreach (array_keys($v) as $kk)
 			{
-				// exclude pattern not allowed in multigroup
-				if (!in_array($kk, $GLOBALS['TL_CTP_NA']['multipattern']))
+				// Exclude pattern not allowed in sub pattern
+				if (!in_array($kk, $arrNA))
 				{
 					$pattern[$k][] = $kk;					
-				}
+				}				
 			}
 		}
 		
 		return $pattern;
 	}
+	
 	
 
 	/**
