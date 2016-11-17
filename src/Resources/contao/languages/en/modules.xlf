@@ -2,14 +2,11 @@
 <xliff version="1.1">
   <file datatype="php" original="system/modules/elements/languages/en/modules.php" source-language="en">
     <body>
-      <trans-unit id="MOD.tl_content_blocks">
+     <trans-unit id="MOD.tl_content_blocks">
         <source>Content blocks</source>
       </trans-unit>
      <trans-unit id="MOD.tl_content_pattern">
-        <source>Content pattern</source>
-      </trans-unit>
-    <trans-unit id="MOD.tl_content_subpattern">
-        <source>Content blocks</source>
+        <source>Block pattern</source>
       </trans-unit>
  
      <trans-unit id="MOD.element.0">

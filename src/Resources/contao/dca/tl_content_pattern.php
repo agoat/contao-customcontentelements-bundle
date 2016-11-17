@@ -1101,16 +1101,14 @@ class tl_content_pattern extends Backend
 		{			
 			if ($db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
 			{
-				$db->prepare("UPDATE tl_content_subpattern SET pid=?,alias=?,type=?,subPatternType=?,numberOfGroups=? WHERE id=?")
-				   ->execute($dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups, $dc->activeRecord->id);
+				$db->prepare("UPDATE tl_content_subpattern SET pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=? WHERE id=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->label, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups, $dc->activeRecord->id);
 			}
 			else
 			{
-				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
-				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups);
-				
+				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->label, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups);
 			}
-
 		}
 
 		// save the filter for subpattern

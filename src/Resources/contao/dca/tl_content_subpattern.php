@@ -48,6 +48,10 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
+		'title' => array
+		(
+			'sql'                     => "varchar(128) NOT NULL default ''"
+		),
 		'alias' => array
 		(
 			'sql'                     => "varchar(64) NOT NULL default ''"
