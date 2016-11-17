@@ -43,6 +43,12 @@
 			<trans-unit id="CTP.checkbox.1">
 				<source>Insert a checkbox input field.</source>
 			</trans-unit>
+			<trans-unit id="CTP.pagetree.0">
+				<source>Page selection</source>
+			</trans-unit>
+			<trans-unit id="CTP.pagetree.1">
+				<source>Insert a page select input field.</source>
+			</trans-unit>
 			<trans-unit id="CTP.filetree.0">
 				<source>Source selection</source>
 			</trans-unit>
