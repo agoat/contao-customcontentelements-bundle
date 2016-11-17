@@ -1005,6 +1005,7 @@ class tl_content_pattern extends Backend
 		{
 			while($objPattern->ptable == 'tl_content_subpattern')
 			{
+				// The subpattern table can be ignored because pid=id
 				$objPattern = \ContentPatternModel::findById($objPattern->pid);
 				
 				if (in_array($objPattern->type, array_keys($GLOBALS['TL_CTP_NA'])))
