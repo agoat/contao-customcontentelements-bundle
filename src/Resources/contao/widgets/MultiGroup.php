@@ -74,72 +74,77 @@ class MultiGroup extends \Widget
 		// Change pattern content values 
 		if (\Input::get($this->strCommand) && is_numeric(\Input::get('cid')) && \Input::get('id') == $this->currentRecord)
 		{
-			// make the value a number
+			// Set the value at least to 1
 			if ($this->varValue < 1)
 			{
 				$this->varValue = 1;
 			}
-
-			// Correct and save group counter
-			switch(\Input::get($this->strCommand))
+			
+			// Let the DC_Table first save the post values 
+			if (\Environment::get('request_method') == 'GET')
 			{
-				case 'insert':
-					if ($this->varValue < $this->numberOfGroups)
-					{
-						$objValue = \ContentValueModel::findByCidandPidandRid($this->currentRecord, $this->pid, $this->rid);
-						
-						if ($objValue === null)
+				// Correct and save group counter
+				switch(\Input::get($this->strCommand))
+				{
+					case 'insert':
+						if ($this->varValue < $this->numberOfGroups)
 						{
-							// if no dataset exist make a new one
-							$objValue = new ContentValueModel();
+							$objValue = \ContentValueModel::findByCidandPidandRid($this->currentRecord, $this->pid, $this->rid);
+							
+							if ($objValue === null)
+							{
+								// if no dataset exist make a new one
+								$objValue = new ContentValueModel();
+							}
+							
+							$objValue->cid = $this->currentRecord;
+							$objValue->pid = $this->pid;
+							$objValue->rid = $this->rid;
+							$objValue->tstamp = time();
+							$objValue->count = $this->varValue + 1;
+							
+							$objValue->save();
+							
+							// (Re)Order values
+							$this->insertMultiGroup($this->pid, $this->rid, \Input::get('cid'));
 						}
-						
-						$objValue->cid = $this->currentRecord;
-						$objValue->pid = $this->pid;
-						$objValue->rid = $this->rid;
-						$objValue->tstamp = time();
-						$objValue->count = $this->varValue + 1;
-						
-						$objValue->save();
-						
+					break;
+					case 'up':
 						// (Re)Order values
-						$this->insertMultiGroup($this->pid, $this->rid, \Input::get('cid'));
-					}
-				break;
-				case 'up':
-					// (Re)Order values
-					$this->moveUpMultiGroup($this->pid, $this->rid, \Input::get('cid'));
-				break;
-				case 'down':
-					// (Re)Order values
-					$this->moveDownMultiGroup($this->pid, $this->rid, \Input::get('cid'));
-				break;
-				case 'delete':
-					if ($this->varValue > 1)
-					{
-						$objValue = \ContentValueModel::findByCidandPidandRid($this->currentRecord, $this->pid, $this->rid);
-						
-						if ($objValue === null)
+						$this->moveUpMultiGroup($this->pid, $this->rid, \Input::get('cid'));
+					break;
+					case 'down':
+						// (Re)Order values
+						$this->moveDownMultiGroup($this->pid, $this->rid, \Input::get('cid'));
+					break;
+					case 'delete':
+						if ($this->varValue > 1)
 						{
-							// if no dataset exist make a new one
-							$objValue = new ContentValueModel();
+							$objValue = \ContentValueModel::findByCidandPidandRid($this->currentRecord, $this->pid, $this->rid);
+							
+							if ($objValue === null)
+							{
+								// if no dataset exist make a new one
+								$objValue = new ContentValueModel();
+							}
+							
+							$objValue->cid = $this->currentRecord;
+							$objValue->pid = $this->pid;
+							$objValue->rid = $this->rid;
+							$objValue->tstamp = time();
+							$objValue->count = $this->varValue - 1;
+							
+							$objValue->save();
+							
+							// (Re)Order values
+							$this->deleteMultiGroup($this->pid, $this->rid, \Input::get('cid'));
 						}
-						
-						$objValue->cid = $this->currentRecord;
-						$objValue->pid = $this->pid;
-						$objValue->rid = $this->rid;
-						$objValue->tstamp = time();
-						$objValue->count = $this->varValue - 1;
-						
-						$objValue->save();
-						
-						// (Re)Order values
-						$this->deleteMultiGroup($this->pid, $this->rid, \Input::get('cid'));
-					}
-				break;
+					break;
+				}
+				
+				$this->redirect(preg_replace('/&(amp;)?cid=[^&]*/i', '', preg_replace('/&(amp;)?' . preg_quote($this->strCommand, '/') . '=[^&]*/i', '', \Environment::get('request'))));
 			}
 
-			$this->redirect(preg_replace('/&(amp;)?cid=[^&]*/i', '', preg_replace('/&(amp;)?' . preg_quote($this->strCommand, '/') . '=[^&]*/i', '', \Environment::get('request'))));
 		}
 		
 		
@@ -150,7 +155,7 @@ class MultiGroup extends \Widget
 		// Add new button
 		if ($this->groupCount < $this->numberOfGroups)
 		{
-			$return .= '<a href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.($this->rid*100-1).'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'" title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['mg_new']['label'] . '</a>';
+			$return .= '<a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.($this->rid*100-1).'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'" title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['mg_new']['label'] . '</button>';
 		}
 		
 		$return .= '</div>';
