@@ -265,7 +265,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'options'                 => array('button', 'options'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_subPatternType'],
 			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(16) NOT NULL default ''"
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'numberOfGroups' => array
 		(

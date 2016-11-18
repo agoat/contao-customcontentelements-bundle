@@ -46,11 +46,11 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 		'type' => array
 		(
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
-			'sql'                     => "varchar(32) NOT NULL default ''"
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'title' => array
 		(
-			'sql'                     => "varchar(128) NOT NULL default ''"
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'alias' => array
 		(
@@ -59,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 		'subPatternType' => array
 		(
 			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_subPatternType'],
-			'sql'                     => "varchar(32) NOT NULL default ''"
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'numberOfGroups' => array
 		(
