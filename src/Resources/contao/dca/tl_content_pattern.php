@@ -1123,7 +1123,7 @@ class tl_content_pattern extends Backend
 		}
 	}
 
-	public function copySubPattern ($insertID, $dc, $pid=false)
+	public function copySubPattern ($insertID, $dc)
 	{
 		$db = Database::getInstance();
 		
@@ -1136,64 +1136,112 @@ class tl_content_pattern extends Backend
 			$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
 			   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
 
-			$colSubPattern = \ContentPatternModel::findByPidAndTable(($pid) ? $pid : $dc->id, 'tl_content_subpattern');
-		
-			if ($colSubPattern === null)
-			{
-				return;
-			}
+			$colPattern = \ContentPatternModel::findByPidAndTable($dc->id, 'tl_content_subpattern');
 			
-			foreach ($colSubPattern as $objSubPattern)
+			if ($colPattern !== null)
 			{
-				$arrValues = $objSubPattern->row();
+				$arrPattern = $colPattern->fetchAll();
 				
-				// Remove id and set new pid
+				foreach ($arrPattern as $k=>$v)
+				{
+					$arrPattern[$k]['pid'] = $insertID;
+				}				
+			}
+
+			while (!empty($arrPattern))
+			{
+				$arrCurrent = array_shift($arrPattern);
+				
+				$arrValues = $arrCurrent;
+				
+				// Remove id
 				unset($arrValues['id']);
-				$arrValues['pid'] = $insertID;
 				
 				$objInsertStmt = $db->prepare("INSERT INTO tl_content_pattern %s")
 									->set($arrValues)
 									->execute();
-
-				// Recursively copy sub sub pattern
-				if (in_array($arrValues['type'], $GLOBALS['TL_CTP_SUB']))
+				
+				$insertID = $objInsertStmt->insertId;
+				
+				if (in_array($arrCurrent['type'], $GLOBALS['TL_CTP_SUB']))
 				{
-					$this->copySubPattern($objInsertStmt->insertId, $dc, $objSubPattern->id);
+					// copy to subpattern table
+					$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+					   ->execute($insertID, $insertID, $arrCurrent['label'], $arrCurrent['alias'], $arrCurrent['type'], $arrCurrent['subPatternType'], $arrCurrent['numberOfGroups']);
+
+					   $colSubPattern = \ContentPatternModel::findByPidAndTable($arrCurrent['id'], 'tl_content_subpattern');
+					
+					if ($colSubPattern !== null)
+					{
+						$arrSubPattern = $colSubPattern->fetchAll();
+						
+						foreach ($arrSubPattern as $k=>$v)
+						{
+							$arrSubPattern[$k]['pid'] = $insertID;
+						}				
+					}
+						
+					foreach ($arrSubPattern as $k=>$v)
+					{
+						$arrSubPattern[$k]['pid'] = $insertID;
+					}
+
+					$arrPattern = array_merge($arrPattern, $arrSubPattern);
 				}
 			}
 		}
 	}
 
+
 	public function deleteSubPattern ($dc, $intUndoId)
 	{
 		$db = Database::getInstance();
-
-		// save changes to subpattern table
+		
 		if (in_array($dc->activeRecord->type, $GLOBALS['TL_CTP_SUB']))
 		{			
-			$colPattern = \ContentPatternModel::findByPidAndTable($dc->activeRecord->id, 'tl_content_subpattern');
-		
-			if ($colPattern === null)
-			{
-				return;
-			}
-
 			// get the undo database row
 			$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
-						  ->execute($intUndoId) ;
-				
+						  ->execute($intUndoId);
+
 			$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 			
-
-			foreach ($colPattern as $objPattern)
+			$colPattern = \ContentPatternModel::findByPidAndTable($dc->activeRecord->id, 'tl_content_subpattern');
+			
+			if ($colPattern !== null)
 			{
-				
-				// get value row(s)
-				$arrData['tl_content_value'][] = $objPattern->row();
-
-				$objPattern->delete();
+				$arrPattern = $colPattern->fetchAll();
 			}
-		
+
+			while (!empty($arrPattern))
+			{
+				$arrCurrent = array_shift($arrPattern);
+				
+				// Add row to undo array
+				$arrData['tl_content_pattern'][] = $arrCurrent;
+				
+				// Delete row in database
+				$db->prepare("DELETE FROM tl_content_pattern WHERE id=?")
+				   ->execute($arrCurrent['id']);
+				
+				if (in_array($arrCurrent['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					// Add related row to undo array
+					$arrData['tl_content_subpattern'][] = $db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")
+															 ->execute($arrCurrent['id'])->fetchAssoc();
+					
+					// Delete row in database
+					$db->prepare("DELETE FROM tl_content_subpattern WHERE id=?")
+					   ->execute($arrCurrent['id']);
+					
+					$colSubPattern = \ContentPatternModel::findByPidAndTable($arrCurrent['id'], 'tl_content_subpattern');
+					
+					if ($colSubPattern !== null)
+					{
+						$arrPattern = array_merge($arrPattern, $colSubPattern->fetchAll());
+					}
+				}
+			}
+			
 			// save to the undo database row
 			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
 			   ->execute(serialize($arrData), $intUndoId);
@@ -1201,8 +1249,7 @@ class tl_content_pattern extends Backend
 	}
 
 
-	
-	/**
+		/**
 	 * Show a hint if the content block is already in use
 	 */
 	public function showAlreadyUsedHint($dc)
