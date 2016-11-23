@@ -35,6 +35,10 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		(
 			array('tl_content_blocks', 'generateAlias')
 		),
+		'oncopy_callback'			  => array
+		(
+			array('tl_content_blocks', 'copyBlocksSubPattern')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -307,8 +311,65 @@ class tl_content_blocks extends Backend
 			}
 		}
 	}
-
 	
+	
+	public function copyBlocksSubPattern ($insertID, $dc)
+	{
+		$arrOldPattern = \ContentPatternModel::findByPidAndTable($dc->id, 'tl_content_blocks')->fetchEach('id');
+		
+		$colPattern = \ContentPatternModel::findByPidAndTable($insertID, 'tl_content_blocks');
+		
+		foreach ($colPattern as $k=>$objPattern)
+		{
+			if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
+			{			
+				$this->copySubPattern($objPattern->id, $arrOldPattern[$k]);
+			}
+		}
+	}
+	
+	private function copySubPattern ($insertID, $pid)
+	{
+		$db = Database::getInstance();
+		
+		$objPattern = \ContentPatternModel::findById($insertID);
+		
+		// copy changes to subpattern table and duplicate the subpattern
+		if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
+		{			
+			// copy to subpattern table
+			$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+			   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
+			
+			$colSubPattern = \ContentPatternModel::findByPidAndTable($pid, 'tl_content_subpattern');
+			
+			if ($colSubPattern === null)
+			{
+				return;
+			}
+			
+			foreach ($colSubPattern as $objSubPattern)
+			{
+				$arrValues = $objSubPattern->row();
+				
+				// Remove id and set new pid
+				unset($arrValues['id']);
+				$arrValues['pid'] = $insertID;
+				
+				$objInsertStmt = $db->prepare("INSERT INTO tl_content_pattern %s")
+									->set($arrValues)
+									->execute();
+				
+				// Recursively copy sub sub pattern
+				if (in_array($arrValues['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					$this->copySubPattern($objInsertStmt->insertId, $objSubPattern->id);
+				}
+			}
+		}
+	}
+
+		
 	/**
 	 * Return all content element templates as array
 	 *

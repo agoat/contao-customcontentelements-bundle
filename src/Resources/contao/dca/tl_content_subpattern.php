@@ -23,6 +23,9 @@ $GLOBALS['TL_DCA']['tl_content_subpattern'] = array
 	(
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_content_pattern',
+		'notEditable'                 => true,
+		'notCopyable'                 => true,
+		'doNotCopyRecords'            => true,
 		'sql' => array
 		(
 			'keys' => array

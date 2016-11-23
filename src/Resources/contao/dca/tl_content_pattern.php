@@ -37,6 +37,10 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			array('tl_content_pattern', 'saveGroups'),
 			array('tl_content_pattern', 'saveSubPattern'),
 		),
+		'oncopy_callback'			  => array
+		(
+			array('tl_content_pattern', 'copySubPattern'),
+		),
 		'ondelete_callback'			  => array
 		(
 			array('tl_content_pattern', 'deleteSubPattern'),
@@ -1116,6 +1120,47 @@ class tl_content_pattern extends Backend
 		{
 			$db->prepare("UPDATE tl_content_pattern SET suboption=? WHERE id=?")
 			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1], $dc->activeRecord->id);
+		}
+	}
+
+	public function copySubPattern ($insertID, $dc, $pid=false)
+	{
+		$db = Database::getInstance();
+		
+		$objPattern = \ContentPatternModel::findById($insertID);
+
+		// copy changes to subpattern table and duplicate the subpattern
+		if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
+		{			
+			// copy to subpattern table
+			$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+			   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
+
+			$colSubPattern = \ContentPatternModel::findByPidAndTable(($pid) ? $pid : $dc->id, 'tl_content_subpattern');
+		
+			if ($colSubPattern === null)
+			{
+				return;
+			}
+			
+			foreach ($colSubPattern as $objSubPattern)
+			{
+				$arrValues = $objSubPattern->row();
+				
+				// Remove id and set new pid
+				unset($arrValues['id']);
+				$arrValues['pid'] = $insertID;
+				
+				$objInsertStmt = $db->prepare("INSERT INTO tl_content_pattern %s")
+									->set($arrValues)
+									->execute();
+
+				// Recursively copy sub sub pattern
+				if (in_array($arrValues['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					$this->copySubPattern($objInsertStmt->insertId, $dc, $objSubPattern->id);
+				}
+			}
 		}
 	}
 
