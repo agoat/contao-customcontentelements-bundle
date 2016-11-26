@@ -56,7 +56,7 @@ class PatternCode extends Pattern
 		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
 		ob_start();
-		include(TemplateLoader::getPath('be_ace', strtolower($this->highlight)));
+		include(TemplateLoader::getPath('be_ace', 'html5'));
 		$strPreview .= ob_get_contents();
 		ob_end_clean();
 			
