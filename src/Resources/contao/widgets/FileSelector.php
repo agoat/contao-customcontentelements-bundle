@@ -390,8 +390,8 @@ class FileSelector extends \Widget
 		$session = $objSessionBag->all();
 
 		$flag = substr($this->strField, 0, 2);
-		$node = 'tree_' . $this->strTable . '_' . explode('-' , $this->strField)[0];
-		$xtnode = 'tree_' . $this->strTable . '_' . explode('-', $this->strName)[0];
+		$node = 'tree_' . $this->strTable . '_' . explode('_' , $this->strField)[0];
+		$xtnode = 'tree_' . $this->strTable . '_' . explode('_', $this->strName)[0];
 
 		// Get session data and toggle nodes
 		if (\Input::get($flag.'tg'))
