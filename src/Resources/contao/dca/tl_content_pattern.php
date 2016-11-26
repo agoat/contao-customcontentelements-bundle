@@ -200,8 +200,8 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_content_pattern', 'getPattern'),
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
-			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true),
-			'sql'                     => "varchar(32) NOT NULL default ''"
+			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'alias' => array
 		(
@@ -578,7 +578,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_content_pattern', 'getForms'),
-			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
+			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50 wizard'),
 			'wizard' => array
 			(
 				array('tl_content_pattern', 'editForm')
@@ -591,7 +591,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_content_pattern', 'getModules'),
-			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true),
+			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50 wizard'),
 			'wizard' => array
 			(
 				array('tl_content_pattern', 'editModule')
@@ -747,13 +747,22 @@ class tl_content_pattern extends Backend
 
 		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
 
+		if ($objPattern === null)
+		{
+			// Try from pid when no spid
+			$objPattern = \ContentPatternModel::findByPk(\Input::get('pid'));
+		}
+
 		$arrAllowedValues = array();
 		
-		foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+		if ($objPattern->options !== null)
 		{
-			if (!$arrOption['group'])
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
 			{
-				$arrAllowedValues[] = $arrOption['value'];
+				if (!$arrOption['group'])
+				{
+					$arrAllowedValues[] = $arrOption['value'];
+				}
 			}
 		}
 
