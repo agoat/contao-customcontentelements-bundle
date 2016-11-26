@@ -139,7 +139,7 @@ class ContentBlockElement extends ContentElement
 	protected function compile()
 	{		
 		// get the pattern model collection
-		$colPattern = \ContentPatternModel::findPublishedByPidAndTable($this->objBlock->id, 'tl_content_blocks');
+		$colPattern = \ContentPatternModel::findPublishedByPid($this->objBlock->id);
 
 		if ($colPattern === null)
 		{
