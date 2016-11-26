@@ -85,14 +85,14 @@ class ContentBlockElement extends ContentElement
 		// register the custom template
 		if (!array_key_exists($this->objBlock->template, TemplateLoader::getFiles()))
 		{
-			TemplateLoader::addFile($this->objBlock->template, $this->objBlock->getRelated('pid')->templates);
+			TemplateLoader::addFile($this->objBlock->template, TL_ROOT . '/' . $this->objBlock->getRelated('pid')->templates);
 		}
-		
+
 		// set the template file
 		$this->strTemplate = $this->objBlock->template;
 		
 		
-		// add the contentblocks backend stylesheets
+		// add the contentblocks backend stylesheets (depreciated)
 		if (TL_MODE == 'BE')
 		{
 			$objFile = \FilesModel::findByPk($this->objBlock->stylesheet);
@@ -126,7 +126,7 @@ class ContentBlockElement extends ContentElement
 			)
 		);
 
-		// get pattern and values
+		// compile pattern to prepare values
 		$this->compile();
 		
 		return $this->Template->parse();
@@ -146,17 +146,27 @@ class ContentBlockElement extends ContentElement
 			return;
 		}
 		
+		// get correct element id (included content element) see #37
+		$intCid = ($this->origId) ? $this->origId : $this->id;
+		
+		// get values for content block
+		$colValues = \ContentValueModel::findByCid($intCid);
+
+		if ($colValues !== null)
+		{
+			foreach ($colValues as $objValue)
+			{
+				$arrValues[$objValue->pid][$objValue->rid] = $objValue;
+			}							
+		}
+		
+		
+		// prepare values for every pattern
 		foreach($colPattern as $objPattern)
 		{
 			// don´t show the invisible or system pattern
 			if (in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
 			{
-				continue;
-			}
-
-			if ($objPattern->type == 'section')
-			{
-				$strReplicaAlias = ($objPattern->replicable) ? $objPattern->replicaAlias : '';
 				continue;
 			}
 
@@ -169,37 +179,16 @@ class ContentBlockElement extends ContentElement
 			}
 			else
 			{
-				
-				// get correct element id (included content element) see #37
-				$intCid = ($this->origId) ? $this->origId : $this->id;
-				
-				// get the values
-				$colValue = \ContentValueModel::findByCidandPid($intCid, $objPattern->id);
-				
-				if ($colValue === null)
-				{
-					$colValue = array(0=>0);
-				}
-				
 				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->cid = $intCid;
-				$objPatternClass->cpid = $this->pid;
-				$objPatternClass->cptable = $this->ptable;
-				$objPatternClass->replicaAlias = $strReplicaAlias;					
+				$objPatternClass->rid = 0;
 				$objPatternClass->Template = $this->Template;
-			
-				foreach ($colValue as $replica => $objValue)
-				{
-					$objPatternClass->replica = $replica;
-					$objPatternClass->Value = $objValue;
-					
-					$objPatternClass->compile();
-				}				
+				$objPatternClass->arrValues = $arrValues;
+				$objPatternClass->Value = $arrValues[$objPattern->id][0];
+				
+				$objPatternClass->compile();
 			}
-					
-			
 		}
-
 	}
 	
 }

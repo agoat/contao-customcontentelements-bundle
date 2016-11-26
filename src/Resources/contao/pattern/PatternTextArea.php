@@ -33,7 +33,7 @@ class PatternTextArea extends Pattern
 			
 			foreach ($arrTemplateFiles as $strFile)
 			{
-				$arrTemplates[basename($strFile, '.html5')] = str_replace(TL_ROOT, '', dirname($strFile));
+				$arrTemplates[basename($strFile, '.html5')] = dirname($strFile);
 			}
 			
 			TemplateLoader::addFiles($arrTemplates);
@@ -74,7 +74,7 @@ class PatternTextArea extends Pattern
 
 			foreach ($arrTemplateFiles as $strFile)
 			{
-				$arrTemplates[basename($strFile, '.html5')] = str_replace(TL_ROOT, '', dirname($strFile));
+				$arrTemplates[basename($strFile, '.html5')] = dirname($strFile);
 			}
 			
 			TemplateLoader::addFiles($arrTemplates);
@@ -83,7 +83,7 @@ class PatternTextArea extends Pattern
 		if (array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
 			ob_start();
-			include(\TemplateLoader::getPath($this->rteTemplate, 'html5'));
+			include(TemplateLoader::getPath($this->rteTemplate, 'html5'));
 			$strPreview .= ob_get_contents();
 			ob_end_clean();
 		}
