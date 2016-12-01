@@ -105,6 +105,4 @@ class ContentValueModel extends Model
 		return static::find($arrOptions);
 	}
 
-
-
 }

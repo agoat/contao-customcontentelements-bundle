@@ -205,7 +205,7 @@ class PatternFileTree extends Pattern
 	
 		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div><p title="" class="tl_help tl_tip">' . $this->description . '</p>';
 
-		if ($this->canChangeSize)
+		if ($this->source == 'image' && $this->canChangeSize)
 		{
 			$strPreview .= '<h3 style="margin: 0; padding-top: 14px;"><label>' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][0] . '</label></h3><div class="tl_image_size"><select class="tl_select_interval">';
 	

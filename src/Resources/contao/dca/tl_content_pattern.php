@@ -14,7 +14,7 @@
 
  
 /**
- * Table tl_content_element
+ * Table tl_content_pattern
  */
 $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 (
@@ -22,9 +22,11 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 	'config' => array
 	(
 		'dataContainer'               => 'Table',
-		'switchToEdit'                => true,
+		'switchToEdit'                => false,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_content_blocks',
+		'ctable'                      => array('tl_content_subpattern'),
+		'dynamicPtable'				  => true,
 		'onload_callback' => array
 		(
 			//array('tl_content_pattern', 'checkPermission'),
@@ -32,15 +34,24 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'onsubmit_callback'			  => array
 		(
-			array('tl_content_pattern', 'correctGroups'),
+			array('tl_content_pattern', 'saveGroups'),
+			array('tl_content_pattern', 'saveSubPattern'),
+		),
+		'oncopy_callback'			  => array
+		(
+			array('tl_content_pattern', 'copySubPattern'),
+		),
+		'ondelete_callback'			  => array
+		(
+			array('tl_content_pattern', 'deleteSubPattern'),
 		),
 		'sql' => array
 		(
 			'keys' => array
 			(
 				'id' => 'primary',
-				'pid' => 'index',
-				'pid,invisible' => 'index'
+				'pid,ptable,invisible,sorting' => 'index',
+				'pid,ptable,suboption,invisible,sorting' => 'index'
 			)
 		)
 	),
@@ -70,34 +81,40 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'edit' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['edit'],
+				'icon'                => 'edit.svg',
+				'button_callback'     => array('tl_content_pattern', 'patternButton')
+			),
+			'editheader' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['editheader'],
 				'href'                => 'act=edit',
-				'icon'                => 'edit.gif',
+				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['copy'],
 				'href'                => 'act=copy',
-				'icon'                => 'copy.gif',
+				'icon'                => 'copy.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset()"'
 			),
 			'cut' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['cut'],
 				'href'                => 'act=paste&amp;mode=cut',
-				'icon'                => 'cut.gif',
+				'icon'                => 'cut.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset()"'
 			),
 			'delete' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['delete'],
 				'href'                => 'act=delete',
-				'icon'                => 'delete.gif',
+				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['toggle'],
-				'icon'                => 'visible.gif',
+				'icon'                => 'visible.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
 				'button_callback'     => array('tl_content_pattern', 'toggleIcon')
 			),
@@ -105,14 +122,14 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['show'],
 				'href'                => 'act=show',
-				'icon'                => 'show.gif'
+				'icon'                => 'show.svg'
 			)
 		)
 	),
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type','replicable','source','multiSource','picker'),
+		'__selector__'                => array('type','source','multiSource','picker','subPatternType'),
 		'default'                     => '{type_legend},type',
 		// input
 		'textfield'					  => '{type_legend},type;{textfield_legend},minLength,maxLength,rgxp,defaultValue,multiple,picker;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr,classLong;{invisible_legend},invisible',
@@ -128,6 +145,8 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		// layout
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
+		'subpattern'				  => '{type_legend},type;{subpattern_legend},subPatternType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
+		'multipattern'				  => '{type_legend},type;{multipattern_legend},numberOfGroups;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
 		// element
 		'visibility'				  => '{type_legend},type;{visibility_legend},canChangeStart,canChangeStop;{invisible_legend},invisible',
 		'protection'				  => '{type_legend},type;{protection_legend},groups,canChangeGroups;{invisible_legend},invisible',
@@ -139,11 +158,12 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 	// Subpalettes
 	'subpalettes' => array
 	(
-		'replicable'				  => 'maxReplicas,sortReplicas,alias',
 		'source_image'				  => 'size,canChangeSize,sizeList,canEnterSize',
 		'source_custom'				  => 'customExtension',
 		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore',
 		'picker_unit'				  => 'units',
+		'replicable'				  => 'maxReplicas',
+		'subPatternType_options'	  => 'options',
 	),
 	// Fields
 	'fields' => array
@@ -154,8 +174,11 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'pid' => array
 		(
-			'relation'                => array('type'=>'belongsTo', 'load'=>'lazy', 'table'=>'tl_content_blocks'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'ptable' => array
+		(
+			'sql'                     => "varchar(64) NOT NULL default 'tl_content_blocks'"
 		),
 		'sorting' => array
 		(
@@ -165,6 +188,10 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
+		'suboption' => array
+		(
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
 		'type' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['type'],
@@ -172,7 +199,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getElementPattern'),
+			'options_callback'        => array('tl_content_pattern', 'getPattern'),
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
 			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
@@ -210,61 +237,6 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'long clr'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'explanation' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
-			'exclude'                 => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCE_explanation'),
-			'sql'                     => "mediumtext NULL"
-		),
-		'hidden' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['hidden'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'replicable' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['replicable'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 m12'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'replicaAlias' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['replicaAlias'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(64) NOT NULL default ''"
-		),
-		'replicaCount' => array
-		(
-			'eval'                    => array('hideInput'=>true),
-			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
-		),
-		'sortReplicas' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['sortReplicas'],
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'options'                 => array('custom', 'name_asc', 'name_desc', 'random'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern'],
-			'eval'                    => array('tl_class'=>'w50'),
-			'sql'                     => "varchar(32) NOT NULL default ''"
-		),
-		'maxReplicas' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['maxReplicas'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'natural', 'tl_class'=>'w50 clr'),
-			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
-		),
 		'mandatory' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['mandatory'],
@@ -289,6 +261,41 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
 			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'subPatternType' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['subPatternType'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'options'                 => array('button', 'options'),
+			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_subPatternType'],
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'numberOfGroups' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['numberOfGroups'],
+			'exclude'                 => true,
+			'default'				  => 100,
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'minval'=>1, 'maxval'=>100, 'tl_class'=>'w50 clr'),
+			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
+		),
+		'hidden' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['hidden'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'explanation' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
+			'exclude'                 => true,
+			'inputType'               => 'textarea',
+			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCE_explanation'),
+			'sql'                     => "mediumtext NULL"
 		),
 		'style' => array
 		(
@@ -547,7 +554,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['options'],
 			'exclude'                 => true,
 			'inputType'               => 'optionWizard',
-			'eval'                    => array('allowHtml'=>true),
+			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'clr'),
 			'sql'                     => "blob NULL"
 		),
 		'blankOption' => array
@@ -572,7 +579,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_content_pattern', 'getForms'),
-			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
+			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50 wizard'),
 			'wizard' => array
 			(
 				array('tl_content_pattern', 'editForm')
@@ -585,7 +592,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_content_pattern', 'getModules'),
-			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true),
+			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50 wizard'),
 			'wizard' => array
 			(
 				array('tl_content_pattern', 'editModule')
@@ -597,6 +604,70 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 );
 
 
+/**
+ * Dynamically change parent table when editing subpattern
+ */
+if (\Input::get('spid') !== null)
+{
+	$objParent = \ContentPatternModel::findById(\Input::get('spid'));
+}
+else if (\Input::get('act') == 'edit' && \Input::get('mode') == '1')
+{
+	// for the 'save and edit' function use the parent of the parent to check for a sub pattern
+	$objParent = \ContentPatternModel::findById(\Input::get('pid'));
+
+	if ($objParent->ptable == 'tl_content_subpattern')
+	{
+		$objParent = \ContentPatternModel::findById($objParent->pid);
+	}
+	else
+	{
+		$objParent = null;
+	}
+}
+else
+{
+	$objParent = null;	
+}
+
+if ($objParent !== null)
+{
+	if (\Input::get('id') == \Input::get('spid') && \Input::get('act') == 'edit')
+	{
+		// when editing a sub pattern itself use the ptable of the sub pattern object
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objParent->ptable;
+	}
+	else
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
+	}
+	
+	$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
+	
+
+	// Extra config for the sub pattern types
+	if ($objParent->type == 'subpattern')
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
+		
+		// set the filter for the subpattern option
+		if ($objParent->subPatternType == 'options')
+		{
+			// set callbacks and filter
+			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback'][] = array('tl_content_pattern', 'subPatternFilter');
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panel_callback']['subPatternFilter'] = array('tl_content_pattern', 'generatesubPatternFilter');
+
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
+		}
+	}
+	else if ($objParent->type == 'multipattern')
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
+	}
+
+}
+
+
 
 /**
  * Provide miscellaneous methods that are used by the data configuration array.
@@ -606,6 +677,12 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 class tl_content_pattern extends Backend
 {
 
+
+	protected $table = 'tl_content_pattern';
+	
+	
+	
+	
 	/**
 	 * Import the back end user object
 	 */
@@ -615,7 +692,137 @@ class tl_content_pattern extends Backend
 		$this->import('BackendUser', 'User');
 	}
 
+	
+	// panel_callback
+	public function generatesubPatternFilter($dc) 
+	{ 
+		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
+		
+		if ($objPattern !== null)
+		{
+			$return = '<div class="tl_filter tl_subpanel"><strong>' . $GLOBALS['TL_LANG']['tl_content_pattern']['suboption'] . ' </strong>';
+			$return .= '<select name="suboption" id="suboption" class="tl_select" onchange="this.form.submit()">';
 
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				if ($arrOption['group'])
+				{
+					if ($blnOpenGroup)
+					{
+						$return .= '</optgroup>';
+					}
+					
+					$return .= '<optgroup label="&nbsp;' . StringUtil::specialchars($arrOption['label']) . '">';
+					$blnOpenGroup = true;
+					continue;
+				}
+				
+				$return .='<option value="' . $arrOption['value'] . '"' . (($GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'][1] == $arrOption['value'])? ' selected' : '') . '>' . StringUtil::specialchars($arrOption['label']) . '</option>';
+			}
+
+			if ($blnOpenGroup)
+			{
+				$return .= '</optgroup>';
+			}
+
+			$return .='</select></div>';
+		
+			return $return;
+		}
+
+		
+	}
+
+	
+	// onload_callback
+	public function subPatternFilter($dc) 
+	{ 
+		/** @var SessionInterface $objSession */
+		$objSession = \System::getContainer()->get('session');
+		
+		/** @var AttributeBagInterface $objSessionBag */
+		$objSessionBag = $objSession->getBag('contao_backend');
+		
+		$filter = $objSessionBag->get('filter');
+		$suboption = $filter['tl_content_pattern_'.CURRENT_ID]['suboption'];
+
+		$objPattern = \ContentPatternModel::findByPk(\Input::get('spid'));
+
+		if ($objPattern === null)
+		{
+			// Try from pid when no spid
+			$objPattern = \ContentPatternModel::findByPk(\Input::get('pid'));
+		}
+
+		$arrAllowedValues = array();
+		
+		if ($objPattern->options !== null)
+		{
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				if (!$arrOption['group'])
+				{
+					$arrAllowedValues[] = $arrOption['value'];
+				}
+			}
+		}
+
+		if (\Input::post('FORM_SUBMIT') == 'tl_filters' && in_array(\Input::post('suboption'), $arrAllowedValues))
+		{
+			// Validate the user input
+			if (\Input::post('suboption'))
+			{
+				$suboption = \Input::Post('suboption');
+			}
+			
+			$filter['tl_content_pattern_'.CURRENT_ID]['suboption'] = $suboption;
+			$objSessionBag->set('filter', $filter);
+		}
+		
+		if (!$suboption)
+		{
+			
+			if ($objPattern !== null)
+			{
+				foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+				{
+					if ($arrOption['default'] || (!$suboption && !$arrOption['group']))
+					{
+						$suboption = $arrOption['value'];
+					}	
+				}
+				
+			$filter['tl_content_pattern_'.CURRENT_ID]['suboption'] = $suboption;
+			$objSessionBag->set('filter', $filter);
+			}
+		}
+
+		// Set the filter option
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $suboption);
+	}
+	
+	
+	
+	/**
+	 * Return the pattern edit button
+	 *
+	 * @param array  $row
+	 * @param string $href
+	 * @param string $label
+	 * @param string $title
+	 * @param string $icon
+	 * @param string $attributes
+	 *
+	 * @return string
+	 */
+	public function patternButton($row, $href, $label, $title, $icon, $attributes)
+	{
+		if (in_array($row['type'], $GLOBALS['TL_CTP_SUB']))
+		{
+			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;spid='.$row['id'],true, array('act','mode')).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+		}
+		
+	}	
 	
 	/**
 	 * Add the type of content pattern
@@ -633,13 +840,6 @@ class tl_content_pattern extends Backend
 		switch ($arrRow['type'])
 		{
 			case 'section':
-				if ($arrRow['replicable'])
-				{
-					$options = ' <span style="color :#b3b3b3 ;padding-left: 3px"> (Template alias: $this->' . $arrRow['alias'] . '->...)</span>';		
-					$type = $GLOBALS['TL_LANG']['CTP']['multisection'][0];
-				}
-				break;
-			
 			case 'explanation':
 			case 'protection':
 			case 'visibility':
@@ -689,13 +889,13 @@ class tl_content_pattern extends Backend
 				if (!in_array($dc->activeRecord->rgxp, array('date', 'time', 'datim')))
 				{
 					// change rgxp in database
-					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET rgxp=? WHERE id=?")
 					   ->execute('date', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET multiple=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -704,7 +904,7 @@ class tl_content_pattern extends Backend
 				if (!in_array($dc->activeRecord->rgxp, array('alnum', 'extnd')))
 				{
 					// change rgxp in database
-					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET rgxp=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -713,13 +913,13 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->rgxp != 'url')
 				{
 					// change rgxp in database
-					$db->prepare("UPDATE tl_content_pattern SET rgxp=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET rgxp=? WHERE id=?")
 					   ->execute('url', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// reset multiple in database
-					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET multiple=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -728,13 +928,13 @@ class tl_content_pattern extends Backend
 				if ($dc->activeRecord->maxLength > 200)
 				{
 					// change maxLength in database
-					$db->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET maxLength=? WHERE id=?")
 					   ->execute(200, $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
 					// change multiple in database
-					$db->prepare("UPDATE tl_content_pattern SET multiple=? WHERE id=?")
+					$db->prepare("UPDATE " . $this->table . " SET multiple=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
@@ -758,7 +958,7 @@ class tl_content_pattern extends Backend
 		if ($value > 0 && $dc->activeRecord->maxLength > 255/$value-16)
 		{
 			// change rgxp in database
-			$db->prepare("UPDATE tl_content_pattern SET maxLength=? WHERE id=?")
+			$db->prepare("UPDATE " . $this->table . " SET maxLength=? WHERE id=?")
 			   ->execute(round(255/$value-16), $dc->activeRecord->id);
 		}
 		
@@ -782,19 +982,19 @@ class tl_content_pattern extends Backend
 			if (!$dc->activeRecord->multiSource)
 			{
 				// change multiSource in database
-				$db->prepare("UPDATE tl_content_pattern SET multiSource=? WHERE id=?")
+				$db->prepare("UPDATE " . $this->table . " SET multiSource=? WHERE id=?")
 				   ->execute(1, $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->sortBy != 'html5media')
 			{
 				// change sortBy in database
-				$db->prepare("UPDATE tl_content_pattern SET sortBy=? WHERE id=?")
+				$db->prepare("UPDATE " . $this->table . " SET sortBy=? WHERE id=?")
 				   ->execute('html5media', $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->canChangeSortBy)
 			{
 				// change canChangeSortBy in database
-				$db->prepare("UPDATE tl_content_pattern SET canChangeSortBy=? WHERE id=?")
+				$db->prepare("UPDATE " . $this->table . " SET canChangeSortBy=? WHERE id=?")
 				   ->execute(0, $dc->activeRecord->id);
 			}
 		}
@@ -808,21 +1008,45 @@ class tl_content_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getElementPattern()
+	public function getPattern()
 	{
+		// Prepare the NotAllowed list for all parent sub pattern
+		$objPattern = \ContentPatternModel::findById(\Input::get('id'));
 
+		$arrNA = array();
+		
+		if ($objPattern != null)
+		{
+			while($objPattern->ptable == 'tl_content_subpattern')
+			{
+				// The subpattern table can be ignored because pid=id
+				$objPattern = \ContentPatternModel::findById($objPattern->pid);
+				
+				if (in_array($objPattern->type, array_keys($GLOBALS['TL_CTP_NA'])))
+				{
+					$arrNA = array_merge($arrNA, $GLOBALS['TL_CTP_NA'][$objPattern->type]);
+				}
+			}
+		}
+			
+		$arrNA = array_unique($arrNA);
 		$pattern = array();
 		
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{
 			foreach (array_keys($v) as $kk)
 			{
-				$pattern[$k][] = $kk;
+				// Exclude pattern not allowed in sub pattern
+				if (!in_array($kk, $arrNA))
+				{
+					$pattern[$k][] = $kk;					
+				}				
 			}
 		}
 		
 		return $pattern;
 	}
+	
 	
 
 	/**
@@ -864,7 +1088,7 @@ class tl_content_pattern extends Backend
 
 	
 
-	public function correctGroups (DataContainer $dc)
+	public function saveGroups ($dc)
 	{
 		$db = Database::getInstance();
 					
@@ -881,11 +1105,164 @@ class tl_content_pattern extends Backend
 		}
 	}
 
-	
-	/**
+
+	public function saveSubPattern ($dc)
+	{
+		$db = Database::getInstance();
+		
+		// save changes to subpattern table
+		if (in_array($dc->activeRecord->type, $GLOBALS['TL_CTP_SUB']))
+		{			
+			if ($db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
+			{
+				$db->prepare("UPDATE tl_content_subpattern SET pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=? WHERE id=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->label, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups, $dc->activeRecord->id);
+			}
+			else
+			{
+				$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->label, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups);
+			}
+		}
+
+		// save the filter for subpattern
+		if (isset($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1]))
+		{
+			$db->prepare("UPDATE tl_content_pattern SET suboption=? WHERE id=?")
+			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1], $dc->activeRecord->id);
+		}
+	}
+
+	public function copySubPattern ($insertID, $dc)
+	{
+		$db = Database::getInstance();
+		
+		$objPattern = \ContentPatternModel::findById($insertID);
+
+		// copy changes to subpattern table and duplicate the subpattern
+		if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
+		{			
+			// copy to subpattern table
+			$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+			   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
+
+			$colPattern = \ContentPatternModel::findByPidAndTable($dc->id, 'tl_content_subpattern');
+			
+			if ($colPattern !== null)
+			{
+				$arrPattern = $colPattern->fetchAll();
+				
+				foreach ($arrPattern as $k=>$v)
+				{
+					$arrPattern[$k]['pid'] = $insertID;
+				}				
+			}
+
+			while (!empty($arrPattern))
+			{
+				$arrCurrent = array_shift($arrPattern);
+				
+				$arrValues = $arrCurrent;
+				
+				// Remove id
+				unset($arrValues['id']);
+				
+				$objInsertStmt = $db->prepare("INSERT INTO tl_content_pattern %s")
+									->set($arrValues)
+									->execute();
+				
+				$insertID = $objInsertStmt->insertId;
+				
+				if (in_array($arrCurrent['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					// copy to subpattern table
+					$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+					   ->execute($insertID, $insertID, $arrCurrent['label'], $arrCurrent['alias'], $arrCurrent['type'], $arrCurrent['subPatternType'], $arrCurrent['numberOfGroups']);
+
+					   $colSubPattern = \ContentPatternModel::findByPidAndTable($arrCurrent['id'], 'tl_content_subpattern');
+					
+					if ($colSubPattern !== null)
+					{
+						$arrSubPattern = $colSubPattern->fetchAll();
+						
+						foreach ($arrSubPattern as $k=>$v)
+						{
+							$arrSubPattern[$k]['pid'] = $insertID;
+						}				
+					}
+						
+					foreach ($arrSubPattern as $k=>$v)
+					{
+						$arrSubPattern[$k]['pid'] = $insertID;
+					}
+
+					$arrPattern = array_merge($arrPattern, $arrSubPattern);
+				}
+			}
+		}
+	}
+
+
+	public function deleteSubPattern ($dc, $intUndoId)
+	{
+		$db = Database::getInstance();
+		
+		if (in_array($dc->activeRecord->type, $GLOBALS['TL_CTP_SUB']))
+		{			
+			// get the undo database row
+			$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+						  ->execute($intUndoId);
+
+			$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
+			
+			$colPattern = \ContentPatternModel::findByPidAndTable($dc->activeRecord->id, 'tl_content_subpattern');
+			
+			if ($colPattern !== null)
+			{
+				$arrPattern = $colPattern->fetchAll();
+			}
+
+			while (!empty($arrPattern))
+			{
+				$arrCurrent = array_shift($arrPattern);
+				
+				// Add row to undo array
+				$arrData['tl_content_pattern'][] = $arrCurrent;
+				
+				// Delete row in database
+				$db->prepare("DELETE FROM tl_content_pattern WHERE id=?")
+				   ->execute($arrCurrent['id']);
+				
+				if (in_array($arrCurrent['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					// Add related row to undo array
+					$arrData['tl_content_subpattern'][] = $db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")
+															 ->execute($arrCurrent['id'])->fetchAssoc();
+					
+					// Delete row in database
+					$db->prepare("DELETE FROM tl_content_subpattern WHERE id=?")
+					   ->execute($arrCurrent['id']);
+					
+					$colSubPattern = \ContentPatternModel::findByPidAndTable($arrCurrent['id'], 'tl_content_subpattern');
+					
+					if ($colSubPattern !== null)
+					{
+						$arrPattern = array_merge($arrPattern, $colSubPattern->fetchAll());
+					}
+				}
+			}
+			
+			// save to the undo database row
+			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+			   ->execute(serialize($arrData), $intUndoId);
+		}
+	}
+
+
+		/**
 	 * Show a hint if the content block is already in use
 	 */
-	public function showAlreadyUsedHint(DataContainer $dc)
+	public function showAlreadyUsedHint($dc)
 	{
 		if ($_POST || \Input::get('act') != 'edit')
 		{
@@ -931,7 +1308,7 @@ class tl_content_pattern extends Backend
 		}
 		
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->hasAccess('tl_content_pattern::invisible', 'alexf'))
+		if (!$this->User->hasAccess($this->table . '::invisible', 'alexf'))
 		{
 			return '';
 		}
@@ -940,7 +1317,7 @@ class tl_content_pattern extends Backend
 		
 		if ($row['invisible'])
 		{
-			$icon = 'invisible.gif';
+			$icon = 'invisible.svg';
 		}
 		
 		return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
@@ -973,16 +1350,16 @@ class tl_content_pattern extends Backend
 		}		
 				
 		// Check the field access
-		if (!$this->User->hasAccess('tl_content_pattern::invisible', 'alexf'))
+		if (!$this->User->hasAccess($this->table . '::invisible', 'alexf'))
 		{
 			$this->log('Not enough permissions to publish/unpublish content element ID "'.$intId.'"', __METHOD__, TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 		
 		// The onload_callbacks vary depending on the dynamic parent table (see #4894)
-		if (is_array($GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback']))
+		if (is_array($GLOBALS['TL_DCA'][$this->table]['config']['onload_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA'][$this->table]['config']['onload_callback'] as $callback)
 			{
 				if (is_array($callback))
 				{
@@ -997,19 +1374,19 @@ class tl_content_pattern extends Backend
 		}
 		
 		// Check permissions to publish
-		if (!$this->User->hasAccess('tl_content_pattern::invisible', 'alexf'))
+		if (!$this->User->hasAccess($this->table . '::invisible', 'alexf'))
 		{
 			$this->log('Not enough permissions to show/hide content element ID "'.$intId.'"', __METHOD__, TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 		
-		$objVersions = new Versions('tl_content_pattern', $intId);
+		$objVersions = new Versions($this->table, $intId);
 		$objVersions->initialize();
 		
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_content_pattern']['fields']['invisible']['save_callback']))
+		if (is_array($GLOBALS['TL_DCA'][$this->table]['fields']['invisible']['save_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_content_pattern']['fields']['invisible']['save_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA'][$this->table]['fields']['invisible']['save_callback'] as $callback)
 			{
 				if (is_array($callback))
 				{
@@ -1024,11 +1401,11 @@ class tl_content_pattern extends Backend
 		}
 		
 		// Update the database
-		$db->prepare("UPDATE tl_content_pattern SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
+		$db->prepare("UPDATE " . $this->table . " SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
 		   ->execute($intId);
 					   
 		$objVersions->create();
-		$this->log('A new version of record "tl_content_pattern.id='.$intId.'" has been created'.$this->getParentEntries('tl_content_pattern', $intId), __METHOD__, TL_GENERAL);
+		$this->log('A new version of record "' . $this->table . '.id='.$intId.'" has been created'.$this->getParentEntries('tl_content_pattern', $intId), __METHOD__, TL_GENERAL);
 	}
 	
 	
