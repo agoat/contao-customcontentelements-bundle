@@ -174,15 +174,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_content_pattern', 'getElementPattern'),
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
-			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true),
-			'sql'                     => "varchar(32) NOT NULL default ''"
-		),
-		'prefix' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['prefix'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>64, 'tl_class'=>'w50'),
+			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'alias' => array
