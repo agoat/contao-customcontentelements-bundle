@@ -42,6 +42,7 @@ $GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentBlocks\\Theme
 $GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentBlocks\\Theme','importContentBlockTables');
 $GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentBlocks\\Theme','exportContentBlockTables');
 
+$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Agoat\\ContentBlocks\\Config','loadParameters');
  
  
 /**
