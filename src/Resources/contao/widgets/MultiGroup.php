@@ -150,7 +150,7 @@ class MultiGroup extends \Widget
 		
 		// Add hidden input fields		
 		$return = '<input type="hidden" name="' . $this->strName . '" id="ctrl_' . $this->strId . '" value="' . $this->groupCount . '">';
-		$return .= '<div class="tl_multigroup_header clr">';
+		$return .= '<div class="tl_multigroup_header">';
 		
 		// Add new button
 		if ($this->groupCount < $this->numberOfGroups)
