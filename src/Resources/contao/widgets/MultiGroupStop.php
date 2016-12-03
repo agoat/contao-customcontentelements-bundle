@@ -42,9 +42,7 @@ class MultiGroupStop extends \Widget
 	 */
 	public function generate()
 	{
-		
 		return '</div></div>';
-							
 	}
 
 

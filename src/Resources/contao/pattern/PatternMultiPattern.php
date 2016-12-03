@@ -48,11 +48,12 @@ class PatternMultiPattern extends Pattern
 			'inputType' =>	'multigroup',
 			'eval'		=>	array
 			(
-				'numberOfGroups'			=>	$this->numberOfGroups, 
+				'numberOfGroups'	=>	$this->numberOfGroups, 
 				'groupCount'		=>	$intGroupCount, 
 				'pid'				=>	$this->id, 
 				'rid'				=>	$this->rid, 
 				'strCommand'		=>	'cmd_multigroup-' . $this->id . '-' . $this->rid, 
+				'tl_class'			=>	'clr'	
 			)
 		));
 
@@ -76,8 +77,9 @@ class PatternMultiPattern extends Pattern
 					'down'			=>	($rid != $intGroupCount-1), 
 					'delete'		=>	($intGroupCount > 1), 
 					'insert'		=>	($intGroupCount < $this->numberOfGroups), 
-					'cid'			=>	$this->rid, 
+					'rid'			=>	$this->rid,
 					'strCommand'	=>	'cmd_multigroup-' . $this->id . '-' . $prid, 
+					'tl_class'		=>	'clr'	
 				)
 			), false);
 				
@@ -118,8 +120,7 @@ class PatternMultiPattern extends Pattern
 				'inputType' =>	'multigroupstop',
 				'eval'		=>	array
 				(
-					'pid'				=>	$this->id, 
-					'rid'				=>	$this->rid, 
+					'tl_class'		=>	'clr'	
 				)
 			), false);
 		

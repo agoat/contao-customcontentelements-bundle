@@ -44,27 +44,27 @@ class MultiGroupStart extends \Widget
 	{
 		$strCommand = 'cmd_multigroup-' . $this->groupId . '-' . $this->rid;
 		
-		$return = '<div class="tl_multigroup clr" data-rid="' . $this->rid . '">';
+		$return = '<div class="tl_multigroup" data-rid="' . $this->rid . '">';
 		$return .= '<div class="tl_multigroup_right click2edit">';
 
 		if ($this->up)
 		{
-			$return .= '<a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=up&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('up.svg', 'up', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_up'] . '"') . '</a>';
+			$return .= '<a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=up&amp;cid='.$this->rid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('up.svg', 'up', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_up'] . '"') . '</a>';
 
 		}
 		if ($this->down)
 		{
-			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=down&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('down.svg', 'down', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_down'] . '"') . '</a>';
+			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=down&amp;cid='.$this->rid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('down.svg', 'down', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_down'] . '"') . '</a>';
 
 		}
 		if ($this->delete)
 		{
-			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=delete&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_delete'] . '"') . '</a>';
+			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=delete&amp;cid='.$this->rid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_delete'] . '"') . '</a>';
 
 		}
 		if ($this->insert)
 		{
-			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.$this->cid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['after'] . '"') . '</a>';
+			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=insert&amp;cid='.$this->rid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['after'] . '"') . '</a>';
 		}
 		
 		$return .= '</div>';

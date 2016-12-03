@@ -3,7 +3,7 @@
 .ctb_group {padding: 5px; font-weight: 500;}
 .ctb_element.unpublished {opacity: .33;}
 
-.tl_multigroup {background: rgba(200,200,200,.15); margin: 0 -10px 8px; padding: 10px 10px 18px; border-radius: 6px;}
+.tl_multigroup {background: rgba(200,200,200,.15); margin: 0 -1% 10px; padding: 10px 1% 10px; border-radius: 6px;}
 .tl_multigroup h3 {padding-top:1px}
 .tl_multigroup_header {margin: 18px 0 8px; float: right; text-align: right;}
 .tl_multigroup_right {padding: 1px 0 8px; float: right; text-align: right;}
