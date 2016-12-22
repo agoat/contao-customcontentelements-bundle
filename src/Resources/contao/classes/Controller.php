@@ -14,12 +14,11 @@
 
 namespace Agoat\ContentBlocks;
  
-use Contao\Controller;
 use Contao\Input;
 use Contao\File;
 use Contao\StringUtil;
 
-class Controller extends Controller
+class Controller extends \Contao\Controller
 {
 
 	// add frontend stylesheets to backend
