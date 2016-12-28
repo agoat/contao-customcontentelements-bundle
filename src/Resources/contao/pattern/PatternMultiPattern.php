@@ -178,7 +178,7 @@ class PatternMultiPattern extends Pattern
 			}
 		}
 
-		$strGroupPreview .=  '</div></div>';
+		$strGroupPreview .=  '<div class="clr widget"></div></div></div>';
 
 		// add the sub pattern twice
 		$strPreview .=  $strGroupPreview;	
