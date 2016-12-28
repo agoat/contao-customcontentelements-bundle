@@ -159,7 +159,7 @@ class PatternFileTree extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
+		$strPreview = '<div class="clr widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
 
 		switch ($this->source)
 		{
@@ -196,11 +196,11 @@ class PatternFileTree extends Pattern
 		}
 		
 	
-		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div><p title="" class="tl_help tl_tip">' . $this->description . '</p>';
+		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
 		if ($this->source == 'image' && $this->canChangeSize)
 		{
-			$strPreview .= '<h3 style="margin: 0; padding-top: 14px;"><label>' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][0] . '</label></h3><div class="tl_image_size"><select class="tl_select_interval">';
+			$strPreview .= '<div class="w50 clr widget"><h3 style="margin: 0; padding-top: 14px;"><label>' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][0] . '</label></h3><div class="tl_image_size"><select class="tl_select_interval">';
 	
 			$imgSizes = $this->getImageSizeList();
 			$size = \StringUtil::deserialize($this->size);
@@ -230,10 +230,8 @@ class PatternFileTree extends Pattern
 			}
 	
 		
-			$strPreview .= '</select> <input class="tl_text_4 tl_imageSize_0" value="" type="text"> <input class="tl_text_4 tl_imageSize_1" value="" type="text"></div><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][1] . '</p>';
+			$strPreview .= '</select> <input class="tl_text_4 tl_imageSize_0" value="" type="text"> <input class="tl_text_4 tl_imageSize_1" value="" type="text"></div><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][1] . '</p></div>';
 		}
-		
-		$strPreview .= '</div>';	
 
 		return $strPreview;
 	}
