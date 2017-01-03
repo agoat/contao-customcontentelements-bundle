@@ -39,7 +39,10 @@ class PatternTextArea extends Pattern
 				$arrTemplates[basename($strFile, '.html5')] = rtrim($objFilesystem->makePathRelative(dirname($strFile), TL_ROOT), '/');
 			}
 			
-			TemplateLoader::addFiles($arrTemplates);
+			if ($arrTemplates !== null)
+			{
+				TemplateLoader::addFiles($arrTemplates);
+			}
 		}
 
 		$this->generateDCA('text', array
@@ -82,7 +85,10 @@ class PatternTextArea extends Pattern
 				$arrTemplates[basename($strFile, '.html5')] = rtrim($objFilesystem->makePathRelative(dirname($strFile), TL_ROOT), '/');
 			}
 			
-			TemplateLoader::addFiles($arrTemplates);
+			if ($arrTemplates !== null)
+			{
+				TemplateLoader::addFiles($arrTemplates);
+			}
 		}
 
 		if (array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))

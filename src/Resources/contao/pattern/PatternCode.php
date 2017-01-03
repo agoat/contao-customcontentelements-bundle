@@ -71,8 +71,7 @@ class PatternCode extends Pattern
 	 */
 	public function compile()
 	{
-		// prepare value(s)
-		
+		// prepare value(s)		
 		$this->writeToTemplate(array('code' => $this->Value->text, 'highlight' => $this->highlight));
 	}
 	
