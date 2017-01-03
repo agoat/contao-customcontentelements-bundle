@@ -85,7 +85,7 @@ class ContentBlockElement extends ContentElement
 		// register the custom template
 		if (!array_key_exists($this->objBlock->template, TemplateLoader::getFiles()))
 		{
-			TemplateLoader::addFile($this->objBlock->template, TL_ROOT . '/' . $this->objBlock->getRelated('pid')->templates);
+			TemplateLoader::addFile($this->objBlock->template, $this->objBlock->getRelated('pid')->templates);
 		}
 
 		// set the template file
@@ -190,5 +190,4 @@ class ContentBlockElement extends ContentElement
 			}
 		}
 	}
-	
 }
