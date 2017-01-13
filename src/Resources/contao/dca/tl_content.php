@@ -389,6 +389,12 @@ class tl_content_contentblocks extends tl_content
 	{
 		$db = Database::getInstance();
 		
+		// get the undo database row
+		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+					  ->execute($intUndoId) ;
+			
+		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
+		
 		$colValues = \ContentValueModel::findByCid($dc->activeRecord->id);
 		
 		if ($colValues === null)
@@ -396,26 +402,17 @@ class tl_content_contentblocks extends tl_content
 			return;
 		}
 
-		// get the undo database row
-		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
-					  ->execute($intUndoId) ;
-			
-		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
-		
-
 		foreach ($colValues as $objValue)
 		{
-			
 			// get value row(s)
 			$arrData['tl_content_value'][] = $objValue->row();
 
 			$objValue->delete();
 		}
 	
-		// save to the undo database row
+		// save back to the undo database row
 		$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
 		   ->execute(serialize($arrData), $intUndoId);
-
 	}
 
 	

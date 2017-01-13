@@ -149,7 +149,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'options'       		  => array('group', 'element'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_content_blocks_type'],
 			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true),
-			'sql'                     => "varchar(16) NOT NULL default ''"
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'title' => array
 		(
@@ -157,13 +157,13 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(128) NOT NULL default ''"
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'alias' => array
 		(
 			'eval'                    => array('doNotCopy'=>true),
-			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''",
+			'sql'                     => "varchar(64) COLLATE utf8_bin NOT NULL default ''",
 		),
 		'description' => array
 		(
@@ -290,18 +290,18 @@ class tl_content_blocks extends Backend
 	{
 		$db = Database::getInstance();
 		
-		// generate the alias from the title
+		// Generate alias from title and id
 		$alias = \StringUtil::generateAlias($dc->activeRecord->title.'-'.$dc->activeRecord->id);
 
 		if ($alias != $dc->activeRecord->alias)
 		{
-			// save alias to database
+			// Save alias to database
 			$db->prepare("UPDATE tl_content_blocks SET alias=? WHERE id=?")
 			   ->execute($alias, $dc->activeRecord->id);
 		
 			if ($dc->activeRecord->alias)
 			{
-				// also change the type
+				// Also change the type (=alias) in tl_content
 				$db->prepare("UPDATE tl_content SET type=? WHERE type=?")
 				   ->execute($alias, $dc->activeRecord->alias);
 			}

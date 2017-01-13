@@ -20,37 +20,19 @@ $GLOBALS['TL_DCA']['tl_article']['config']['ondelete_callback'][] = array('tl_ar
 	
 class tl_article_contentblocks extends tl_article
 {
-	
-		
 	/**
 	 * copy related Values from the content elements when an article is copied
 	 */
 	public function copyRelatedValues ($intId, $dc)
 	{
-		
 		$colOrigContent = \ContentModel::findByPid($dc->id, array('order'=>'sorting'));
 		$colNewContent = \ContentModel::findByPid($intId, array('order'=>'sorting'));
 
-		while ($colOrigContent->next())
+		// Call the oncopy_callback for every content element (use the model as the datacontainer)
+		while ($colOrigContent->next() && $colNewContent->next())
 		{
-			$colNewContent->next();
-
-			$colValues = \ContentValueModel::findByCid($colOrigContent->id);
-
-			if ($colValues === null)
-			{
-				continue;
-			}
-		
-			foreach ($colValues as $objValue)
-			{
-				$objNewValue = clone $objValue;
-				$objNewValue->cid = $colNewContent->id; // we assume that the sequence is the same as the original
-				$objNewValue->save();
-			} 
-		
+			\tl_content_contentblocks::copyRelatedValues($colNewContent->current()->id, $colOrigContent->current());
 		}
-
 	}
 
 	/**
@@ -60,19 +42,18 @@ class tl_article_contentblocks extends tl_article
 	{
 		$db = Database::getInstance();
 		
-		$colContent = \ContentModel::findByPid($dc->activeRecord->id);
-		
-		if ($colContent === null)
-		{
-			return;
-		}
-
 		// get the undo database row
 		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
 					  ->execute($intUndoId) ;
 
 		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
 
+		$colContent = \ContentModel::findByPid($dc->activeRecord->id);
+		
+		if ($colContent === null)
+		{
+			return;
+		}
 		
 		foreach ($colContent as $objContent)
 		{
@@ -93,11 +74,8 @@ class tl_article_contentblocks extends tl_article
 			
 		}
 
-	
-		// save to the undo database row
+		// save back to the undo database row
 		$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
 		   ->execute(serialize($arrData), $intUndoId);
-
 	}
-
 }

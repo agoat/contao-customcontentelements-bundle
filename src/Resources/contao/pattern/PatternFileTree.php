@@ -13,18 +13,11 @@
 
 namespace Agoat\ContentBlocks;
 
-use Contao\System;
-use Contao\Config;
-use Contao\Environment;
-use Contao\File;
-use Contao\StringUtil;
 use Agoat\ContentBlocks\Pattern;
 
 
 class PatternFileTree extends Pattern
 {
-
-
 	/**
 	 * generate the DCA construct
 	 */
@@ -34,21 +27,21 @@ class PatternFileTree extends Pattern
 		switch ($this->source)
 		{
 			case 'image':
-				$extensions = Config::get('validImageTypes');
+				$extensions = \Config::get('validImageTypes');
 				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = true;
 				$isDownloads = false;
 				break;
 				
 			case 'video':
-				$extensions = Config::get('validVideoTypes');
+				$extensions = \Config::get('validVideoTypes');
 				$orderField = false;
 				$isGallery = false;
 				$isDownloads = false;
 				break;
 				
 			case 'audio':
-				$extensions = Config::get('validAudioTypes');
+				$extensions = \Config::get('validAudioTypes');
 				$orderField = false;
 				$isGallery = false;
 				$isDownloads = false;
@@ -62,13 +55,13 @@ class PatternFileTree extends Pattern
 				break;
 				
 			default:
-				$extensions = Config::get('allowedDownload');
+				$extensions = \Config::get('allowedDownload');
 				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = false;
 				$isDownloads = true;
 				break;				
 		}
-		
+
 		if ($this->multiSource)
 		{
 			// the multiSRC field
@@ -166,7 +159,7 @@ class PatternFileTree extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
+		$strPreview = '<div class="clr widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
 
 		switch ($this->source)
 		{
@@ -203,14 +196,14 @@ class PatternFileTree extends Pattern
 		}
 		
 	
-		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div><p title="" class="tl_help tl_tip">' . $this->description . '</p>';
+		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
-		if ($this->canChangeSize)
+		if ($this->source == 'image' && $this->canChangeSize)
 		{
-			$strPreview .= '<h3 style="margin: 0; padding-top: 14px;"><label>' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][0] . '</label></h3><div class="tl_image_size"><select class="tl_select_interval">';
+			$strPreview .= '<div class="w50 clr widget"><h3 style="margin: 0; padding-top: 14px;"><label>' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][0] . '</label></h3><div class="tl_image_size"><select class="tl_select_interval">';
 	
 			$imgSizes = $this->getImageSizeList();
-			$size = StringUtil::deserialize($this->size);
+			$size = \StringUtil::deserialize($this->size);
 
 			foreach ($imgSizes as $k=>$v)
 			{
@@ -218,18 +211,18 @@ class PatternFileTree extends Pattern
 				{
 					$selected = ((is_numeric($size[2])) ? $kk == $size[2] : $vv == $size[2]) ? ' selected' : '';
 					$label = ($GLOBALS['TL_LANG']['MSC'][$v]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$v])) ? $GLOBALS['TL_LANG']['MSC'][$v][0] : $GLOBALS['TL_LANG']['MSC'][$v] : $v;
-					$strPreview .= '<option value="' . StringUtil::specialchars($v) . '"' . $selected . '>' . $label . '</option>';
+					$strPreview .= '<option value="' . \StringUtil::specialchars($v) . '"' . $selected . '>' . $label . '</option>';
 				}
 				else
 				{
 					$label = ($GLOBALS['TL_LANG']['MSC'][$k]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$k])) ? $GLOBALS['TL_LANG']['MSC'][$k][0] : $GLOBALS['TL_LANG']['MSC'][$k] : $k;
-					$strPreview .= '<optgroup label="&nbsp;' . StringUtil::specialchars($label) . '">';
+					$strPreview .= '<optgroup label="&nbsp;' . \StringUtil::specialchars($label) . '">';
 					
 					$bolAssoc = array_is_assoc($v);
 					foreach ($v as $kk=>$vv)
 					{
 						$selected = ((is_numeric($size[2]) && $bolAssoc) ? $kk == $size[2] : $vv == $size[2]) ? ' selected' : '';
-						$strPreview .= '<option value="' . StringUtil::specialchars($vv) . '"' . $selected . '>' . (($GLOBALS['TL_LANG']['MSC'][$vv]) ? $GLOBALS['TL_LANG']['MSC'][$vv][0] : $vv) . '</option>';
+						$strPreview .= '<option value="' . \StringUtil::specialchars($vv) . '"' . $selected . '>' . (($GLOBALS['TL_LANG']['MSC'][$vv]) ? $GLOBALS['TL_LANG']['MSC'][$vv][0] : $vv) . '</option>';
 					}
 
 					$strPreview .= '</optgroup>';
@@ -237,10 +230,8 @@ class PatternFileTree extends Pattern
 			}
 	
 		
-			$strPreview .= '</select> <input class="tl_text_4 tl_imageSize_0" value="" type="text"> <input class="tl_text_4 tl_imageSize_1" value="" type="text"></div><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][1] . '</p>';
+			$strPreview .= '</select> <input class="tl_text_4 tl_imageSize_0" value="" type="text"> <input class="tl_text_4 tl_imageSize_1" value="" type="text"></div><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][1] . '</p></div>';
 		}
-		
-		$strPreview .= '</div>';	
 
 		return $strPreview;
 	}
@@ -254,7 +245,7 @@ class PatternFileTree extends Pattern
 	
 		if ($this->multiSource)
 		{
-			$multiSRC = StringUtil::deserialize($this->Value->multiSRC);
+			$multiSRC = \StringUtil::deserialize($this->Value->multiSRC);
 			
 			// Return if there are no files
 			if (!is_array($multiSRC) || empty($multiSRC))
@@ -300,9 +291,9 @@ class PatternFileTree extends Pattern
 		}
 		
 		global $objPage;
-		$allowedDownload = StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
-		$allowedVideo = StringUtil::trimsplit(',', strtolower(\Config::get('validVideoTypes')));
-		$allowedAudio = StringUtil::trimsplit(',', strtolower(\Config::get('validAudioTypes')));
+		$allowedDownload = \StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
+		$allowedVideo = \StringUtil::trimsplit(',', strtolower(\Config::get('validVideoTypes')));
+		$allowedAudio = \StringUtil::trimsplit(',', strtolower(\Config::get('validAudioTypes')));
 		
 		$files = array();
 		$auxDate = array();
@@ -371,10 +362,10 @@ class PatternFileTree extends Pattern
 				// Use the file name as title if none is given
 				if ($arrMeta['title'] == '')
 				{
-					$arrMeta['title'] = StringUtil::specialchars($objFile->basename);
+					$arrMeta['title'] = \StringUtil::specialchars($objFile->basename);
 				}
 
-				$strHref = Environment::get('request');
+				$strHref = \Environment::get('request');
 				
 				// Remove an existing file parameter (see #5683)
 				if (preg_match('/(&(amp;)?|\?)file=/', $strHref))
@@ -382,7 +373,7 @@ class PatternFileTree extends Pattern
 					$strHref = preg_replace('/(&(amp;)?|\?)file=[^&]+/', '', $strHref);
 				}
 				
-				$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . System::urlEncode($objFiles->path);
+				$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objFiles->path);
 				
 				
 				// Add the file
@@ -475,7 +466,7 @@ class PatternFileTree extends Pattern
 					// Use the file name as title if none is given
 					if ($arrMeta['title'] == '')
 					{
-						$arrMeta['title'] = StringUtil::specialchars($objFile->basename);
+						$arrMeta['title'] = \StringUtil::specialchars($objFile->basename);
 					}
 
 					$strHref = \Environment::get('request');
@@ -536,7 +527,7 @@ class PatternFileTree extends Pattern
 			case 'custom':
 				if ($this->Value->orderSRC != '')
 				{
-					$tmp = StringUtil::deserialize($this->Value->orderSRC);
+					$tmp = \StringUtil::deserialize($this->Value->orderSRC);
 					
 					if (!empty($tmp) && is_array($tmp))
 					{
@@ -641,8 +632,8 @@ class PatternFileTree extends Pattern
 	 */
 	public function getImageSizeList()
 	{
-		$arrSizes = System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
-		$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(StringUtil::deserialize($this->sizeList)));
+		$arrSizes = \System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
+		$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(\StringUtil::deserialize($this->sizeList)));
 		
 		if ($this->canEnterSize)
 		{

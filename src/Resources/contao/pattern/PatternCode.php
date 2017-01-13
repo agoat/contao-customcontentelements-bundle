@@ -13,6 +13,7 @@
 
 namespace Agoat\ContentBlocks;
 
+use Contao\TemplateLoader;
 use Agoat\ContentBlocks\Pattern;
 
 
@@ -34,7 +35,7 @@ class PatternCode extends Pattern
 			(
 				'mandatory'		=>	($this->mandatory) ? true : false, 
 				'tl_class'		=> 	'clr',
-				'rte'			=>	'ace|'.strtolower($this->highlight),
+				'rte'			=>	'ace|' . strtolower($this->highlight),
 				'preserveTags'	=>	true,
 			)
 		));
@@ -55,7 +56,7 @@ class PatternCode extends Pattern
 		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
 		ob_start();
-		include(\TemplateLoader::getPath('be_ace', 'html5'));
+		include(TemplateLoader::getPath('be_ace', 'html5'));
 		$strPreview .= ob_get_contents();
 		ob_end_clean();
 			
@@ -70,8 +71,7 @@ class PatternCode extends Pattern
 	 */
 	public function compile()
 	{
-		// prepare value(s)
-		
+		// prepare value(s)		
 		$this->writeToTemplate(array('code' => $this->Value->text, 'highlight' => $this->highlight));
 	}
 	
