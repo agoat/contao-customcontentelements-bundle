@@ -33,7 +33,8 @@
             "src/Resources/contao/languages",
             "src/Resources/contao/templates",
             "../../contao/core-bundle/src/Resources/contao/widgets/FileSelector.php",
-            "../../contao/core-bundle/src/Resources/contao/widgets/FileTree.php"
+            "../../contao/core-bundle/src/Resources/contao/widgets/FileTree.php",
+            "../../contao/core-bundle/src/Resources/contao/widgets/PageTree.php"
         ]
     },
     "autoload-dev": {

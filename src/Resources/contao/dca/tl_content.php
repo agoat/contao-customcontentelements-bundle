@@ -587,6 +587,31 @@ class tl_content_contentblocks extends tl_content
 		return $value;
 	}
 
+	/**
+	 * prepare the virtual orderPage field (pagetree widget)
+	 */
+	public function prepareOrderPageValue ($value, $dc)
+	{
+		// Prepare the order field
+		$id = explode('-', $dc->field);
+		$orderPage = \StringUtil::deserialize($this->arrLoadedValues[$id[1]][$id[2]]['orderPage']);
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderPage-'.$id[1].'-'.$id[2]] = (is_array($orderPage)) ? $orderPage : array();
+
+		return $value;
+	}
+
+	/**
+	 * save the virtual orderPage field (pagetree widget)
+	 */
+	public function saveOrderPageValue ($value, $dc)
+	{
+		// Prepare the order field
+		$id = explode('-', $dc->field);
+		$orderPage = (\Input::post('orderPage-'.$id[1].'-'.$id[2])) ? explode(',', \Input::post('orderPage-'.$id[1].'-'.$id[2])) : false;
+		$this->arrModifiedValues[$id[1]][$id[2]]['orderPage'] = $orderPage;
+		
+		return $value;
+	}
 	
 	/**
 	 * set default value for new records

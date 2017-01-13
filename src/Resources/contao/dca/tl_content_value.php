@@ -92,9 +92,17 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "mediumblob NULL"
 		),
-		'pageSRC' => array
+		'singlePage' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'multiPage' => array
+		(
+			'sql'                     => "blob NULL"
+		),
+		'orderPage' => array
+		(
+			'sql'                     => "blob NULL"
 		),
 		'singleSRC' => array
 		(
@@ -116,8 +124,10 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
-
-
+		'count' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 	)
 );
 
