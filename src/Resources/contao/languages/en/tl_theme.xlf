@@ -8,9 +8,9 @@
       <trans-unit id="tl_theme.ctb.1">
         <source>Edit the content blocks for the theme ID %s</source>
       </trans-unit>
-
-
- 	  
+      <trans-unit id="tl_theme.contentblocks_pattern">
+        <source>Content blocks</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

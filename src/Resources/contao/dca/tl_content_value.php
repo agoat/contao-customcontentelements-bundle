@@ -30,7 +30,9 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'cid,pid' => 'index'
+				'cid' => 'index',
+				'cid,pid' => 'index',
+				'cid,pid,rid' => 'index'
 			)
 		)
 	),
@@ -50,7 +52,7 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'rid' => array	// replica id
+		'rid' => array	// multi dimensional recursive id
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),

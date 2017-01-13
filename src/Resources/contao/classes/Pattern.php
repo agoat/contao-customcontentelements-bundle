@@ -41,7 +41,7 @@ abstract class Pattern extends Controller
 	 */
 	protected $arrData = array();
 
-
+	protected $arrMapper = false;
 	
 	/**
 	 * Initialize the object
@@ -112,7 +112,7 @@ abstract class Pattern extends Controller
 	 */
 	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolLoadSaveCallback=true)
 	{
-		$strVirtualField = $this->virtualFieldName($strFieldName);
+		$this->virtualFieldAlias = $this->virtualFieldName($strFieldName);
 		
 		// add some standard field attributes
 		$arrFieldDCA['eval']['doNotSaveEmpty'] = true;
@@ -133,12 +133,10 @@ abstract class Pattern extends Controller
 			array_push($arrFieldDCA['save_callback'], array('tl_content_contentblocks', 'saveFieldAndClear'));
 		}
 
-		// add to palette
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$strVirtualField;		
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$this->virtualFieldAlias;		
 
 		// add field informations
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$strVirtualField] = $arrFieldDCA;
-
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$this->virtualFieldAlias] = $arrFieldDCA;
 
 	}
 
@@ -157,18 +155,26 @@ abstract class Pattern extends Controller
 	public function writeToTemplate($Value)
 	{
 
-		if ($this->replicaAlias)
+		if (is_array($this->arrMapper))
 		{
-			$replica = (is_array($this->Template->{$this->replicaAlias})) ? $this->Template->{$this->replicaAlias} : array();
 		
-			if (!is_object($replica[$this->replica]))
+			$arrValue[$this->arrMapper[0]] = $this->Template->{$this->arrMapper[0]};
+			
+			$map =& $arrValue;
+			
+			foreach ($this->arrMapper as $key)
 			{
-				$replica[$this->replica] = new \stdClass();
+				if (!is_array($map[$key]))
+				{
+					$map[$key] = array();
+				}
+				
+				$map =& $map[$key];
 			}
 			
-			$replica[$this->replica]->{$this->alias} = $Value;
+			$map[$this->alias] = $Value;
 
-			$this->Template->{$this->replicaAlias} = $replica;
+			$this->Template->{$this->arrMapper[0]} = $arrValue[$this->arrMapper[0]];
 			return;
 		}	
 	
@@ -187,13 +193,13 @@ abstract class Pattern extends Controller
 	 */
 	protected function virtualFieldName($strName)
 	{
-		if (!$this->replica)
+		if (!$this->rid)
 		{
-			$this->replica = 0;
+			$this->rid = 0;
 		}
 	
-		// field alias syntax: tablecolumn_patternId_multipartId
-		return $strName.'_'.$this->id.'_'.$this->replica;
+		// field alias syntax: tablecolumn_patternId_recursiveId
+		return $strName.'-'.$this->id.'-'.$this->rid;
 	}
 
 	

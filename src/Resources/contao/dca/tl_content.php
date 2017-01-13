@@ -15,7 +15,7 @@
 
 // table callbacks
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_contentblocks', 'buildPaletteAndFields');
-$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_contentblocks', 'savePatternFields');
+$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_contentblocks', 'saveFieldValues');
 
 $GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][] = array('tl_content_contentblocks', 'copyRelatedValues');
 $GLOBALS['TL_DCA']['tl_content']['config']['ondelete_callback'][] = array('tl_content_contentblocks', 'deleteRelatedValues');
@@ -203,12 +203,12 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function buildPaletteAndFields ($dc)
 	{
-		// build the content block elements palette and fields only when editing a content element (see #5 and #14)
+		// build the content block elements palette and fields only when editing a content element (see #5)
 		if (\Input::get('act') != 'edit' && \Input::get('act') != 'show')
 		{
 			return;
 		}
-		
+	
 		// get content element
 		$objContent = \ContentModel::findByPk($dc->id);
 	
@@ -225,125 +225,63 @@ class tl_content_contentblocks extends tl_content
 			return;
 		}
 
+		// load values from tl_content_value
+		$colValue = \ContentValueModel::findByCid($objContent->id);
+		
+		if ($colValue !== null)
+		{
+			foreach ($colValue as $objValue)
+			{
+				$this->arrLoadedValues[$objValue->pid][$objValue->rid] = $objValue->row();
+			}							
+		}
+
 
 		// add default palette (for type selection)
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$objBlock->alias] = '{type_legend},type';
 
 					
 		// add the pattern to palettes
-		$colPattern = \ContentPatternModel::findPublishedByPid($objBlock->id, array('order'=>'sorting ASC'));
+		$colPattern = \ContentPatternModel::findPublishedByPidAndTable($objBlock->id, 'tl_content_blocks', array('order'=>'sorting ASC'));
 
 		if ($colPattern === null)
 		{
 			return;
 		}
 
-
-		while($colPattern->next())
+		foreach($colPattern as $objPattern)
 		{
-
-			// don´t load values for system pattern (because they have no ?? maybe a replica counter ??)
-			if (!in_array($colPattern->current()->type, array('section', 'explanation', 'visibility', 'protection')))
-			{
-				$colValue = \ContentValueModel::findByCidandPid($objContent->id, $colPattern->current()->id);
-			
-				if ($colValue !== null)
-				{
-					foreach ($colValue as $objValue)
-					{
-						$this->arrLoadedValues[$objValue->rid][$colPattern->current()->id] = $objValue->row();
-					}							
-				}
-
-			}
-		
 			// construct dca for pattern
-			$strClass = \Agoat\ContentBlocks\Pattern::findClass($colPattern->current()->type);
+			$strClass = \Agoat\ContentBlocks\Pattern::findClass($objPattern->type);
 				
 			if (!class_exists($strClass))
 			{
-				\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
+				\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$objPattern->type.'") does not exist', __METHOD__, TL_ERROR);
 			}
 			else
 			{
-				$objPatternClass = new $strClass($colPattern->current());
+				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->cid = $objContent->id;
-				$objPatternClass->replica = 0;
+				$objPatternClass->rid = 0;
 				$objPatternClass->alias = $objBlock->alias;			
-				
+
 				$objPatternClass->construct();
 			}
-
-				
-			// extra work for section with replicas
-			if ($colPattern->current()->type == 'section' && $colPattern->current()->replicable)
-			{
-
-				$objSectionPattern = $colPattern->current();
-				$arrPatternClass = array();
-						
-				// first: load existing values and classes for every pattern
-				while($colPattern->next())
-				{
-					if ($colPattern->current()->type == 'section')
-					{
-						$colPattern->prev();
-						break;
-					}
-					elseif (!in_array($colPattern->current()->type, array('visibility', 'protection'))) // ignore visibility and protection pattern replicas
-					{								
-							
-						$colValue = \ContentValueModel::findByCidandPid($objContent->id, $colPattern->current()->id);
-					
-						if ($colValue !== null)
-						{
-							foreach ($colValue as $objValue)
-							{
-								$this->arrLoadedValues[$objValue->rid][$colPattern->current()->id] = $objValue->row();
-							}							
-						}
-
-						
-						$strClass = \Pattern::findClass($colPattern->current()->type);
-				
-						if (!class_exists($strClass))
-						{
-							\System::log('Pattern element class "'.$strClass.'" (pattern element "'.$colPattern->current()->type.'") does not exist', __METHOD__, TL_ERROR);
-						}
-						else
-						{
-							$arrPatternClass[] = new $strClass($colPattern->current());
-						}
-						
-					}
-				}
-			
-				// second: construct dca for every replica and pattern
-				for ($replica = 0; $replica < $objSectionPattern->maxReplicas; $replica++)
-				{
-				
-					foreach ($arrPatternClass as $objPatternClass)
-					{			
-							
-						$objPatternClass->replica = $replica;
-						$objPatternClass->alias = $objBlock->alias;			
-						$objPatternClass->construct();
-						
-					}					
-				}		
-			}
 		}
+
 	}	
+
+
 
 	
 	/**
 	 * save field values to tl_content_value table
 	 */
-	public function savePatternFields (&$dc)
+	public function saveFieldValues (&$dc)
 	{
-		foreach ($this->arrModifiedValues as $rid => $pattern)
+		foreach ($this->arrModifiedValues as $pid => $pattern)
 		{
-			foreach ($pattern as $pid => $fields)
+			foreach ($pattern as $rid => $fields)
 			{
 				$bolVersion = false;
 				$objValue = \ContentValueModel::findByCidandPidandRid($dc->activeRecord->id,$pid,$rid);
@@ -353,8 +291,8 @@ class tl_content_contentblocks extends tl_content
 					$objValue = new ContentValueModel();
 				}
 				
-				$objValue->pid = $pid;
 				$objValue->cid = $dc->activeRecord->id;
+				$objValue->pid = $pid;
 				$objValue->rid = $rid;
 				$objValue->tstamp = time();
 			
@@ -363,12 +301,11 @@ class tl_content_contentblocks extends tl_content
 					
 					if ($objValue->$k != $v)
 					{
-
 						$bolVersion = true;
 						$objValue->$k = $v;
 					}
 				}
-		
+				
 				$objValue->save();
 				
 				if ($bolVersion)
@@ -378,7 +315,6 @@ class tl_content_contentblocks extends tl_content
 				
 			}
 		}
-		
 	}
 
 	
@@ -541,10 +477,9 @@ class tl_content_contentblocks extends tl_content
 	{
 		if ($this->arrLoadedValues)
 		{
-			$id = explode('_', $dc->field);			
-			return $this->arrLoadedValues[$id[2]][$id[1]][$id[0]];
+			$id = explode('-', $dc->field);					
+			return $this->arrLoadedValues[$id[1]][$id[2]][$id[0]];
 		}
-		
 		return $value;		
 	}
 
@@ -553,9 +488,9 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function saveFieldAndClear ($value, $dc)
 	{
-		$id = explode('_', $dc->field);
-		$this->arrModifiedValues[$id[2]][$id[1]][$id[0]] = $value;
-	
+		$id = explode('-', $dc->field);
+		$this->arrModifiedValues[$id[1]][$id[2]][$id[0]] = $value;
+
 		return null;
 	}
 
@@ -567,9 +502,9 @@ class tl_content_contentblocks extends tl_content
 	public function prepareOrderSRCValue ($value, $dc)
 	{
 		// Prepare the order field
-		$id = explode('_', $dc->field);
-		$orderSRC = \StringUtil::deserialize($this->arrLoadedValues[$id[2]][$id[1]]['orderSRC']);
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderSRC_'.$id[1].'_'.$id[2]] = (is_array($orderSRC)) ? $orderSRC : array();
+		$id = explode('-', $dc->field);
+		$orderSRC = \StringUtil::deserialize($this->arrLoadedValues[$id[1]][$id[2]]['orderSRC']);
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderSRC-'.$id[1].'-'.$id[2]] = (is_array($orderSRC)) ? $orderSRC : array();
 
 		return $value;
 	}
@@ -580,9 +515,9 @@ class tl_content_contentblocks extends tl_content
 	public function saveOrderSRCValue ($value, $dc)
 	{
 		// Prepare the order field
-		$id = explode('_', $dc->field);
-		$orderSRC = (\Input::post('orderSRC_'.$id[1].'_'.$id[2])) ? array_map('\StringUtil::uuidToBin', explode(',', \Input::post('orderSRC_'.$id[1].'_'.$id[2]))) : false;
-		$this->arrModifiedValues[$id[2]][$id[1]]['orderSRC'] = $orderSRC;
+		$id = explode('-', $dc->field);
+		$orderSRC = (\Input::post('orderSRC-'.$id[1].'-'.$id[2])) ? array_map('\StringUtil::uuidToBin', explode(',', \Input::post('orderSRC-'.$id[1].'-'.$id[2]))) : false;
+		$this->arrModifiedValues[$id[1]][$id[2]]['orderSRC'] = $orderSRC;
 		
 		return $value;
 	}
