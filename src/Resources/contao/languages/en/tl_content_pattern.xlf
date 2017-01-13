@@ -162,6 +162,16 @@
 				<source>Do not show files without meta data matching the page language.</source>
 			</trans-unit>
 
+			<trans-unit id="tl_content_pattern.multiPage_legend">
+				<source>Multiple page selection</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.multiPage.0">
+				<source>Multiple page selection</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.multiPage.1">
+				<source>Allow to select more than page.</source>
+			</trans-unit>
+
 
  			<trans-unit id="tl_content_pattern.section_legend">
 				<source>Section settings</source>
