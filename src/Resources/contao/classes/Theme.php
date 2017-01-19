@@ -10,10 +10,8 @@
 
 namespace Agoat\ContentBlocks;
 
-use Contao\Theme;
 use Patchwork\Utf8;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
 
 
 /**
@@ -21,7 +19,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *
  * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
-class Theme extends Theme
+class Theme extends \Contao\Theme
 {
 
 	/**
