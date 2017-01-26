@@ -110,7 +110,6 @@ $GLOBALS['TL_CTP_NA'] = array
  * System pattern (with no values)
  */
 $GLOBALS['TL_CTP_SYS'] = array('section', 'explanation', 'visibility', 'protection');
-$GLOBALS['TL_SYS_PATTERN'] = array('section', 'explanation', 'visibility', 'protection');
 
 
 

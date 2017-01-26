@@ -165,7 +165,7 @@ class ContentBlockElement extends ContentElement
 		foreach($colPattern as $objPattern)
 		{
 			// don´t show the invisible or system pattern
-			if (in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+			if (in_array($objPattern->type, $GLOBALS['TL_CTP_SYS']))
 			{
 				continue;
 			}
