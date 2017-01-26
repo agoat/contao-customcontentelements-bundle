@@ -68,6 +68,8 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'section'		=> 'Agoat\ContentBlocks\PatternSection',
 		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
+		'subpattern'	=> 'Agoat\ContentBlocks\PatternSubPattern',
+		'multipattern'	=> 'Agoat\ContentBlocks\PatternMultiPattern',
 	),
 	'element' => array
 	(
@@ -104,6 +106,11 @@ $GLOBALS['TL_CTP_NA'] = array
 		'module',
 	),
 );
+
+/**
+ * Sub pattern
+ */
+$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multipattern');
 
 
 /**
