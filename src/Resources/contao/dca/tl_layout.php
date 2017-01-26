@@ -14,7 +14,7 @@
 
 // Palettes
 
-$GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('loadingOrder', 'loadingOrder,backendCSS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
+$GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('external', 'external,backendCSS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
 $GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('analytics', 'analytics,externalJS,backendJS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
 
 
@@ -59,3 +59,5 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['orderBackendJS'] = array
 	'sql'                     => "blob NULL"
 );
 
+
+$GLOBALS['TL_DCA']['tl_layout']['fields']['loadingOrder']['eval']['tl_class'] = 'clr w50';
