@@ -145,8 +145,6 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		// layout
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
-		'subpattern'				  => '{type_legend},type;{subpattern_legend},subPatternType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
-		'multipattern'				  => '{type_legend},type;{multipattern_legend},numberOfGroups;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
 		// element
 		'visibility'				  => '{type_legend},type;{visibility_legend},canChangeStart,canChangeStop;{invisible_legend},invisible',
 		'protection'				  => '{type_legend},type;{protection_legend},groups,canChangeGroups;{invisible_legend},invisible',
