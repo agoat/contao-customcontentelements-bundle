@@ -10,32 +10,30 @@
 
 namespace Agoat\ContentBlocks;
 
-use Contao\Theme;
 use Patchwork\Utf8;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
-
 /**
- * Modified Contao\Theme class to include content block elements
- * 
- * Provide methods to handle themes.
+ * Provide methods to export/import content blocks and pattern
  *
- * @author Leo Feyer <https://github.com/leofeyer>
+ * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
-class Theme extends Theme
+class Theme extends \Contao\Theme
 {
 
 	/**
 	 * Import content blocks tables with template import
+	 *
+	 * compareThemeFiles Hook
 	 */
 	public function compareContentBlockTables ($xml, $objArchive)
 	{
 		// Store the field names of the theme tables
 		$arrDbFields = array
 		(
-			'tl_content_blocks'           => $this->Database->getFieldNames('tl_content_blocks'),
-			'tl_content_pattern'           => $this->Database->getFieldNames('tl_content_pattern'),
+			'tl_content_blocks'		=> $this->Database->getFieldNames('tl_content_blocks'),
+			'tl_content_pattern'	=> $this->Database->getFieldNames('tl_content_pattern'),
 		);
 			
 		$tables = $xml->getElementsByTagName('table');
@@ -91,8 +89,11 @@ class Theme extends Theme
 	}
 
 	
+	
 	/**
 	 * Import content blocks tables with template import
+	 *
+	 * extractThemeFiles Hook
 	 */
 	public function importContentBlockTables ($xml, $objArchive, $intThemeId, $arrMapper)
 	{
@@ -106,9 +107,10 @@ class Theme extends Theme
 		// Lock the tables
 		$arrLocks = array
 		(
-			'tl_content_blocks'  => 'WRITE',
-			'tl_content_pattern' => 'WRITE',
-			'tl_files' 			 => 'READ'
+			'tl_content_blocks'		=> 'WRITE',
+			'tl_content_pattern'	=> 'WRITE',
+			'tl_content_subpattern'	=> 'WRITE',
+			'tl_files'				=> 'READ'
 		);
 
 		// Load the DCAs of the locked tables (see #7345)
@@ -126,7 +128,7 @@ class Theme extends Theme
 		
 		$tables = $xml->getElementsByTagName('table');
 		
-		// Update mapper data
+		// Update the mapper data first
 		for ($i=0; $i<$tables->length; $i++)
 		{
 			$rows = $tables->item($i)->childNodes;
@@ -201,6 +203,7 @@ class Theme extends Theme
 					{
 						if ($table == 'tl_content_pattern')
 						{
+							$oPid = $value;
 							$value = $arrMapper['tl_content_blocks'][$value];
 						}
 						else
@@ -297,6 +300,13 @@ class Theme extends Theme
 					$set[$name] = $value;
 				}
 
+				// Correct subpattern´s pid
+				if ($table == 'tl_content_pattern' && $set['ptable'] == 'tl_content_subpattern')
+				{
+					$set['pid']	= $arrMapper['tl_content_pattern'][$oPid];
+				
+				}
+
 				// Skip fields that are not in the database (e.g. because of missing extensions)
 				foreach ($set as $k=>$v)
 				{
@@ -305,9 +315,28 @@ class Theme extends Theme
 						unset($set[$k]);
 					}
 				}
-				
+					
 				// Insert into database
 				$this->Database->prepare("INSERT INTO $table %s")->set($set)->execute();
+
+				// For subpattern mirror some columns to the tl_content_subpattern table
+				if ($table == 'tl_content_pattern' && in_array($set['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					
+					$subSet = array
+					(
+						id => $set['id'],
+						pid => $set['id'],
+						type => $set['type'],
+						title => $set['label'],
+						alias => $set['alias'],
+						subPatternType => $set['subPatternType'],
+						numberofGroups => $set['numberOfGroups']
+					);
+
+					$this->Database->prepare("INSERT INTO tl_content_subpattern %s")->set($subSet)->execute();
+				}
+				
 			}
 		}
 
@@ -318,8 +347,12 @@ class Theme extends Theme
 	}
 
 	
+	
+	
 	/**
 	 * Export content blocks tables with template export
+	 *
+	 * exportTheme Hook
 	 */
 	public function exportContentBlockTables ($xml, $objArchive, $objThemeId)
 	{
@@ -364,21 +397,34 @@ class Theme extends Theme
 		$objDcaExtractor = \DcaExtractor::getInstance('tl_content_pattern');
 		$arrOrder = $objDcaExtractor->getOrderFields();
 
-		// Add the child rows
+		// Add pattern and subpattern recursively
 		while ($objContentBlocks->next())
 		{
+			$this->addPatternData($xml, $table, $arrOrder, $objContentBlocks->id);
+		}
+	}
+
+	
+	/**
+	 * Add pattern and subpattern recursively
+	 */
+	protected function addPatternData ($xml, $table, $arrOrder, $intParentID)
+	{
 			// Get all content patterns
 			$objContentPattern = $this->Database->prepare("SELECT * FROM tl_content_pattern WHERE pid=?")
-									   ->execute($objContentBlocks->id);
-
+									   ->execute($intParentID);
+			
 			// Add the rows
 			while ($objContentPattern->next())
 			{
 				$this->addDataRow($xml, $table, $objContentPattern->row(), $arrOrder);
+				
+				if (in_array($objContentPattern->type, $GLOBALS['TL_CTP_SUB']))
+				{
+					$this->addPatternData($xml, $table, $arrOrder, $objContentPattern->id);
+				}
 			}
-		}
-		
-
+	
 	}
-
+	
 }

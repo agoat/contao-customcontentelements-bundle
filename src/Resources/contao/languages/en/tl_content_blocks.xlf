@@ -111,10 +111,10 @@
 				<source>Edit content block ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_content_blocks.editheader.0">
-				<source>Edit content block settings</source>
+				<source>Edit content block</source>
 			</trans-unit>
 			<trans-unit id="tl_content_blocks.editheader.1">
-				<source>Edit the settings of content block ID %s</source>
+				<source>Edit content block settings</source>
 			</trans-unit>
 			<trans-unit id="tl_content_blocks.copy.0">
 				<source>Duplicate content block</source>

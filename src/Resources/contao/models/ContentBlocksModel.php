@@ -39,7 +39,7 @@ class ContentBlocksModel extends Model
 	public function getRelatedPattern(array $arrOptions=array())
 	{
 		// get pattern from pattern model
-		return \ContentPatternModel::findByPid($this->id);
+		return \ContentPatternModel::findPublishedByPidAndTable($this->id);
 		
 	}
 

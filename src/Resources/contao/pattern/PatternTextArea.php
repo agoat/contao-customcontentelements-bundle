@@ -15,6 +15,7 @@ namespace Agoat\ContentBlocks;
 
 use Contao\TemplateLoader;
 use Agoat\ContentBlocks\Pattern;
+use Symfony\Component\Filesystem\Filesystem;
 
 
 class PatternTextArea extends Pattern
@@ -29,14 +30,19 @@ class PatternTextArea extends Pattern
 		// register all tinyMCE template files
 		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
+			$objFilesystem = new Filesystem();
+
 			$arrTemplateFiles = glob(TL_ROOT . '/templates/*/be_tinyMCE*');
 			
 			foreach ($arrTemplateFiles as $strFile)
 			{
-				$arrTemplates[basename($strFile, '.html5')] = str_replace(TL_ROOT, '', dirname($strFile));
+				$arrTemplates[basename($strFile, '.html5')] = rtrim($objFilesystem->makePathRelative(dirname($strFile), TL_ROOT), '/');
 			}
 			
-			TemplateLoader::addFiles($arrTemplates);
+			if ($arrTemplates !== null)
+			{
+				TemplateLoader::addFiles($arrTemplates);
+			}
 		}
 
 		$this->generateDCA('text', array
@@ -70,20 +76,25 @@ class PatternTextArea extends Pattern
 		// register all tinyMCE template files
 		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
+			$objFilesystem = new Filesystem();
+			
 			$arrTemplateFiles = glob(TL_ROOT . '/templates/*/be_tinyMCE*');
 
 			foreach ($arrTemplateFiles as $strFile)
 			{
-				$arrTemplates[basename($strFile, '.html5')] = str_replace(TL_ROOT, '', dirname($strFile));
+				$arrTemplates[basename($strFile, '.html5')] = rtrim($objFilesystem->makePathRelative(dirname($strFile), TL_ROOT), '/');
 			}
 			
-			TemplateLoader::addFiles($arrTemplates);
+			if ($arrTemplates !== null)
+			{
+				TemplateLoader::addFiles($arrTemplates);
+			}
 		}
 
 		if (array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
 			ob_start();
-			include(\TemplateLoader::getPath($this->rteTemplate, 'html5'));
+			include(TemplateLoader::getPath($this->rteTemplate, 'html5'));
 			$strPreview .= ob_get_contents();
 			ob_end_clean();
 		}

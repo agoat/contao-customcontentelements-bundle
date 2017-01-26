@@ -27,18 +27,49 @@ class PatternPageTree extends Pattern
 	public function construct()
 	{
 		
-		$this->generateDCA('pageSRC', array
-		(
-			'inputType' 	=>	'pageTree',
-			'label'			=>	array($this->label, $this->description),
-			'foreignKey'    => 'tl_page.title',
-			'eval'			=>	array
+		if ($this->multiPage)
+		{
+			// the multiPage field
+			$this->generateDCA('multiPage', array
 			(
-				'mandatory'		=>	($this->mandatory) ? true : false, 
-				'tl_class'		=> 	'clr',
-				'fieldType'		=>	'radio', 
-			)
-		));
+				'inputType' =>	'pageTree',
+				'label'		=>	array($this->label, $this->description),
+				'eval'     	=> 	array
+				(
+					'multiple'		=>	true,				
+					'fieldType'		=>	'checkbox', 
+					'orderField'	=>	$this->virtualFieldName('orderPage'),
+					'files'			=>	true,
+					'mandatory'		=>	($this->mandatory) ? true : false, 
+					'tl_class'		=>	'clr',
+				),
+				'load_callback'		=> array
+				(
+					array('tl_content_contentblocks', 'prepareOrderPageValue'),
+				),
+				'save_callback'		=> array
+				(
+					array('tl_content_contentblocks', 'saveOrderPageValue'),
+				),
+			));
+		}
+		else
+		{
+			// the multiPage field
+			$this->generateDCA('singlePage', array
+			(
+				'inputType' =>	'pageTree',
+				'label'		=>	array($this->label, $this->description),
+				'eval'     	=> 	array
+				(
+					'fieldType'		=>	'radio', 
+					'extensions' 	=>	$extensions,
+					'mandatory'		=>	($this->mandatory) ? true : false, 
+					'tl_class'		=>	'clr',
+				),
+			));
+			
+		}
 		
 	}
 	
@@ -62,7 +93,42 @@ class PatternPageTree extends Pattern
 	public function compile()
 	{
 		// prepare value(s)
-		$this->writeToTemplate($this->Value->pageSRC);
+		if ($this->multiPage)
+		{
+			$objPages = \PageModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiPage));
+
+			// Return if there are no pages
+			if ($objPages === null)
+			{
+				return;
+			}
+
+			$arrPages = array();
+
+			// Sort the array keys according to the given order
+			if ($this->Value->orderPage != '')
+			{
+				$tmp = \StringUtil::deserialize($this->Value->orderPage);
+
+				if (!empty($tmp) && is_array($tmp))
+				{
+					$arrPages = array_map(function () {}, array_flip($tmp));
+				}
+			}
+
+			// Add the items to the pre-sorted array
+			while ($objPages->next())
+			{
+				$arrPages[$objPages->id] = $objPages->current();
+			}
+
+			$arrPages = array_values(array_filter($arrPages));
+			
+			$this->writeToTemplate($arrPages);
+		}
+		else
+		{
+			$this->writeToTemplate(\PageModel::findById($this->Value->singlePage));
+		}
 	}
-	
 }

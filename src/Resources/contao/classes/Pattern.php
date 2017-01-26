@@ -14,12 +14,6 @@
  
 namespace Agoat\ContentBlocks;
  
-use Contao\Config;
-use Contao\System;
-use Contao\File;
-use Contao\Image;
-use Contao\Picture;
-use Contao\StringUtil;
 use Agoat\ContentBlocks\Controller;
 
 /**
@@ -47,7 +41,7 @@ abstract class Pattern extends Controller
 	 */
 	protected $arrData = array();
 
-
+	protected $arrMapper = false;
 	
 	/**
 	 * Initialize the object
@@ -118,7 +112,7 @@ abstract class Pattern extends Controller
 	 */
 	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolLoadSaveCallback=true)
 	{
-		$strVirtualField = $this->virtualFieldName($strFieldName);
+		$this->virtualFieldAlias = $this->virtualFieldName($strFieldName);
 		
 		// add some standard field attributes
 		$arrFieldDCA['eval']['doNotSaveEmpty'] = true;
@@ -139,12 +133,10 @@ abstract class Pattern extends Controller
 			array_push($arrFieldDCA['save_callback'], array('tl_content_contentblocks', 'saveFieldAndClear'));
 		}
 
-		// add to palette
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$strVirtualField;		
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$this->virtualFieldAlias;		
 
 		// add field informations
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$strVirtualField] = $arrFieldDCA;
-
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$this->virtualFieldAlias] = $arrFieldDCA;
 
 	}
 
@@ -163,18 +155,26 @@ abstract class Pattern extends Controller
 	public function writeToTemplate($Value)
 	{
 
-		if ($this->replicaAlias)
+		if (is_array($this->arrMapper))
 		{
-			$replica = (is_array($this->Template->{$this->replicaAlias})) ? $this->Template->{$this->replicaAlias} : array();
 		
-			if (!is_object($replica[$this->replica]))
+			$arrValue[$this->arrMapper[0]] = $this->Template->{$this->arrMapper[0]};
+			
+			$map =& $arrValue;
+			
+			foreach ($this->arrMapper as $key)
 			{
-				$replica[$this->replica] = new \stdClass();
+				if (!is_array($map[$key]))
+				{
+					$map[$key] = array();
+				}
+				
+				$map =& $map[$key];
 			}
 			
-			$replica[$this->replica]->{$this->alias} = $Value;
+			$map[$this->alias] = $Value;
 
-			$this->Template->{$this->replicaAlias} = $replica;
+			$this->Template->{$this->arrMapper[0]} = $arrValue[$this->arrMapper[0]];
 			return;
 		}	
 	
@@ -193,13 +193,13 @@ abstract class Pattern extends Controller
 	 */
 	protected function virtualFieldName($strName)
 	{
-		if (!$this->replica)
+		if (!$this->rid)
 		{
-			$this->replica = 0;
+			$this->rid = 0;
 		}
 	
-		// field alias syntax: tablecolumn_patternId_multipartId
-		return $strName.'_'.$this->id.'_'.$this->replica;
+		// field alias syntax: tablecolumn_patternId_recursiveId
+		return $strName.'-'.$this->id.'-'.$this->rid;
 	}
 
 	
@@ -230,9 +230,8 @@ abstract class Pattern extends Controller
 	}
 
 	
-	
 	/**
-	 * Add an image to a template (new method for pattern)
+	 * Add an image to a template (new method for pattern without using the max backend width of 320px)
 	 *
 	 * @param object  $objTemplate   The template object to add the image to
 	 * @param array   $arrItem       The element or module as array
@@ -243,7 +242,7 @@ abstract class Pattern extends Controller
 	{
 		try
 		{
-			$objFile = new File($arrItem['singleSRC']);
+			$objFile = new \File($arrItem['singleSRC']);
 		}
 		catch (\Exception $e)
 		{
@@ -252,15 +251,7 @@ abstract class Pattern extends Controller
 		}
 
 		$imgSize = $objFile->imageSize;
-
-		// Store the original dimensions
-		if ($imgSize !== false)
-		{
-			$objTemplate->width = $imgSize[0];
-			$objTemplate->height = $imgSize[1];
-		}
-
-		$size = StringUtil::deserialize($arrItem['size']);
+		$size = \StringUtil::deserialize($arrItem['size']);
 		
 		if (is_numeric($size))
 		{
@@ -270,15 +261,20 @@ abstract class Pattern extends Controller
 		{
 			$size = array();
 		}
+		
 		$size += array(0, 0, 'crop');
 
 
 		if ($intMaxWidth === null)
 		{
-			$intMaxWidth = Config::get('maxImageWidth');
+			$intMaxWidth = \Config::get('maxImageWidth');
 		}
 
-		$arrMargin = StringUtil::deserialize($arrItem['imagemargin']);
+		$arrMargin = \StringUtil::deserialize($arrItem['imagemargin']);
+
+		// Store the original dimensions
+		$objTemplate->width = $imgSize[0];
+		$objTemplate->height = $imgSize[1];
 
 		// Adjust the image size
 		if ($intMaxWidth > 0 && $imgSize !== false)
@@ -310,20 +306,25 @@ abstract class Pattern extends Controller
 			}
 		}
 
-
 		try
 		{
-			$src = Image::create($arrItem['singleSRC'], $size)->executeResize()->getResizedPath();
-			$picture = Picture::create($arrItem['singleSRC'], $size)->getTemplateData();
+			$src = \System::getContainer()->get('contao.image.image_factory')->create(TL_ROOT . '/' . $arrItem['singleSRC'], $size)->getUrl(TL_ROOT);
+			$picture = \System::getContainer()->get('contao.image.picture_factory')->create(TL_ROOT . '/' . $arrItem['singleSRC'], $size);
+
+			$picture = array
+			(
+				'img' => $picture->getImg(TL_ROOT),
+				'sources' => $picture->getSources(TL_ROOT)
+			);
 
 			if ($src !== $arrItem['singleSRC'])
 			{
-				$objFile = new File(rawurldecode($src), true);
+				$objFile = new \File(rawurldecode($src), true);
 			}
 		}
 		catch (\Exception $e)
 		{
-			System::log('Image "' . $arrItem['singleSRC'] . '" could not be processed: ' . $e->getMessage(), __METHOD__, TL_ERROR);
+			\System::log('Image "' . $arrItem['singleSRC'] . '" could not be processed: ' . $e->getMessage(), __METHOD__, TL_ERROR);
 
 			$src = '';
 			$picture = array('img'=>array('src'=>'', 'srcset'=>''), 'sources'=>array());
@@ -336,8 +337,13 @@ abstract class Pattern extends Controller
 			$objTemplate->imgSize = ' width="' . $imgSize[0] . '" height="' . $imgSize[1] . '"';
 		}
 
-		$picture['alt'] = StringUtil::specialchars($arrItem['alt']);
-		$picture['title'] = StringUtil::specialchars($arrItem['title']);
+		$picture['alt'] = \StringUtil::specialchars($arrItem['alt']);
+
+		// Only add the title if the image is not part of an image link
+		if (empty($arrItem['imageUrl']) && empty($arrItem['fullsize']))
+		{
+			$picture['title'] = \StringUtil::specialchars($arrItem['title']);
+		}
 
 		$objTemplate->picture = $picture;
 
@@ -391,8 +397,8 @@ abstract class Pattern extends Controller
 
 		// Do not urlEncode() here because getImage() already does (see #3817)
 		$objTemplate->src = TL_FILES_URL . $src;
-		$objTemplate->alt = StringUtil::specialchars($arrItem['alt']);
-		$objTemplate->title = StringUtil::specialchars($arrItem['title']);
+		$objTemplate->alt = \StringUtil::specialchars($arrItem['alt']);
+		$objTemplate->title = \StringUtil::specialchars($arrItem['title']);
 		$objTemplate->linkTitle = $objTemplate->title;
 		$objTemplate->fullsize = $arrItem['fullsize'] ? true : false;
 		$objTemplate->addBefore = ($arrItem['floating'] != 'below');
@@ -401,6 +407,4 @@ abstract class Pattern extends Controller
 		$objTemplate->singleSRC = $arrItem['singleSRC'];
 		$objTemplate->addImage = true;
 	}
-
-
 }
