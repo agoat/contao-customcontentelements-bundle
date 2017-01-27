@@ -309,7 +309,7 @@ class PatternSubPattern extends Pattern
 				foreach($colSubPattern as $objSubPattern)
 				{
 					// don´t show system pattern
-					if (in_array($objSubPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+					if (in_array($objSubPattern->type, $GLOBALS['TL_CTP_SYS']))
 					{
 						continue;
 					}
@@ -355,7 +355,7 @@ class PatternSubPattern extends Pattern
 				foreach($colSubPattern as $objSubPattern)
 				{
 					// don´t show system pattern
-					if (in_array($objSubPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+					if (in_array($objSubPattern->type, $GLOBALS['TL_CTP_SYS']))
 					{
 						continue;
 					}

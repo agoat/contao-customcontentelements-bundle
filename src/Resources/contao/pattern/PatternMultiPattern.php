@@ -224,7 +224,7 @@ class PatternMultiPattern extends Pattern
 			foreach($colPattern as $objPattern)
 			{
 				// exclude system pattern
-				if (in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+				if (in_array($objPattern->type, $GLOBALS['TL_CTP_SYS']))
 				{
 					continue;
 				}
