@@ -154,9 +154,9 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options'       		  => array('group', 'element'),
+			'options'       	  => array('group', 'element'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_content_blocks_type'],
-			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true),
+			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'title' => array
