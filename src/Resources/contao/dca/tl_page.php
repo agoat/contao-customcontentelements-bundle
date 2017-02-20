@@ -27,13 +27,17 @@ class tl_page_contentblocks extends tl_page
 	{
 		$colOrigArticles = \ArticleModel::findByPid($dc->id, array('order'=>'sorting'));
 		$colNewArticles = \ArticleModel::findByPid($intId, array('order'=>'sorting'));
-
-		// Call the oncopy_callback for every article element (use the model as the datacontainer)
-		while ($colOrigArticles->next() && $colNewArticles->next())
+        
+		if ($colOrigArticles !== null && $colNewArticles!== null)
 		{
-			\tl_article_contentblocks::copyRelatedValues($colNewArticles->current()->id, $colOrigArticles->current());
+			// Call the oncopy_callback for every article element (use the model as the datacontainer)
+			while ($colOrigArticles->next() && $colNewArticles->next())
+			{
+				\tl_article_contentblocks::copyRelatedValues($colNewArticles->current()->id, $colOrigArticles->current());
+			}
 		}
 	}
+
 
 	/**
 	 * delete related Values from the content elements when an article is deleted
