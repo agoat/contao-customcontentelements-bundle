@@ -147,7 +147,7 @@ class PatternArticle extends Pattern
 		{
 			if (($objArticle = \ArticleModel::findById($this->Value->selectField)) !== null)
 			{
-				$this->writeToTemplate($objArticle);
+				$this->writeToTemplate($objArticle->row());
 			}
 		}
 
