@@ -49,6 +49,12 @@
 			<trans-unit id="CTP.pagetree.1">
 				<source>Insert a page select input field.</source>
 			</trans-unit>
+			<trans-unit id="CTP.article.0">
+				<source>Article selection</source>
+			</trans-unit>
+			<trans-unit id="CTP.article.1">
+				<source>Insert a article select field.</source>
+			</trans-unit>
 			<trans-unit id="CTP.filetree.0">
 				<source>Source selection</source>
 			</trans-unit>
