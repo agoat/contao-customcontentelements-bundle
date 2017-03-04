@@ -139,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'checkbox'					  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'listwizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
 		'tablewizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
-		'pagetree'					  => '{type_legend},type;{multiPage_legend},multiPage;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
+		'pagetree'					  => '{type_legend},type;{page_legend},multiPage;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'filetree'					  => '{type_legend},type;{source_legend},source;{multiSource_legend},multiSource;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'imagesize'					  => '{type_legend},type;{source_legend},size;{pattern_legend},alias;{invisible_legend},invisible',
 		// layout
