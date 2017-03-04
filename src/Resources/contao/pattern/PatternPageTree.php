@@ -124,11 +124,14 @@ class PatternPageTree extends Pattern
 
 			$arrPages = array_values(array_filter($arrPages));
 			
-			$this->writeToTemplate($arrPages);
+			$this->writeToTemplate($arrPages->fetchAll());
 		}
 		else
 		{
-			$this->writeToTemplate(\PageModel::findById($this->Value->singlePage));
+			if (($objPage = \PageModel::findById($this->Value->singlePage)) !== null)
+			{
+                $this->writeToTemplate($objPage->row());
+            }
 		}
 	}
 }
