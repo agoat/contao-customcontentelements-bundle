@@ -169,7 +169,23 @@
 				<source>Multiple page selection</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.multiPage.1">
-				<source>Allow to select more than page.</source>
+				<source>Allow to select more than one page.</source>
+			</trans-unit>
+
+			<trans-unit id="tl_content_pattern.article_legend">
+				<source>Article selection settings</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.insideRoot.0">
+				<source>Restrict to website root</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.insideRoot.1">
+				<source>Restrict the selection to the current website root.</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.multiArticle.0">
+				<source>Multiple article selection</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.multiArticle.1">
+				<source>Allow to select more than one article.</source>
 			</trans-unit>
 
 
