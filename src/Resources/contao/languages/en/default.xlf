@@ -53,7 +53,7 @@
 				<source>Article selection</source>
 			</trans-unit>
 			<trans-unit id="CTP.article.1">
-				<source>Insert a article select field.</source>
+				<source>Insert an article select field.</source>
 			</trans-unit>
 			<trans-unit id="CTP.filetree.0">
 				<source>Source selection</source>
