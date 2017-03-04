@@ -119,12 +119,12 @@ class PatternPageTree extends Pattern
 			// Add the items to the pre-sorted array
 			while ($objPages->next())
 			{
-				$arrPages[$objPages->id] = $objPages->current();
+				$arrPages[$objPages->id] = $objPages->row();
 			}
 
 			$arrPages = array_values(array_filter($arrPages));
 			
-			$this->writeToTemplate($arrPages->fetchAll());
+			$this->writeToTemplate($arrPages);
 		}
 		else
 		{
