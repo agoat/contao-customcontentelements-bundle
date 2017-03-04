@@ -15,16 +15,21 @@
  /**
  * Register back end module (tables, css, overwritten classes)
  */
-
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern');
+
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
 $GLOBALS['BE_MOD']['content']['article']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
-$GLOBALS['BE_MOD']['content']['news']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
+
+$bundles = \System::getContainer()->getParameter('kernel.bundles');
+
+if (isset($bundles['ContaoNewsBundle']))
+{
+	$GLOBALS['BE_MOD']['content']['news']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
+}
 
 
+/**
 
-
- /**
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentBlocks\\Controller','loadAndRegisterBlockElements');
@@ -37,6 +42,7 @@ $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks\\Controlle
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addContentBlockCSS');
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addContentBlockJS');
 $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentBlocks\\Controller','addLayoutJS');
+
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks\\Controller','hideContentValueVersions');
 
@@ -69,6 +75,8 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'section'		=> 'Agoat\ContentBlocks\PatternSection',
 		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
+		'subpattern'	=> 'Agoat\ContentBlocks\PatternSubPattern',
+		'multipattern'	=> 'Agoat\ContentBlocks\PatternMultiPattern',
 	),
 	'element' => array
 	(
@@ -83,12 +91,39 @@ $GLOBALS['TL_CTP'] = array
 	),
 );
 
+/**
+ * Content pattern not allowed in sub pattern
+ */
+$GLOBALS['TL_CTP_NA'] = array
+(
+	'subpattern' => array
+	(
+		'section',
+		'visibility',
+		'protection',
+		'imagesize',
+	),
+	'multipattern' => array
+	(
+		'section',
+		'visibility',
+		'protection',
+		'imagesize',
+		'form',
+		'module',
+	),
+);
+
+/**
+ * Sub pattern
+ */
+$GLOBALS['TL_CTP_SUB'] = array('subpattern', 'multipattern');
 
 
 /**
- * system pattern (with no values)
+ * System pattern (with no values)
  */
-$GLOBALS['TL_SYS_PATTERN'] = array('explanation', 'visibility', 'protection');
+$GLOBALS['TL_CTP_SYS'] = array('section', 'explanation', 'visibility', 'protection');
 
 
 
@@ -98,4 +133,7 @@ $GLOBALS['TL_SYS_PATTERN'] = array('explanation', 'visibility', 'protection');
 $GLOBALS['BE_FFL']['explanation'] = 'Explanation';
 $GLOBALS['BE_FFL']['visualselect'] = 'VisualSelectMenu';
 
+$GLOBALS['BE_FFL']['multigroup'] = 'MultiGroup';
+$GLOBALS['BE_FFL']['multigroupstart'] = 'MultiGroupStart';
+$GLOBALS['BE_FFL']['multigroupstop'] = 'MultiGroupStop';
 

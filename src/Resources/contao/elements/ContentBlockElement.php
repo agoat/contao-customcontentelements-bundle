@@ -139,7 +139,7 @@ class ContentBlockElement extends ContentElement
 	protected function compile()
 	{		
 		// get the pattern model collection
-		$colPattern = \ContentPatternModel::findPublishedByPid($this->objBlock->id);
+		$colPattern = \ContentPatternModel::findPublishedByPidAndTable($this->objBlock->id, 'tl_content_blocks');
 
 		if ($colPattern === null)
 		{
@@ -165,7 +165,7 @@ class ContentBlockElement extends ContentElement
 		foreach($colPattern as $objPattern)
 		{
 			// don´t show the invisible or system pattern
-			if (in_array($objPattern->type, $GLOBALS['TL_SYS_PATTERN']))
+			if (in_array($objPattern->type, $GLOBALS['TL_CTP_SYS']))
 			{
 				continue;
 			}

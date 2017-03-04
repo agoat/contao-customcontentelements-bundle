@@ -28,10 +28,13 @@ class tl_article_contentblocks extends tl_article
 		$colOrigContent = \ContentModel::findByPid($dc->id, array('order'=>'sorting'));
 		$colNewContent = \ContentModel::findByPid($intId, array('order'=>'sorting'));
 
-		// Call the oncopy_callback for every content element (use the model as the datacontainer)
-		while ($colOrigContent->next() && $colNewContent->next())
+		if ($colOrigContent !== null && $colNewContent!== null)
 		{
-			\tl_content_contentblocks::copyRelatedValues($colNewContent->current()->id, $colOrigContent->current());
+			// Call the oncopy_callback for every content element (use the model as the datacontainer)
+			while ($colOrigContent->next() && $colNewContent->next())
+			{
+				\tl_content_contentblocks::copyRelatedValues($colNewContent->current()->id, $colOrigContent->current());
+			}
 		}
 	}
 

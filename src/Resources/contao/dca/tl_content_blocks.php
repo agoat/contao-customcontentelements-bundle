@@ -35,6 +35,14 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		(
 			array('tl_content_blocks', 'generateAlias')
 		),
+		'oncopy_callback'			  => array
+		(
+			array('tl_content_blocks', 'copySubPattern')
+		),
+		'ondelete_callback'			  => array
+		(
+			array('tl_content_blocks', 'deleteSubPattern')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -72,33 +80,33 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['edit'],
 				'href'                => 'table=tl_content_pattern',
-				'icon'                => 'edit.gif',
+				'icon'                => 'edit.svg',
 				'button_callback'     => array('tl_content_blocks', 'elementButtons')
 			),
 			'editheader' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['editheader'],
 				'href'                => 'act=edit',
-				'icon'                => 'header.gif',
+				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['copy'],
 				'href'                => 'act=copy',
-				'icon'                => 'copy.gif',
+				'icon'                => 'copy.svg',
 				'button_callback'     => array('tl_content_blocks', 'elementButtons')
 			),
 			'delete' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['delete'],
 				'href'                => 'act=delete',
-				'icon'                => 'delete.gif',
+				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['toggle'],
-				'icon'                => 'visible.gif',
+				'icon'                => 'visible.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
 				'button_callback'     => array('tl_content_blocks', 'toggleIcon')
 			),
@@ -106,7 +114,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['show'],
 				'href'                => 'act=show',
-				'icon'                => 'show.gif'
+				'icon'                => 'show.svg'
 			)
 		)
 	),
@@ -123,7 +131,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 	(
 		'id' => array
 		(
-			'relation'                => array('type'=>'hasMany', 'load'=>'lazy', 'table'=>'tl_content_pattern', 'field'=>'pid'),
+		//	'relation'                => array('type'=>'hasMany', 'load'=>'lazy', 'table'=>'tl_content_pattern', 'field'=>'pid'),
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
 		),
 		'pid' => array
@@ -146,9 +154,9 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options'       		  => array('group', 'element'),
+			'options'       	  => array('group', 'element'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_content_blocks_type'],
-			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true),
+			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'title' => array
@@ -307,7 +315,152 @@ class tl_content_blocks extends Backend
 			}
 		}
 	}
+	
+	
+	public function copySubPattern ($insertID, $dc)
+	{
+		$db = Database::getInstance();
+		
+		$colOldPattern = \ContentPatternModel::findByPidAndTable($dc->id, 'tl_content_blocks');
 
+		if ($colOldPattern !== null)
+		{
+			$arrOldPatternId = $colOldPattern->fetchEach('id');
+		}
+			
+		$colPattern = \ContentPatternModel::findByPidAndTable($insertID, 'tl_content_blocks');
+
+		if ($colPattern !== null)
+		{
+			foreach ($colPattern as $i=>$objPattern)
+			{
+				if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
+				{
+					// copy to subpattern table
+					$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+					   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
+
+					$colPattern = \ContentPatternModel::findByPidAndTable($arrOldPatternId[$i], 'tl_content_subpattern');
+					
+					if ($colPattern !== null)
+					{
+						$arrPattern = $colPattern->fetchAll();
+						
+						foreach ($arrPattern as $k=>$v)
+						{
+							$arrPattern[$k]['pid'] = $objPattern->id;
+						}				
+					}
+
+					while (!empty($arrPattern))
+					{
+						$arrCurrent = array_shift($arrPattern);
+						
+						$arrValues = $arrCurrent;
+						
+						// Remove id
+						unset($arrValues['id']);
+						
+						$objInsertStmt = $db->prepare("INSERT INTO tl_content_pattern %s")
+											->set($arrValues)
+											->execute();
+						
+						$insertID = $objInsertStmt->insertId;
+						
+						if (in_array($arrCurrent['type'], $GLOBALS['TL_CTP_SUB']))
+						{
+							// copy to subpattern table
+							$db->prepare("INSERT INTO tl_content_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+							   ->execute($insertID, $insertID, $arrCurrent['label'], $arrCurrent['alias'], $arrCurrent['type'], $arrCurrent['subPatternType'], $arrCurrent['numberOfGroups']);
+
+							   $colSubPattern = \ContentPatternModel::findByPidAndTable($arrCurrent['id'], 'tl_content_subpattern');
+							
+							if ($colSubPattern !== null)
+							{
+								$arrSubPattern = $colSubPattern->fetchAll();
+								
+								foreach ($arrSubPattern as $k=>$v)
+								{
+									$arrSubPattern[$k]['pid'] = $insertID;
+								}				
+							}
+								
+							foreach ($arrSubPattern as $k=>$v)
+							{
+								$arrSubPattern[$k]['pid'] = $insertID;
+							}
+
+							$arrPattern = array_merge($arrPattern, $arrSubPattern);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+
+	public function deleteSubPattern ($dc, $intUndoId)
+	{
+		$db = Database::getInstance();
+		
+		// get the undo database row
+		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+					  ->execute($intUndoId);
+
+		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
+		
+		if (is_array($arrData['tl_content_subpattern']))
+		{
+			foreach ($arrData['tl_content_subpattern'] as $arrSubPattern)
+			{
+				if (in_array($arrSubPattern['type'], $GLOBALS['TL_CTP_SUB']))
+				{			
+
+					$colPattern = \ContentPatternModel::findByPidAndTable($arrSubPattern['id'], 'tl_content_subpattern');
+					
+					if ($colPattern !== null)
+					{
+						$arrPattern = $colPattern->fetchAll();
+					}
+
+					while (!empty($arrPattern))
+					{
+						$arrCurrent = array_shift($arrPattern);
+						
+						// Add row to undo array
+						$arrData['tl_content_pattern'][] = $arrCurrent;
+						
+						// Delete row in database
+						$db->prepare("DELETE FROM tl_content_pattern WHERE id=?")
+						   ->execute($arrCurrent['id']);
+						
+						if (in_array($arrCurrent['type'], $GLOBALS['TL_CTP_SUB']))
+						{
+							// Add related row to undo array
+							$arrData['tl_content_subpattern'][] = $db->prepare("SELECT * FROM tl_content_subpattern WHERE id=?")
+																	 ->execute($arrCurrent['id'])->fetchAssoc();
+							
+							// Delete row in database
+							$db->prepare("DELETE FROM tl_content_subpattern WHERE id=?")
+							   ->execute($arrCurrent['id']);
+							
+							$colSubPattern = \ContentPatternModel::findByPidAndTable($arrCurrent['id'], 'tl_content_subpattern');
+							
+							if ($colSubPattern !== null)
+							{
+								$arrPattern = array_merge($arrPattern, $colSubPattern->fetchAll());
+							}
+						}
+					}
+				}
+			}
+			
+			// save to the undo database row
+			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+			   ->execute(serialize($arrData), $intUndoId);
+		}
+	}
+	
 	
 	/**
 	 * Return all content element templates as array
@@ -418,7 +571,7 @@ class tl_content_blocks extends Backend
 		
 		if ($row['invisible'])
 		{
-			$icon = 'invisible.gif';
+			$icon = 'invisible.svg';
 		}
 		
 		return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
