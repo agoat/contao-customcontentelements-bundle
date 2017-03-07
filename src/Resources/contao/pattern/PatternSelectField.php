@@ -3,7 +3,7 @@
  /**
  * Contao Open Source CMS - ContentBlocks extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2017 Arne Stappen (aGoat)
  *
  *
  * @package   contentblocks
@@ -26,8 +26,8 @@ class PatternSelectField extends Pattern
 	 */
 	public function construct()
 	{
-
 		$class = ($this->classClr) ? 'w50 clr' : 'w50';
+		$class .= ($this->multiSelect) ? ' autoheight' : '';
 
 		// Generate options
 		$strGroup = 'default';
@@ -41,7 +41,7 @@ class PatternSelectField extends Pattern
 			
 			if ($arrOption['default'])
 			{
-				$default = 'v'.$arrOption['value'];
+				$default = 'v'.$arrOption['value']; // Add a alphabetic character to allow numeric values
 			}	
 			
 			$arrOptions[$strGroup]['v'.$arrOption['value']] = $arrOption['label'];
@@ -53,8 +53,8 @@ class PatternSelectField extends Pattern
 			$arrOptions = array_values($arrOptions)[0];
 		}
 
-
-		$this->generateDCA('selectField', array
+		// Generate a select field
+		$this->generateDCA(($this->multiSelect) ? 'multiSelectField' : 'selectField', array
 		(
 			'inputType' 	=>	'select',
 			'label'			=>	array($this->label, $this->description),
@@ -62,9 +62,11 @@ class PatternSelectField extends Pattern
 			'options'		=>	$arrOptions,
 			'eval'			=>	array
 			(
-				'mandatory'				=>	($this->mandatory) ? true : false, 
-				'includeBlankOption'	=>	($this->blankOption) ? true : false,
-				'tl_class'				=>	$class,
+				'mandatory'				=> ($this->mandatory) ? true : false, 
+				'includeBlankOption'	=> ($this->blankOption) ? true : false,
+				'multiple'				=> ($this->multiSelect) ? true : false,
+				'chosen'				=> ($this->multiSelect) ? true : false,
+				'tl_class'				=> $class,
 			),
 		));
 		
@@ -111,9 +113,21 @@ class PatternSelectField extends Pattern
 	 */
 	public function compile()
 	{
-		
-		$this->writeToTemplate(substr($this->Value->selectField,1));
-		
+		if ($this->multiSelect)
+		{
+			$arrValues = \StringUtil::deserialize($this->Value->multiSelectField);
+			
+			foreach ($arrValues as &$value)
+			{
+				$value = substr($value,1);
+			}
+			
+			$this->writeToTemplate($arrValues);
+		}
+		else
+		{
+			$this->writeToTemplate(substr($this->Value->selectField,1));
+		}
 	}
 	
 
