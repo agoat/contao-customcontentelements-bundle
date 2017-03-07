@@ -70,9 +70,9 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'multiField' => array
+		'multiTextField' => array
 		(
-			'sql'                     => "varchar(255) NOT NULL default ''"
+			'sql'                     => "varchar(1022) NOT NULL default ''"
 		),
 		'inputUnit' => array
 		(

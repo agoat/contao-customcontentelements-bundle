@@ -44,7 +44,7 @@ class PatternTextField extends Pattern
 		}
 
 		// the text field
-		$this->generateDCA(($this->picker != 'unit') ? ($this->multiple) ? 'multiField' : 'textField' : 'inputUnit', array
+		$this->generateDCA(($this->picker != 'unit') ? ($this->multiple) ? 'multiTextField' : 'textField' : 'inputUnit', array
 		(
 			'inputType' =>	($this->picker == 'unit') ? 'inputUnit' : 'text',
 			'label'		=>	array($this->label, $this->description),
@@ -132,7 +132,7 @@ class PatternTextField extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->Value->multiField) : $this->Value->textField : StringUtil::deserialize($this->Value->inputUnit));	
+		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->Value->multiTextField) : $this->Value->textField : StringUtil::deserialize($this->Value->inputUnit));	
 	}
 	
 }

@@ -435,12 +435,20 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 
+		'multiSource' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiSource'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 m12 clr'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
 		'multiPage' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiPage'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12 clr'),
+			'eval'                    => array('tl_class'=>'w50 m12'),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'multiArticle' => array
@@ -538,7 +546,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('submitOnChange'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array ('tl_content_pattern','setMultipleOptions')
+				array ('tl_content_pattern','setMultipleOption')
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
@@ -561,7 +569,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['units'],
 			'exclude'                 => true,
 			'inputType'               => 'optionWizard',
-			'eval'                    => array('allowHtml'=>true),
+			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'clr'),
 			'sql'                     => "blob NULL"
 		),
 		'options' => array
@@ -960,21 +968,21 @@ class tl_content_pattern extends Backend
 	}
 
 	/**
-	 * Add the type of content pattern
+	 * Set the maxLength for 4 input fields
 	 *
 	 * @param array $arrRow
 	 *
 	 * @return string
 	 */
-	public function setMultipleOptions($value, $dc)
+	public function setMultipleOption($value, $dc)
 	{
 		$db = Database::getInstance();
 		
-		if ($value > 0 && $dc->activeRecord->maxLength > 255/$value-16)
+		if ($value > 3 && $dc->activeRecord->maxLength > 200)
 		{
-			// change rgxp in database
+			// change maxLegth in database
 			$db->prepare("UPDATE " . $this->table . " SET maxLength=? WHERE id=?")
-			   ->execute(round(255/$value-16), $dc->activeRecord->id);
+			   ->execute(200, $dc->activeRecord->id);
 		}
 		
 		return $value;
