@@ -139,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'checkbox'					  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'listwizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
 		'tablewizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
-		'article'					  => '{type_legend},type;{article_legend},insideRoot;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
+		'article'					  => '{type_legend},type;{article_legend},insideRoot,multiArticle;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'pagetree'					  => '{type_legend},type;{page_legend},multiPage;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'filetree'					  => '{type_legend},type;{source_legend},source;{multiSource_legend},multiSource;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'imagesize'					  => '{type_legend},type;{source_legend},size;{pattern_legend},alias;{invisible_legend},invisible',
@@ -443,20 +443,20 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('tl_class'=>'w50 m12 clr'),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
+		'multiArticle' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiArticle'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
 		'insideRoot' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['insideRoot'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12 clr'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'multiSource' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiSource'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 m12 clr'),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'sortBy' => array

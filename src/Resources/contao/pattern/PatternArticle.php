@@ -94,24 +94,27 @@ class PatternArticle extends Pattern
 			}
 		}
 
+		$class = ($this->classClr) ? 'w50 clr' : 'w50';
+		$class .= ($this->multiArticle) ? ' autoheight' : '';
+		$class .= (!$this->multiArticle) ? ' wizard' : '';
+		
+		$wizard = (!$this->multiArticle) ? array(array('tl_content', 'editArticleAlias')) : false;
+		
 		// Add a selectField with the articles as options
-		$this->generateDCA('selectField', array
+		$this->generateDCA(($this->multiArticle) ? 'multiSelectField' : 'selectField', array
 		(
 			'inputType' => 'select',
 			'label'		=> array($this->label, $this->description),
 			'options'	=> $arrArticle,
-			'wizard' => array
-			(
-				array('tl_content', 'editArticleAlias')
-			),
+			'wizard' 	=> $wizard,
 			'eval'		=> array
 			(
 				'mandatory'				=> ($this->mandatory) ? true : false, 
 				'includeBlankOption'	=> ($this->mandatory) ? false : true,
-				'submitOnChange'		=> true,
-				//'multiple'				=> $this->multiArticle,
-				'chosen'				=> true,
-				'tl_class'				=> ($this->classClr) ? 'w50 clr wizard' : 'w50 wizard',
+				'submitOnChange'		=> ($this->multiArticle) ? false : true,
+				'multiple'				=> ($this->multiArticle) ? true : false,
+				'chosen'				=> ($this->multiArticle) ? true : false,
+				'tl_class'				=> $class,
 			),
 		));
 	}
@@ -143,7 +146,29 @@ class PatternArticle extends Pattern
 	 */
 	public function compile()
 	{
-		if ($this->Value->selectField != '')
+		if ($this->multiArticle)
+		{
+			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiSelectField));
+
+			// Return if there are no pages
+			if ($objArticles === null)
+			{
+				return;
+			}
+
+			$arrArticles = array();
+
+			// Add the items to the pre-sorted array
+			while ($objArticles->next())
+			{
+				$arrArticles[] = $objArticles->row();
+			}
+
+			$arrArticles = array_values(array_filter($arrArticles));
+			
+			$this->writeToTemplate($arrArticles);
+		}
+		else
 		{
 			if (($objArticle = \ArticleModel::findById($this->Value->selectField)) !== null)
 			{
