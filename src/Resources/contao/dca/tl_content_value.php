@@ -82,6 +82,10 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "varchar(128) NOT NULL default ''"
 		),
+		'multiSelectField' => array
+		(
+			'sql'                     => "varchar(1022) NOT NULL default ''"
+		),
 		'checkBox' => array
 		(
 			'sql'                     => "char(1) NOT NULL default ''"
