@@ -13,7 +13,6 @@
 
 namespace Agoat\ContentBlocks;
 
-use Contao\TemplateLoader;
 use Agoat\ContentBlocks\Pattern;
 
 
