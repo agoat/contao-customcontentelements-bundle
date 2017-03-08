@@ -65,7 +65,7 @@ class PatternSelectField extends Pattern
 				'mandatory'				=> ($this->mandatory) ? true : false, 
 				'includeBlankOption'	=> ($this->blankOption) ? true : false,
 				'multiple'				=> ($this->multiSelect) ? true : false,
-				'chosen'				=> ($this->multiSelect) ? true : false,
+				'chosen'				=> true,
 				'tl_class'				=> $class,
 			),
 		));
