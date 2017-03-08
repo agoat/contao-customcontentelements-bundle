@@ -112,7 +112,7 @@ class PatternArticle extends Pattern
 				'includeBlankOption'	=> ($this->mandatory) ? false : true,
 				'submitOnChange'		=> ($this->multiArticle) ? false : true,
 				'multiple'				=> ($this->multiArticle) ? true : false,
-				'chosen'				=> ($this->multiArticle) ? true : false,
+				'chosen'				=> true,
 				'tl_class'				=> $class,
 			),
 		));
