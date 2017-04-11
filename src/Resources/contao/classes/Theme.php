@@ -109,7 +109,6 @@ class Theme extends \Contao\Theme
 		(
 			'tl_content_blocks'		=> 'WRITE',
 			'tl_content_pattern'	=> 'WRITE',
-			'tl_content_subpattern'	=> 'WRITE',
 			'tl_files'				=> 'READ'
 		);
 
@@ -300,13 +299,6 @@ class Theme extends \Contao\Theme
 					$set[$name] = $value;
 				}
 
-				// Correct subpattern´s pid
-				if ($table == 'tl_content_pattern' && $set['ptable'] == 'tl_content_subpattern')
-				{
-					$set['pid']	= $arrMapper['tl_content_pattern'][$oPid];
-				
-				}
-
 				// Skip fields that are not in the database (e.g. because of missing extensions)
 				foreach ($set as $k=>$v)
 				{
@@ -319,24 +311,6 @@ class Theme extends \Contao\Theme
 				// Insert into database
 				$this->Database->prepare("INSERT INTO $table %s")->set($set)->execute();
 
-				// For subpattern mirror some columns to the tl_content_subpattern table
-				if ($table == 'tl_content_pattern' && in_array($set['type'], $GLOBALS['TL_CTP_SUB']))
-				{
-					
-					$subSet = array
-					(
-						id => $set['id'],
-						pid => $set['id'],
-						type => $set['type'],
-						title => $set['label'],
-						alias => $set['alias'],
-						subPatternType => $set['subPatternType'],
-						numberofGroups => $set['numberOfGroups']
-					);
-
-					$this->Database->prepare("INSERT INTO tl_content_subpattern %s")->set($subSet)->execute();
-				}
-				
 			}
 		}
 
@@ -397,7 +371,7 @@ class Theme extends \Contao\Theme
 		$objDcaExtractor = \DcaExtractor::getInstance('tl_content_pattern');
 		$arrOrder = $objDcaExtractor->getOrderFields();
 
-		// Add pattern and subpattern recursively
+		// Add pattern recursively
 		while ($objContentBlocks->next())
 		{
 			$this->addPatternData($xml, $table, $arrOrder, $objContentBlocks->id);
@@ -406,7 +380,7 @@ class Theme extends \Contao\Theme
 
 	
 	/**
-	 * Add pattern and subpattern recursively
+	 * Add pattern recursively
 	 */
 	protected function addPatternData ($xml, $table, $arrOrder, $intParentID)
 	{
