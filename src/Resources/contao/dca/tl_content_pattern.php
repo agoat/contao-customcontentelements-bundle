@@ -802,37 +802,13 @@ class tl_content_pattern extends Backend
 	 */
 	public function getPattern()
 	{
-		// Prepare the NotAllowed list for all parent sub pattern
-		$objPattern = \ContentPatternModel::findById(\Input::get('id'));
-
-		$arrNA = array();
-		
-		if ($objPattern != null)
-		{
-			while($objPattern->ptable == 'tl_content_subpattern')
-			{
-				// The subpattern table can be ignored because pid=id
-				$objPattern = \ContentPatternModel::findById($objPattern->pid);
-				
-				if (in_array($objPattern->type, array_keys($GLOBALS['TL_CTP_NA'])))
-				{
-					$arrNA = array_merge($arrNA, $GLOBALS['TL_CTP_NA'][$objPattern->type]);
-				}
-			}
-		}
-			
-		$arrNA = array_unique($arrNA);
 		$pattern = array();
 		
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{
 			foreach (array_keys($v) as $kk)
 			{
-				// Exclude pattern not allowed in sub pattern
-				if (!in_array($kk, $arrNA))
-				{
-					$pattern[$k][] = $kk;					
-				}				
+				$pattern[$k][] = $kk;					
 			}
 		}
 		
