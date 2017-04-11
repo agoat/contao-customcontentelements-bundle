@@ -3,7 +3,7 @@ Contao 4 bundle
 
 ___
 
-###Install
+### Install
 
 Add to app/AppKernel.php (after 'new Contao\CoreBundle\ContaoCoreBundle()')
 ```
