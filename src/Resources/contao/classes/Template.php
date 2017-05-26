@@ -81,7 +81,9 @@ class Template extends FrontendTemplate
 			return;
 		}
 		
-		if (!in_array($strType, array('css', 'scss' , 'less')))
+		$strType = strtoupper($strType);
+		
+		if (!in_array($strType, array('CSS', 'SCSS' , 'LESS')))
 		{
 			return;
 		}
