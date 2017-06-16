@@ -15,6 +15,7 @@
 namespace Agoat\ContentBlocks;
  
 use Agoat\ContentBlocks\Controller;
+use \Contao\FilesModel;
 
 /**
  * Pattern class
