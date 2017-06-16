@@ -231,14 +231,15 @@ abstract class Pattern extends Controller
 
 	
 	/**
-	 * Add an image to a template (new method for pattern without using the max backend width of 320px)
+	 * Add an image to a template (New method for pattern without using the max backend width of 320px)
 	 *
-	 * @param object  $objTemplate   The template object to add the image to
-	 * @param array   $arrItem       The element or module as array
-	 * @param integer $intMaxWidth   An optional maximum width of the image
-	 * @param string  $strLightboxId An optional lightbox ID
+	 * @param object     $objTemplate   The template object to add the image to
+	 * @param array      $arrItem       The element or module as array
+	 * @param integer    $intMaxWidth   An optional maximum width of the image
+	 * @param string     $strLightboxId An optional lightbox ID
+	 * @param FilesModel $objModel      An optional files model
 	 */
-	public static function addImageToTemplate($objTemplate, $arrItem, $intMaxWidth=null, $strLightboxId=null)
+	public static function addImageToTemplate($objTemplate, $arrItem, $intMaxWidth=null, $strLightboxId=null, FilesModel $objModel=null)
 	{
 		try
 		{
@@ -252,7 +253,7 @@ abstract class Pattern extends Controller
 
 		$imgSize = $objFile->imageSize;
 		$size = \StringUtil::deserialize($arrItem['size']);
-		
+
 		if (is_numeric($size))
 		{
 			$size = array(0, 0, (int) $size);
@@ -261,9 +262,8 @@ abstract class Pattern extends Controller
 		{
 			$size = array();
 		}
-		
-		$size += array(0, 0, 'crop');
 
+		$size += array(0, 0, 'crop');
 
 		if ($intMaxWidth === null)
 		{
@@ -277,12 +277,12 @@ abstract class Pattern extends Controller
 		$objTemplate->height = $imgSize[1];
 
 		// Adjust the image size
-		if ($intMaxWidth > 0 && $imgSize !== false)
+		if ($intMaxWidth > 0)
 		{
 			// Subtract the margins before deciding whether to resize (see #6018)
 			if (is_array($arrMargin) && $arrMargin['unit'] == 'px')
 			{
-				$intMargin = $arrMargin['left'] + $arrMargin['right'];
+				$intMargin = (int) $arrMargin['left'] + (int) $arrMargin['right'];
 
 				// Reset the margin if it exceeds the maximum width (see #7245)
 				if ($intMaxWidth - $intMargin < 1)
@@ -296,14 +296,20 @@ abstract class Pattern extends Controller
 				}
 			}
 
-			if ($size[0] > $intMaxWidth || (!$size[0] && !$size[1] && $imgSize[0] > $intMaxWidth))
+			if ($size[0] > $intMaxWidth || (!$size[0] && !$size[1] && (!$imgSize[0] || $imgSize[0] > $intMaxWidth)))
 			{
 				// See #2268 (thanks to Thyon)
-				$ratio = ($size[0] && $size[1]) ? $size[1] / $size[0] : $imgSize[1] / $imgSize[0];
+				$ratio = ($size[0] && $size[1]) ? $size[1] / $size[0] : (($imgSize[0] && $imgSize[1]) ? $imgSize[1] / $imgSize[0] : 0);
 
 				$size[0] = $intMaxWidth;
 				$size[1] = floor($intMaxWidth * $ratio);
 			}
+		}
+
+		// Disable responsive images in the back end (see #7875)
+		if (TL_MODE == 'BE')
+		{
+			unset($size[2]);
 		}
 
 		try
@@ -313,13 +319,13 @@ abstract class Pattern extends Controller
 
 			$picture = array
 			(
-				'img' => $picture->getImg(TL_ROOT),
-				'sources' => $picture->getSources(TL_ROOT)
+				'img' => $picture->getImg(TL_ROOT, TL_FILES_URL),
+				'sources' => $picture->getSources(TL_ROOT, TL_FILES_URL)
 			);
 
 			if ($src !== $arrItem['singleSRC'])
 			{
-				$objFile = new \File(rawurldecode($src), true);
+				$objFile = new \File(rawurldecode($src));
 			}
 		}
 		catch (\Exception $e)
@@ -337,12 +343,74 @@ abstract class Pattern extends Controller
 			$objTemplate->imgSize = ' width="' . $imgSize[0] . '" height="' . $imgSize[1] . '"';
 		}
 
+		$arrMeta = array();
+
+		// Load the meta data
+		if ($objModel instanceof FilesModel)
+		{
+			if (TL_MODE == 'FE')
+			{
+				global $objPage;
+
+				$arrMeta = \Frontend::getMetaData($objModel->meta, $objPage->language);
+
+				if (empty($arrMeta) && $objPage->rootFallbackLanguage !== null)
+				{
+					$arrMeta = \Frontend::getMetaData($objModel->meta, $objPage->rootFallbackLanguage);
+				}
+			}
+			else
+			{
+				$arrMeta = \Frontend::getMetaData($objModel->meta, $GLOBALS['TL_LANGUAGE']);
+			}
+
+			\Controller::loadDataContainer('tl_files');
+
+			// Add any missing fields
+			foreach (array_keys($GLOBALS['TL_DCA']['tl_files']['fields']['meta']['eval']['metaFields']) as $k)
+			{
+				if (!isset($arrMeta[$k]))
+				{
+					$arrMeta[$k] = '';
+				}
+			}
+
+			$arrMeta['imageTitle'] = $arrMeta['title'];
+			$arrMeta['imageUrl'] = $arrMeta['link'];
+			unset($arrMeta['title'], $arrMeta['link']);
+
+			// Add the meta data to the item
+			if (!$arrItem['overwriteMeta'])
+			{
+				foreach ($arrMeta as $k=>$v)
+				{
+					switch ($k)
+					{
+						case 'alt':
+						case 'imageTitle':
+							$arrItem[$k] = \StringUtil::specialchars($v);
+							break;
+
+						default:
+							$arrItem[$k] = $v;
+							break;
+					}
+				}
+			}
+		}
+
 		$picture['alt'] = \StringUtil::specialchars($arrItem['alt']);
 
-		// Only add the title if the image is not part of an image link
-		if (empty($arrItem['imageUrl']) && empty($arrItem['fullsize']))
+		// Move the title to the link tag so it is shown in the lightbox
+		if ($arrItem['fullsize'] && $arrItem['imageTitle'] && !$arrItem['linkTitle'])
 		{
-			$picture['title'] = \StringUtil::specialchars($arrItem['title']);
+			$arrItem['linkTitle'] = $arrItem['imageTitle'];
+			unset($arrItem['imageTitle']);
+		}
+
+		if (isset($arrItem['imageTitle']))
+		{
+			$picture['title'] = \StringUtil::specialchars($arrItem['imageTitle']);
 		}
 
 		$objTemplate->picture = $picture;
@@ -354,7 +422,7 @@ abstract class Pattern extends Controller
 		}
 
 		// Float image
-		if ($arrItem['floating'] != '')
+		if ($arrItem['floating'])
 		{
 			$objTemplate->floatClass = ' float_' . $arrItem['floating'];
 		}
@@ -363,20 +431,20 @@ abstract class Pattern extends Controller
 		$strHrefKey = ($objTemplate->href != '') ? 'imageHref' : 'href';
 
 		// Image link
-		if ($arrItem['imageUrl'] != '' && TL_MODE == 'FE')
+		if ($arrItem['imageUrl'] && TL_MODE == 'FE')
 		{
 			$objTemplate->$strHrefKey = $arrItem['imageUrl'];
 			$objTemplate->attributes = '';
 
 			if ($arrItem['fullsize'])
 			{
-				// Open images in  he lightbox
+				// Open images in the lightbox
 				if (preg_match('/\.(jpe?g|gif|png)$/', $arrItem['imageUrl']))
 				{
 					// Do not add the TL_FILES_URL to external URLs (see #4923)
 					if (strncmp($arrItem['imageUrl'], 'http://', 7) !== 0 && strncmp($arrItem['imageUrl'], 'https://', 8) !== 0)
 					{
-						$objTemplate->$strHrefKey = TL_FILES_URL . System::urlEncode($arrItem['imageUrl']);
+						$objTemplate->$strHrefKey = TL_FILES_URL . \System::urlEncode($arrItem['imageUrl']);
 					}
 
 					$objTemplate->attributes = ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
@@ -391,20 +459,23 @@ abstract class Pattern extends Controller
 		// Fullsize view
 		elseif ($arrItem['fullsize'] && TL_MODE == 'FE')
 		{
-			$objTemplate->$strHrefKey = TL_FILES_URL . System::urlEncode($arrItem['singleSRC']);
+			$objTemplate->$strHrefKey = TL_FILES_URL . \System::urlEncode($arrItem['singleSRC']);
 			$objTemplate->attributes = ' data-lightbox="' . substr($strLightboxId, 9, -1) . '"';
+		}
+
+		// Add the meta data to the template
+		foreach (array_keys($arrMeta) as $k)
+		{
+			$objTemplate->$k = $arrItem[$k];
 		}
 
 		// Do not urlEncode() here because getImage() already does (see #3817)
 		$objTemplate->src = TL_FILES_URL . $src;
-		$objTemplate->alt = \StringUtil::specialchars($arrItem['alt']);
-		$objTemplate->title = \StringUtil::specialchars($arrItem['title']);
-		$objTemplate->linkTitle = $objTemplate->title;
+		$objTemplate->singleSRC = $arrItem['singleSRC'];
+		$objTemplate->linkTitle = $arrItem['linkTitle'] ?: $arrItem['title'];
 		$objTemplate->fullsize = $arrItem['fullsize'] ? true : false;
 		$objTemplate->addBefore = ($arrItem['floating'] != 'below');
 		$objTemplate->margin = static::generateMargin($arrMargin);
-		$objTemplate->caption = $arrItem['caption'];
-		$objTemplate->singleSRC = $arrItem['singleSRC'];
 		$objTemplate->addImage = true;
 	}
 }
