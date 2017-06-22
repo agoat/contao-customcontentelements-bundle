@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "symfony/framework-bundle": "~2.8|~3.0",
+        "php": ">=5.6",
+        "symfony/framework-bundle": "^3.3",
         "contao/core-bundle": "^4.4"
     },
     "require-dev": {
@@ -31,10 +31,7 @@
             "src/Resources/contao/config",
             "src/Resources/contao/dca",
             "src/Resources/contao/languages",
-            "src/Resources/contao/templates",
-            "../../contao/core-bundle/src/Resources/contao/widgets/FileSelector.php",
-            "../../contao/core-bundle/src/Resources/contao/widgets/FileTree.php",
-            "../../contao/core-bundle/src/Resources/contao/widgets/PageTree.php"
+            "src/Resources/contao/templates"
         ]
     },
     "autoload-dev": {

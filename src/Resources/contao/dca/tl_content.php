@@ -204,13 +204,16 @@ class tl_content_contentblocks extends tl_content
 	public function buildPaletteAndFields ($dc)
 	{
 		// build the content block elements palette and fields only when editing a content element (see #5)
-		if (\Input::get('act') != 'edit' && \Input::get('act') != 'show')
+		if (\Input::get('act') != 'edit' && \Input::get('act') != 'show' && !isset($_GET['target']))
 		{
 			return;
 		}
-	
+		
+		$intId = (isset($_GET['target'])) ? explode('.', \Input::get('target'))[2] : $dc->id;
+		
+		
 		// get content element
-		$objContent = \ContentModel::findByPk($dc->id);
+		$objContent = \ContentModel::findByPk($intId);
 	
 		if ($objContent === null)
 		{
