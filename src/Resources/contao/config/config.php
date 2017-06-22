@@ -125,6 +125,7 @@ $GLOBALS['TL_CTP_SYS'] = array('section', 'explanation', 'visibility', 'protecti
  */
 $GLOBALS['BE_FFL']['explanation'] = 'Explanation';
 $GLOBALS['BE_FFL']['visualselect'] = 'VisualSelectMenu';
+$GLOBALS['BE_FFL']['fileTree'] = '\Agoat\ContentBlocks\FileTree';
 
 $GLOBALS['BE_FFL']['multigroup'] = 'MultiGroup';
 $GLOBALS['BE_FFL']['multigroupstart'] = 'MultiGroupStart';
