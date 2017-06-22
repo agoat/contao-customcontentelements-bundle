@@ -258,7 +258,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
 			'exclude'                 => true,
 			'inputType'               => 'textarea',
-			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyMCE_explanation'),
+			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyExplanation'),
 			'sql'                     => "mediumtext NULL"
 		),
 		'style' => array
