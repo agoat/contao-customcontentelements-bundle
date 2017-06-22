@@ -21,8 +21,7 @@ TemplateLoader::addFiles(array
 	'cb_standard' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
 	'cb_simple' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
 	'cb_debug' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
-	'be_tinyMCE_standard' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
 	'be_tinyMCE_simple' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
-	'be_tinyMCE_explanation' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
+	'be_tinyExplanation' => 'vendor/agoat/contentblocks-bundle/src/Resources/contao/templates',
 ));
 
