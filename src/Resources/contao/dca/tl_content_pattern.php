@@ -600,6 +600,69 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 );
 
 
+/**
+ * Dynamically change parent table when editing subpattern
+ */
+if (\Input::get('spid') !== null)
+{
+	$objParent = \ContentPatternModel::findById(\Input::get('spid'));
+}
+else if (\Input::get('act') == 'edit' && \Input::get('mode') == '1')
+{
+	// for the 'save and edit' function use the parent of the parent to check for a sub pattern
+	$objParent = \ContentPatternModel::findById(\Input::get('pid'));
+
+	if ($objParent->ptable == 'tl_content_subpattern')
+	{
+		$objParent = \ContentPatternModel::findById($objParent->pid);
+	}
+	else
+	{
+		$objParent = null;
+	}
+}
+else
+{
+	$objParent = null;	
+}
+
+if ($objParent !== null)
+{
+	if (\Input::get('id') == \Input::get('spid') && \Input::get('act') == 'edit')
+	{
+		// when editing a sub pattern itself use the ptable of the sub pattern object
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = $objParent->ptable;
+	}
+	else
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['config']['ptable'] = 'tl_content_subpattern';
+	}
+	
+	$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
+	
+
+	// Extra config for the sub pattern types
+	if ($objParent->type == 'subpattern')
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
+		
+		// set the filter for the subpattern option
+		if ($objParent->subPatternType == 'options')
+		{
+			// set callbacks and filter
+			$GLOBALS['TL_DCA']['tl_content_pattern']['config']['onload_callback'][] = array('tl_content_pattern', 'subPatternFilter');
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panel_callback']['subPatternFilter'] = array('tl_content_pattern', 'generatesubPatternFilter');
+
+			$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['panelLayout']);
+		}
+	}
+	else if ($objParent->type == 'multipattern')
+	{
+		$GLOBALS['TL_DCA']['tl_content_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
+	}
+
+}
+
 
 /**
  * Provide miscellaneous methods that are used by the data configuration array.
