@@ -181,7 +181,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'inputType'               => 'select',
 			'default'				  => 'element_standard',
 			'flag'                    => 11,
-			'options_callback'        => array('tl_content_blocks', 'getElementTemplates'),
+			'options_callback'        => array('tl_content_blocks', 'getContentBlockTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
@@ -310,21 +310,63 @@ class tl_content_blocks extends Backend
 
 	
 	/**
-	 * Return all content element templates as array
+	 * Return all content block templates as array
 	 *
 	 * @return array
 	 */
-	public function getElementTemplates(DataContainer $dc)
+	public function getContentBlockTemplates(DataContainer $dc)
 	{
-		$theme = \ThemeModel::findById($dc->activeRecord->pid);
+		$arrTemplates = array();
 
-		foreach($this->getTemplateGroup('cb_') as $k=>$v)
+		// Get the default templates
+		foreach (\TemplateLoader::getPrefixedFiles('cb_') as $strTemplate)
 		{
-			if (strpos($v,'(') === false || strpos($v, $theme->name) || strpos($v, 'global'))
+			$arrTemplates[$strTemplate][] = 'root';
+		}
+
+		$arrCustomized = glob(TL_ROOT . '/templates/cb_*');
+
+		// Add the customized templates
+		if (is_array($arrCustomized))
+		{
+			foreach ($arrCustomized as $strFile)
 			{
-				$arrTemplates[$k] = $v;
+				$strTemplate = basename($strFile, strrchr($strFile, '.'));
+				$arrTemplates[$strTemplate][] = $GLOBALS['TL_LANG']['MSC']['global'];
 			}
 		}
+
+		// Add the customized theme templates
+		$theme = \ThemeModel::findById($dc->activeRecord->pid);
+		
+		$arrCustomized = glob(TL_ROOT . '/' . $theme->templates . '/' . 'cb_*');
+		if (is_array($arrCustomized))
+		{
+			foreach ($arrCustomized as $strFile)
+			{
+				$strTemplate = basename($strFile, strrchr($strFile, '.'));
+				$arrTemplates[$strTemplate][] = $theme->name;
+			}
+		}
+
+		// Show the template sources
+		foreach ($arrTemplates as $k=>$v)
+		{
+			$v = array_filter($v, function($a) {
+				return $a != 'root';
+			});
+			if (empty($v))
+			{
+				$arrTemplates[$k] = $k;
+			}
+			else
+			{
+				$arrTemplates[$k] = $k . ' (' . implode(', ', $v) . ')';
+			}
+		}
+
+		// Sort the template names
+		ksort($arrTemplates);
 		
 		return $arrTemplates;
 	}
