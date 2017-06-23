@@ -130,6 +130,10 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
+		'highlight' => array
+		(
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
 		'count' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"

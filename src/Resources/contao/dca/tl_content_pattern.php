@@ -325,6 +325,14 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
+		'canChangeHighlight' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeHighlight'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
 
 
 		'source' => array
