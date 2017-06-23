@@ -68,11 +68,17 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'operations' => array
 		(
+			'edit' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['edit'],
+				'icon'                => 'edit.svg',
+				'button_callback'     => array('tl_content_pattern', 'patternButton')
+			),
 			'editheader' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['editheader'],
 				'href'                => 'act=edit',
-				'icon'                => 'edit.svg',
+				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
