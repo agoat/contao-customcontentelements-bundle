@@ -49,8 +49,6 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['type']['default'] = false;
 	
 class tl_content_contentblocks extends tl_content
 {
-	
-	
 	/**
 	 * @var array returned field values
 	 *
@@ -62,7 +60,6 @@ class tl_content_contentblocks extends tl_content
 	 * @var array returned field values
 	 */
 	protected $arrModifiedValues = array();
-
 	
 	
 	/**
@@ -90,7 +87,6 @@ class tl_content_contentblocks extends tl_content
 	{
 		return ' <a href="contao/help.php?table='.$dc->table.'&amp;field='.$dc->field.'&amp;ptable='.$dc->parentTable.'&amp;pid='.$dc->activeRecord->pid.'" title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['helpWizard']) . '" onclick="Backend.openModalIframe({\'width\':735,\'title\':\''.\StringUtil::specialchars(str_replace("'", "\\'", $arrData['label'][0])).'\',\'url\':this.href});return false">'.\Image::getHtml('about.svg', $GLOBALS['TL_LANG']['MSC']['helpWizard'], 'style="vertical-align:text-bottom"').'</a>';
 	}
-	
 	
 	
 	/**
@@ -154,6 +150,21 @@ class tl_content_contentblocks extends tl_content
 	}
 
 
+	/**
+	 * Dynamically set the ace syntax
+	 */
+	public function setAceCodeHighlighting($value, $dc)
+	{
+		$id = explode('-', $dc->field);
+		if (!empty($this->arrLoadedValues[$id[1]][$id[2]]['highlight']))
+		{
+			$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['rte'] = 'ace|' . strtolower($this->arrLoadedValues[$id[1]][$id[2]]['highlight']);
+		}
+
+		return $value;
+	}
+	
+	
 	/**
 	 * set default value for new records
 	 */

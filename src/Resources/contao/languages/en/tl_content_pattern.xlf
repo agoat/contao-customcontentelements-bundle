@@ -336,6 +336,12 @@
 			<trans-unit id="tl_content_pattern.highlight.1">
 				<source>Select a scripting language.</source>
 			</trans-unit>
+			<trans-unit id="tl_content_pattern.canChangeHighlight.0">
+				<source>Highlighting is selectable</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.canChangeHighlight.1">
+				<source>The highlight select field will be displayed above the code area.</source>
+			</trans-unit>
 
 
 			<trans-unit id="tl_content_pattern.form_legend">
