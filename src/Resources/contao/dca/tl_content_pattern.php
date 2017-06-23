@@ -321,7 +321,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['highlight'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options'                 => array('HTML', 'HTML5', 'XML', 'JavaScript', 'CSS', 'SCSS', 'PHP', 'JSON'),
+			'options'                 => array('HTML', 'HTML5', 'XML', 'JavaScript', 'CSS', 'SCSS', 'PHP', 'JSON', 'Markdown'),
 			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
