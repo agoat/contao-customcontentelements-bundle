@@ -460,6 +460,7 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function loadFieldValue ($value, $dc)
 	{
+		if (!empty($value))
 		{
 			return $value;
 		}
