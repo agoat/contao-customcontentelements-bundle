@@ -211,7 +211,6 @@ class tl_content_contentblocks extends tl_content
 		
 		$intId = (isset($_GET['target'])) ? explode('.', \Input::get('target'))[2] : $dc->id;
 		
-		
 		// get content element
 		$objContent = \ContentModel::findByPk($intId);
 	
@@ -227,18 +226,6 @@ class tl_content_contentblocks extends tl_content
 		{
 			return;
 		}
-
-		// load values from tl_content_value
-		$colValue = \ContentValueModel::findByCid($objContent->id);
-		
-		if ($colValue !== null)
-		{
-			foreach ($colValue as $objValue)
-			{
-				$this->arrLoadedValues[$objValue->pid][$objValue->rid] = $objValue->row();
-			}							
-		}
-
 
 		// add default palette (for type selection)
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$objBlock->alias] = '{type_legend},type';
@@ -271,10 +258,7 @@ class tl_content_contentblocks extends tl_content
 				$objPatternClass->construct();
 			}
 		}
-
 	}	
-
-
 
 	
 	/**
@@ -471,19 +455,25 @@ class tl_content_contentblocks extends tl_content
 	}
 
 	
-	
-	
 	/**
 	 * load field value from tl_content_value table
 	 */
 	public function loadFieldValue ($value, $dc)
 	{
-		if ($this->arrLoadedValues)
 		{
-			$id = explode('-', $dc->field);					
+			return $value;
+		}
+
+		$this->loadContentValues($dc->id);
+
+		$id = explode('-', $dc->field);	
+
+		if (!empty($this->arrLoadedValues[$id[1]][$id[2]][$id[0]]))
+		{
 			return $this->arrLoadedValues[$id[1]][$id[2]][$id[0]];
 		}
-		return $value;		
+		
+		return $value;
 	}
 
 	/**
@@ -504,6 +494,8 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function prepareOrderSRCValue ($value, $dc)
 	{
+		$this->loadContentValues($dc->id);
+		
 		// Prepare the order field
 		$id = explode('-', $dc->field);
 		$orderSRC = \StringUtil::deserialize($this->arrLoadedValues[$id[1]][$id[2]]['orderSRC']);
@@ -530,6 +522,8 @@ class tl_content_contentblocks extends tl_content
 	 */
 	public function prepareOrderPageValue ($value, $dc)
 	{
+		$this->loadContentValues($dc->id);
+
 		// Prepare the order field
 		$id = explode('-', $dc->field);
 		$orderPage = \StringUtil::deserialize($this->arrLoadedValues[$id[1]][$id[2]]['orderPage']);
@@ -551,6 +545,25 @@ class tl_content_contentblocks extends tl_content
 		return $value;
 	}
 	
+	/**
+	 * load the content values from the tl_content_value database
+	 */
+	protected function loadContentValues ($intId)
+	{
+		if (empty($this->arrLoadedValues))
+		{
+			$colValue = \ContentValueModel::findByCid($intId);
+			
+			if ($colValue !== null)
+			{
+				foreach ($colValue as $objValue)
+				{
+					$this->arrLoadedValues[$objValue->pid][$objValue->rid] = $objValue->row();
+				}							
+			}
+		}
+	}
+
 	/**
 	 * set default value for new records
 	 */
