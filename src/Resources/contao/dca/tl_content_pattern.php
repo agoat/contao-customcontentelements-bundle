@@ -694,7 +694,28 @@ class tl_content_pattern extends Backend
 	}
 
 
-	
+	/**
+	 * Return the pattern edit button
+	 *
+	 * @param array  $row
+	 * @param string $href
+	 * @param string $label
+	 * @param string $title
+	 * @param string $icon
+	 * @param string $attributes
+	 *
+	 * @return string
+	 */
+	public function patternButton($row, $href, $label, $title, $icon, $attributes)
+	{
+		if (in_array($row['type'], $GLOBALS['TL_CTP_SUB']))
+		{
+			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;spid='.$row['id'],true, array('act','mode')).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+		}
+		
+	}	
+
+    
 	/**
 	 * Add the type of content pattern
 	 *
