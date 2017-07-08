@@ -146,7 +146,76 @@ class Template extends FrontendTemplate
 		$GLOBALS['TL_CTB_JS'] .= $strJS;
 	}
 
+
+	/**
+	 * Save a variable globally (to load in other content block templates)
+	 *
+	 * @param string $strKey  The name
+	 * @param mixed  $varData The content
+	 */
+	public function saveVar ($strKey, $varData)
+	{
+		$GLOBALS['templateVars'][$strKey] = $varData;
+	}
+
 	
+	/**
+	 * Load a variable globally
+	 *
+	 * @param string $strKey  The name
+	 *
+	 * @return mixed|boolean The globally saved content or false if nothing exist
+	 */
+	public function loadVar ($strKey)
+	{
+		if (!isset($GLOBALS['templateVars'][$strKey]))
+		{
+			return false;
+		}
+		
+		return $GLOBALS['templateVars'][$strKey];
+	}
+
+	
+	/**
+	 * Return the type of the previous content element
+	 *
+	 * @return string  The type of the previous content element
+	 */
+	public function prevType ()
+	{
+		$objCte = \ContentModel::findPublishedByPidAndTable($this->pid, $this->ptable);
+		
+		if ($objCte === null)
+		{
+			return;
+		}
+		
+		$arrTypes = $objCte->fetchEach('type');
+		
+		return $arrTypes[array_keys($arrTypes)[array_search($this->id, array_keys($arrTypes)) - 1]];
+	}
+
+	
+	/**
+	 * Return the type of the previous content element
+	 *
+	 * @return string  The type of the previous content element
+	 */
+	public function nextType ()
+	{
+		$objCte = \ContentModel::findPublishedByPidAndTable($this->pid, $this->ptable);
+		
+		if ($objCte === null)
+		{
+			return;
+		}
+		
+		$arrTypes = $objCte->fetchEach('type');
+		
+		return $arrTypes[array_keys($arrTypes)[array_search($this->id, array_keys($arrTypes)) + 1]];
+	}
+
 	
 	/**
 	 * Insert a template
