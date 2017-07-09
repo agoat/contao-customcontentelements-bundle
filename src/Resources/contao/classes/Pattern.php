@@ -307,13 +307,8 @@ abstract class Pattern extends Controller
 			}
 		}
 
-		// Disable responsive images in the back end (see #7875)
-		if (TL_MODE == 'BE')
-		{
-			unset($size[2]);
-		}
 
-		try
+        try
 		{
 			$src = \System::getContainer()->get('contao.image.image_factory')->create(TL_ROOT . '/' . $arrItem['singleSRC'], $size)->getUrl(TL_ROOT);
 			$picture = \System::getContainer()->get('contao.image.picture_factory')->create(TL_ROOT . '/' . $arrItem['singleSRC'], $size);
