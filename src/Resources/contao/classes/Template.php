@@ -170,7 +170,7 @@ class Template extends FrontendTemplate
 	{
 		if (!isset($GLOBALS['templateVars'][$strKey]))
 		{
-			return false;
+			return null;
 		}
 		
 		return $GLOBALS['templateVars'][$strKey];
@@ -184,15 +184,18 @@ class Template extends FrontendTemplate
 	 */
 	public function prevType ()
 	{
-		$objCte = \ContentModel::findPublishedByPidAndTable($this->pid, $this->ptable);
-		
-		if ($objCte === null)
+		if (($arrTypes = $GLOBALS['templateTypes'][$this->ptable.'.'.$this->pid]) === null)
 		{
-			return;
+			$objCte = \ContentModel::findPublishedByPidAndTable($this->pid, $this->ptable);
+			
+			if ($objCte === null)
+			{
+				return;
+			}
+			
+			$arrTypes = $GLOBALS['templateTypes'][$this->ptable.'.'.$this->pid] = $objCte->fetchEach('type');
 		}
-		
-		$arrTypes = $objCte->fetchEach('type');
-		
+
 		return $arrTypes[array_keys($arrTypes)[array_search($this->id, array_keys($arrTypes)) - 1]];
 	}
 
@@ -204,14 +207,17 @@ class Template extends FrontendTemplate
 	 */
 	public function nextType ()
 	{
-		$objCte = \ContentModel::findPublishedByPidAndTable($this->pid, $this->ptable);
-		
-		if ($objCte === null)
+		if (($arrTypes = $GLOBALS['templateTypes'][$this->ptable.'.'.$this->pid]) === null)
 		{
-			return;
+		$objCte = \ContentModel::findPublishedByPidAndTable($this->pid, $this->ptable);
+			
+			if ($objCte === null)
+			{
+				return;
+			}
+			
+			$arrTypes = $GLOBALS['templateTypes'][$this->ptable.'.'.$this->pid] = $objCte->fetchEach('type');
 		}
-		
-		$arrTypes = $objCte->fetchEach('type');
 		
 		return $arrTypes[array_keys($arrTypes)[array_search($this->id, array_keys($arrTypes)) + 1]];
 	}
