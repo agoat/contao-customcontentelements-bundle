@@ -1,14 +1,12 @@
 <?php
 
 /**
- * Contao Open Source CMS - ContentBlocks extension
+ * Contao Open Source CMS - Contentblocks extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2005-2017 Leo Feyer
+ * Copyright (c) 2017 Arne Stappen
  *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @license LGPL-3.0+
  */
 
 namespace Agoat\ContentBlocks;
@@ -22,6 +20,7 @@ use Contao\CoreBundle\DataContainer\DcaFilterInterface;
  * @property string  $orderField
  * @property boolean $multiple
  * @property array   $rootNodes
+ * @property string  $fieldType
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
@@ -113,6 +112,11 @@ class PageTree extends \Widget implements DcaFilterInterface
 			}
 		}
 
+		if ($this->fieldType)
+		{
+			$arrFilters['fieldType'] = $this->fieldType;
+		}
+
 		return $arrFilters;
 	}
 
@@ -147,7 +151,6 @@ class PageTree extends \Widget implements DcaFilterInterface
 					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
 				}
-				
 				$this->objDca->createNewVersion = true; // see #6285
 			}
 		}
@@ -266,9 +269,9 @@ class PageTree extends \Widget implements DcaFilterInterface
 		}
 
 		$return .= '</ul>
-    <p><a href="' . ampersand(\System::getContainer()->get('router')->generate('contao_backend_picker', array('do'=>'page', 'context'=>'page', 'target'=>$this->strTable.'.'.$this->strField.'.'.$this->activeRecord->id, 'value'=>implode(',', $arrSet), 'popup'=>1))) . '" class="tl_submit" id="pt_' . $this->strField . '">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>
+    <p><a href="' . ampersand(\System::getContainer()->get('router')->generate('contao_backend_picker', array('do'=>'page', 'context'=>'page', 'target'=>$this->strTable.'.'.$this->strField.'.'.$this->activeRecord->id, 'value'=>implode(',', $arrSet), 'popup'=>1))) . '" class="tl_submit" id="pt_' . $this->strName . '">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>
     <script>
-      $("pt_' . $this->strField . '").addEvent("click", function(e) {
+      $("pt_' . $this->strName . '").addEvent("click", function(e) {
         e.preventDefault();
         Backend.openModalSelector({
           "title": "' . \StringUtil::specialchars(str_replace("'", "\\'", $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0])) . '",

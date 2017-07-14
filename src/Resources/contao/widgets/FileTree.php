@@ -1,14 +1,12 @@
 <?php
 
 /**
- * Contao Open Source CMS - ContentBlocks extension
+ * Contao Open Source CMS - Contentblocks extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2005-2017 Leo Feyer
+ * Copyright (c) 2017 Arne Stappen
  *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @license LGPL-3.0+
  */
 
 namespace Agoat\ContentBlocks;
@@ -27,6 +25,7 @@ use Contao\CoreBundle\DataContainer\DcaFilterInterface;
  * @property boolean $filesOnly
  * @property string  $path
  * @property string  $extensions
+ * @property string  $fieldType
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
@@ -96,10 +95,16 @@ class FileTree extends \Widget implements DcaFilterInterface
 	{
 		$arrFilters = array();
 
-		// Only folders can be selected
-		if ($this->files === false)
+		// Show files in file tree
+		if ($this->files)
 		{
-			$arrFilters['hideFiles'] = true;
+			$arrFilters['files'] = true;
+		}
+
+		// Only files can be selected
+		if ($this->filesOnly)
+		{
+			$arrFilters['filesOnly'] = true;
 		}
 
 		// Only files within a custom path can be selected
@@ -112,6 +117,11 @@ class FileTree extends \Widget implements DcaFilterInterface
 		if ($this->extensions)
 		{
 			$arrFilters['extensions'] = $this->extensions;
+		}
+
+		if ($this->fieldType)
+		{
+			$arrFilters['fieldType'] = $this->fieldType;
 		}
 
 		return $arrFilters;
@@ -148,7 +158,7 @@ class FileTree extends \Widget implements DcaFilterInterface
 					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
 				}
-
+				
 				$this->objDca->createNewVersion = true; // see #6285
 			}
 		}
@@ -406,9 +416,9 @@ class FileTree extends \Widget implements DcaFilterInterface
 		}
 
 		$return .= '</ul>
-    <p><a href="' . ampersand(\System::getContainer()->get('router')->generate('contao_backend_picker', array('do'=>'files', 'context'=>'file', 'target'=>$this->strTable.'.'.$this->strField.'.'.$this->activeRecord->id, 'value'=>implode(',', array_keys($arrSet)), 'popup'=>1))) . '" class="tl_submit" id="ft_' . $this->strField . '">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>
+    <p><a href="' . ampersand(\System::getContainer()->get('router')->generate('contao_backend_picker', array('do'=>'files', 'context'=>'file', 'target'=>$this->strTable.'.'.$this->strField.'.'.$this->activeRecord->id, 'value'=>implode(',', array_keys($arrSet)), 'popup'=>1))) . '" class="tl_submit" id="ft_' . $this->strName . '">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>
     <script>
-      $("ft_' . $this->strField . '").addEvent("click", function(e) {
+      $("ft_' . $this->strName . '").addEvent("click", function(e) {
         e.preventDefault();
         Backend.openModalSelector({
           "title": "' . \StringUtil::specialchars(str_replace("'", "\\'", $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['label'][0])) . '",
