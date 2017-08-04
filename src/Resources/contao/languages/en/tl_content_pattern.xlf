@@ -44,7 +44,7 @@
 				<source>Multiple input fields</source>
 			</trans-unit>
 			<trans-unit id="tl_content_pattern.multiple.1">
-				<source>Set the number of multiple input fields.</source>
+				<source>Set the number of input fields.</source>
 			</trans-unit>
  			<trans-unit id="tl_content_pattern.picker.0">
 				<source>Picker</source>
