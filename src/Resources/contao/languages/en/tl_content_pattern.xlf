@@ -181,6 +181,12 @@
 			<trans-unit id="tl_content_pattern.insideRoot.1">
 				<source>Restrict the selection to the current website root.</source>
 			</trans-unit>
+			<trans-unit id="tl_content_pattern.insideLang.0">
+				<source>Restrict to website language</source>
+			</trans-unit>
+			<trans-unit id="tl_content_pattern.insideLang.1">
+				<source>Restrict the selection to the current root language.</source>
+			</trans-unit>
 			<trans-unit id="tl_content_pattern.multiArticle.0">
 				<source>Multiple article selection</source>
 			</trans-unit>
