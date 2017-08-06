@@ -90,12 +90,6 @@ class Controller extends \Contao\Controller
 				$this->addBackendJS($objLayout);
 				$this->addContentBlockJS();
 
-				// Add jquery to the backend if active in layout
-				if ($objLayout->addJQuery && $objLayout->backendJS)
-				{
-					array_unshift($GLOBALS['TL_JAVASCRIPT'], 'assets/jquery/js/jquery.min.js');
-				}
-				
 				$objCombiner = new Combiner();
 				
 				// Add the TL_JAVASCRIPT to the backend template
@@ -122,8 +116,16 @@ class Controller extends \Contao\Controller
 				{
 					foreach ($objCombiner->getFileUrls() as $strUrl)
 					{
-						$objTemplate->javascripts = \Template::generateScriptTag($strUrl) . "\n" . $objTemplate->javascripts;
+						$objTemplate->javascripts .= \Template::generateScriptTag($strUrl) . "\n";
 					}
+				}
+
+				// Add jquery to the backend if active in layout
+				if ($objLayout->addJQuery && $objLayout->backendJS)
+				{
+					$jQuery = \Template::generateScriptTag('assets/jquery/js/jquery.min.js') . "\n";
+					$jQuery .= "<script>jQuery.noConflict();</script>\n";
+					$objTemplate->javascripts = $jQuery . $objTemplate->javascripts;
 				}
 			}
 		}
