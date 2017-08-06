@@ -3,7 +3,7 @@
  /**
  * Contao Open Source CMS - ContentBlocks extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2017 Arne Stappen (aGoat)
  *
  *
  * @package   contentblocks
@@ -11,42 +11,31 @@
  * @license	  LGPL-3.0+
  */
 
-
 namespace Agoat\ContentBlocks;
  
 use Contao\Input;
 use Contao\File;
 use Contao\StringUtil;
+use Contao\Combiner;
+
 
 class Controller extends \Contao\Controller
 {
 
-	// add frontend stylesheets to backend
+	/**
+	 * Add extra css and js to the backend template
+	 */
 	public function addPageLayoutToBE ($objTemplate)
 	{
-
-		// add the contentblocks backend style sheets
 		if (TL_MODE == 'BE')
 		{
 			if ($objTemplate->getName() == 'be_main' && Input::get('table') == 'tl_content')
 			{
-				// Make sure TL_USER_CSS is set
-				if (!is_array($GLOBALS['TL_USER_CSS']))
-				{
-					$GLOBALS['TL_USER_CSS'] = array();
-				}
-
-				// Make sure TL_JAVASCRIPT is set
-				if (!is_array($GLOBALS['TL_JAVASCRIPT']))
-				{
-					$GLOBALS['TL_JAVASCRIPT'] = array();
-				}
-
 				if (Input::get('do') && Input::get('id'))
 				{
 					$intLayoutId = $this->getLayoutId('tl_'.Input::get('do'), Input::get('id')); 
 					
-					// sometimes the id is not the parent table but the content table id
+					// Sometimes the id is not the parent table but the content table id
 					if (!$intLayoutId)
 					{
 						$intLayoutId = $this->getLayoutId('tl_'.Input::get('do'), \ContentModel::findById(Input::get('id'))->pid); 
@@ -59,143 +48,88 @@ class Controller extends \Contao\Controller
 				{
 					return;
 				}
-				
-				// add backend CSS
-				$arrBackendCSS = StringUtil::deserialize($objLayout->backendCSS);
-				
-				if (!empty($arrBackendCSS) && is_array($arrBackendCSS))
-				{
-					// Consider the sorting order (see #5038)
-					if ($objLayout->orderBackendCSS != '')
-					{
-						$tmp = StringUtil::deserialize($objLayout->orderBackendCSS);
-						
-						if (!empty($tmp) && is_array($tmp))
-						{
-							// Remove all values
-							$arrOrder = array_map(function(){}, array_flip($tmp));
-							
-							// Move the matching elements to their position in $arrOrder
-							foreach ($arrBackendCSS as $k=>$v)
-							{
-								if (array_key_exists($v, $arrOrder))
-								{
-									$arrOrder[$v] = $v;
-									unset($arrBackendCSS[$k]);
-								}
-							}
-							
-							// Append the left-over style sheets at the end
-							if (!empty($arrBackendCSS))
-							{
-								$arrOrder = array_merge($arrOrder, array_values($arrBackendCSS));
-							}
-							
-							// Remove empty (unreplaced) entries
-							$arrBackendCSS = array_values(array_filter($arrOrder));
-							unset($arrOrder);
-						}
-					}
-					
-					// Get the file entries from the database
-					$objFiles = \FilesModel::findMultipleByUuids($arrBackendCSS);
-					
-					if ($objFiles !== null)
-					{
-						while ($objFiles->next())
-						{
-							if (file_exists(TL_ROOT . '/' . $objFiles->path))
-							{
-								$GLOBALS['TL_USER_CSS'][] = $objFiles->path . '|static';
-							}
-						}
-					}
 
-					unset($objFiles);
+				$GLOBALS['TL_USER_CSS'] = array(); // The TL_USER_CSS can be reset because it's not used in the backend
+				
+				$this->addBackendCSS($objLayout);
+				$this->addContentBlockCSS();
+
+				$objCombiner = new Combiner();
+
+				// Add the TL_USER_CSS to the backend template
+				foreach ($GLOBALS['TL_USER_CSS'] as $stylesheet)
+				{
+					$options = \StringUtil::resolveFlaggedUrl($stylesheet);
+					
+					if ($options->static)
+					{
+						if ($options->mtime === null)
+						{
+							$options->mtime = filemtime(TL_ROOT . '/' . $stylesheet);
+						}
+						
+						$objCombiner->add($stylesheet, $options->mtime, $options->media);
+					}
+					else
+					{
+						$objTemplate->stylesheets .= \Template::generateStyleTag(static::addStaticUrlTo($stylesheet), $options->media) . "\n";
+					}							
+				}
+					
+				if ($objCombiner->hasEntries())
+				{
+					foreach ($objCombiner->getFileUrls() as $strUrl)
+					{
+						$objTemplate->stylesheets .= \Template::generateStyleTag($strUrl, 'all') . "\n";
+					}
 				}
 				
-				// add backend JS
-				$arrBackendJS = StringUtil::deserialize($objLayout->backendJS);
+
+				$GLOBALS['TL_JAVASCRIPT'] = array(); // The TL_JAVASCRIPT can be reset because it's not used in the backend
 				
-				if (!empty($arrBackendJS) && is_array($arrBackendJS))
-				{
-					// Consider the sorting order (see #5038)
-					if ($objLayout->orderBackendJS != '')
-					{
-						$tmp = StringUtil::deserialize($objLayout->orderBackendJS);
-						
-						if (!empty($tmp) && is_array($tmp))
-						{
-							// Remove all values
-							$arrOrder = array_map(function(){}, array_flip($tmp));
-							
-							// Move the matching elements to their position in $arrOrder
-							foreach ($arrBackendJS as $k=>$v)
-							{
-								if (array_key_exists($v, $arrOrder))
-								{
-									$arrOrder[$v] = $v;
-									unset($arrBackendJS[$k]);
-								}
-							}
-							
-							// Append the left-over style sheets at the end
-							if (!empty($arrBackendJS))
-							{
-								$arrOrder = array_merge($arrOrder, array_values($arrBackendJS));
-							}
-							
-							// Remove empty (unreplaced) entries
-							$arrBackendJS = array_values(array_filter($arrOrder));
-							unset($arrOrder);
-						}
-					}
-					
-					// Get the file entries from the database
-					$objFiles = \FilesModel::findMultipleByUuids($arrBackendJS);
-					
-					if ($objFiles !== null)
-					{
-						while ($objFiles->next())
-						{
-							if (file_exists(TL_ROOT . '/' . $objFiles->path))
-							{
-								$GLOBALS['TL_JAVASCRIPT'][] = $objFiles->path . '|static';
-							}
-						}
-					}
-
-					unset($objFiles);
-				}
-	
-
-				// add content block template js
+				$this->addBackendJS($objLayout);
 				$this->addContentBlockJS();
 
-				// add jquery to the backend if active in layout
+				// Add jquery to the backend if active in layout
 				if ($objLayout->addJQuery && $objLayout->backendJS)
 				{
-					array_unshift($GLOBALS['TL_JAVASCRIPT'], 'assets/jquery/js/jquery.min.js|static');
+					array_unshift($GLOBALS['TL_JAVASCRIPT'], 'assets/jquery/js/jquery.min.js');
 				}
-
 				
-				// add content block template css
-				$this->addContentBlockCSS();
+				$objCombiner = new Combiner();
 				
-				// add extra content block css
-				if (is_array($GLOBALS['TL_CB_CSS']))
+				// Add the TL_JAVASCRIPT to the backend template
+				foreach ($GLOBALS['TL_JAVASCRIPT'] as $javascript)
 				{
-					$GLOBALS['TL_USER_CSS'] = array_merge($GLOBALS['TL_USER_CSS'], $GLOBALS['TL_CB_CSS']);
+					$options = \StringUtil::resolveFlaggedUrl($javascript);
+					
+					if ($options->static)
+					{
+						if ($options->mtime === null)
+						{
+							$options->mtime = filemtime(TL_ROOT . '/' . $javascript);
+						}
+						
+						$objCombiner->add($javascript, $options->mtime);
+					}
+					else
+					{
+						$objTemplate->javascripts .= \Template::generateScriptTag(static::addStaticUrlTo($javascript), $options->async) . "\n";
+					}							
 				}
-
-				
-				// combine stylesheets and javascripts
-				list($objTemplate->stylesheets, $objTemplate->javascripts) = explode('#', $this->replaceDynamicScriptTags('[[TL_CSS]]#[[TL_HEAD]]'));
-				
+					
+				if ($objCombiner->hasEntries())
+				{
+					foreach ($objCombiner->getFileUrls() as $strUrl)
+					{
+						$objTemplate->javascripts = \Template::generateScriptTag($strUrl) . "\n" . $objTemplate->javascripts;
+					}
+				}
 			}
 		}
 	}
 
+	
 	public function addContentBlockCSS ($strBuffer='', $objTemplate=null)
 	{
 		foreach (array('CSS', 'SCSS' , 'LESS') as $strType)
@@ -585,26 +519,131 @@ class Controller extends \Contao\Controller
 	
 	}
 
+
 	/**
-	 * Export content blocks tables with template export
+	 * Add the backend CSS of the layout to the $GLOBALS['TL_USER_CSS']
+	 *
+	 * @param object  $objLayout The layout object
+	 *
 	 */
-	public function exportContentBlocks ($xml, $objArchive, $objThemeId)
+	private static function addBackendCSS($objLayout)
 	{
+		$arrCSS = StringUtil::deserialize($objLayout->backendCSS);
 		
+		if (!empty($arrCSS) && is_array($arrCSS))
+		{
+			// Consider the sorting order (see #5038)
+			if ($objLayout->orderBackendCSS != '')
+			{
+				$tmp = StringUtil::deserialize($objLayout->orderBackendCSS);
+				
+				if (!empty($tmp) && is_array($tmp))
+				{
+					// Remove all values
+					$arrOrder = array_map(function(){}, array_flip($tmp));
+					
+					// Move the matching elements to their position in $arrOrder
+					foreach ($arrCSS as $k=>$v)
+					{
+						if (array_key_exists($v, $arrOrder))
+						{
+							$arrOrder[$v] = $v;
+							unset($arrCSS[$k]);
+						}
+					}
+					
+					// Append the left-over style sheets at the end
+					if (!empty($arrCSS))
+					{
+						$arrOrder = array_merge($arrOrder, array_values($arrCSS));
+					}
+					
+					// Remove empty (unreplaced) entries
+					$arrCSS = array_values(array_filter($arrOrder));
+					unset($arrOrder);
+				}
+			}
+			
+			// Get the file entries from the database
+			$objFiles = \FilesModel::findMultipleByUuids($arrCSS);
+			
+			if ($objFiles !== null)
+			{
+				while ($objFiles->next())
+				{
+					if (file_exists(TL_ROOT . '/' . $objFiles->path))
+					{
+						$GLOBALS['TL_USER_CSS'][] = $objFiles->path . '|static';
+					}
+				}
+			}
 
+			unset($objFiles);
+		}
 	}
-
 	
 	/**
-	 * Import content blocks tables with template import
+	 * Add the backend JS of the layout to the $GLOBALS['TL_JAVASCRIPT']
+	 *
+	 * @param object  $objLayout The layout object
+	 *
 	 */
-	public function importContentBlocks ($xml, $objArchive, $intThemeId, $arrMapper)
+	private static function addBackendJS($objLayout)
 	{
+		$arrJS = StringUtil::deserialize($objLayout->backendJS);
 		
+		if (!empty($arrJS) && is_array($arrJS))
+		{
+			// Consider the sorting order (see #5038)
+			if ($objLayout->orderBackendJS != '')
+			{
+				$tmp = StringUtil::deserialize($objLayout->orderBackendJS);
+				
+				if (!empty($tmp) && is_array($tmp))
+				{
+					// Remove all values
+					$arrOrder = array_map(function(){}, array_flip($tmp));
+					
+					// Move the matching elements to their position in $arrOrder
+					foreach ($arrJS as $k=>$v)
+					{
+						if (array_key_exists($v, $arrOrder))
+						{
+							$arrOrder[$v] = $v;
+							unset($arrJS[$k]);
+						}
+					}
+					
+					// Append the left-over style sheets at the end
+					if (!empty($arrJS))
+					{
+						$arrOrder = array_merge($arrOrder, array_values($arrJS));
+					}
+					
+					// Remove empty (unreplaced) entries
+					$arrJS = array_values(array_filter($arrOrder));
+					unset($arrOrder);
+				}
+			}
+			
+			// Get the file entries from the database
+			$objFiles = \FilesModel::findMultipleByUuids($arrJS);
+			
+			if ($objFiles !== null)
+			{
+				while ($objFiles->next())
+				{
+					if (file_exists(TL_ROOT . '/' . $objFiles->path))
+					{
+						$GLOBALS['TL_JAVASCRIPT'][] = $objFiles->path . '|static';
+					}
+				}
+			}
 
+			unset($objFiles);
+		}
 	}
-
-
+	
 	
 	/**
 	 * register callbacks for news extension bundles with contao core

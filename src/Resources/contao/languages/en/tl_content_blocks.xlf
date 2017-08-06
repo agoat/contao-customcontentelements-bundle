@@ -41,8 +41,8 @@
 			</trans-unit>
 
 			
-			<trans-unit id="tl_content_blocks.html_legend">
-				<source>HTML/Layout settings</source>
+			<trans-unit id="tl_content_blocks.template_legend">
+				<source>Template settings</source>
 			</trans-unit>
 
 			<trans-unit id="tl_content_blocks.template.0">

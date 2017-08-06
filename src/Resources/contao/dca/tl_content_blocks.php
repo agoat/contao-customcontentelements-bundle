@@ -116,7 +116,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		'__selector__'			=> array('type'),
 		'default'				=> '{type_legend},type',
 		'group'					=> '{type_legend},type;{group_legend},title',
-		'element'				=> '{type_legend},type;{element_legend},title,description,singleSRC;{html_legend},template,stylesheet;{default_legend},defaultType;{invisible_legend},invisible'
+		'element'				=> '{type_legend},type;{element_legend},title,description,singleSRC;{template_legend},template;{default_legend},defaultType;{invisible_legend},invisible'
 	),
 	// Fields
 	'fields' => array
@@ -184,14 +184,6 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'options_callback'        => array('tl_content_blocks', 'getContentBlockTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
-		),
-		'stylesheet' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['stylesheet'],
-			'exclude'                 => true,
-			'inputType'               => 'fileTree',
-			'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>'css,scss,less', 'tl_class'=>'w50'),
-			'sql'                     => "binary(16) NULL"
 		),
 		'singleSRC' => array
 		(
