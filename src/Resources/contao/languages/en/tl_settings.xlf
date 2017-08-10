@@ -5,11 +5,11 @@
 			<trans-unit id="tl_settings.elements_legend">
 				<source>Content elements management</source>
 			</trans-unit>
-			<trans-unit id="tl_settings.overwriteCTE.0">
+			<trans-unit id="tl_settings.hideLegacyCTE.0">
 				<source>Hide standard content elements</source>
 			</trans-unit>
-			<trans-unit id="tl_settings.overwriteCTE.1">
-				<source>Show only the content blocks as new content element type (existing standard content elements will still be editable).</source>
+			<trans-unit id="tl_settings.hideLegacyCTE.1">
+				<source>Show only content blocks as new content elements (Existing standard content elements will still be editable).</source>
 			</trans-unit>
 			<trans-unit id="tl_settings.disableVisualSelect.0">
 				<source>Disable visual content element selection</source>

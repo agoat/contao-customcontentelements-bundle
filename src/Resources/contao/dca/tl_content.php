@@ -13,7 +13,7 @@
 
 
 
-// table callbacks
+// Table callbacks
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_contentblocks', 'buildPaletteAndFields');
 $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_contentblocks', 'saveFieldValues');
 
@@ -25,22 +25,18 @@ $GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = arr
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_contentblocks', 'addCteType');
 
-// remove some filter options
+// Remove some filter options
 $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
 
 
-// new type selection widget
+// Changes on the 'type' field
 if (!\Config::get('disableVisualSelect'))
 {
 	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['inputType'] = 'visualselect';
-	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['eval']['helpwizard'] = false;
-	$GLOBALS['TL_DCA']['tl_content']['fields']['type']['xlabel']['helpwizard'] = array('tl_content_contentblocks', 'addTypeHelpWizard');
 }
-
-// new options callback to get new content block elements
+$GLOBALS['TL_DCA']['tl_content']['fields']['type']['eval']['helpwizard'] = false;
+$GLOBALS['TL_DCA']['tl_content']['fields']['type']['xlabel']['helpwizard'] = array('tl_content_contentblocks', 'addTypeHelpWizard');
 $GLOBALS['TL_DCA']['tl_content']['fields']['type']['options_callback'] = array('tl_content_contentblocks', 'getContentBlockElements');
-
-// set new default element
 $GLOBALS['TL_DCA']['tl_content']['fields']['type']['load_callback'] = array(array('tl_content_contentblocks', 'setDefaultType'));
 $GLOBALS['TL_DCA']['tl_content']['fields']['type']['default'] = false;
 
@@ -90,7 +86,11 @@ class tl_content_contentblocks extends tl_content
 	
 	
 	/**
-	 * generate content element list for type selection
+	 * Generate content element list for type selection
+	 *
+	 * @param object $dc The DataContainer object
+	 *
+	 * @return array The content elements
 	 */
 	public function getContentBlockElements ($dc)
 	{
@@ -106,47 +106,49 @@ class tl_content_contentblocks extends tl_content
 			$pid = \Input::get('pid');
 		}
 
-		// try to find content block elements for the theme
+		// Try to find content block elements for the theme
 		$objLayout = \LayoutModel::findById(\Agoat\ContentBlocks\Controller::getLayoutId($ptable, $pid));	
+		$colContentBlocks = \ContentBlocksModel::findPublishedByPid($objLayout->pid);
 
-		if (is_array($GLOBALS['TL_CTB']) && $objLayout)
+		$arrElements = array();
+		$strGroup = 'ctb';
+		
+		if ($colContentBlocks !== null)
 		{
-			$arrCTB = $GLOBALS['TL_CTB'][$objLayout->pid];
+			foreach ($colContentBlocks as $objCB)
+			{
+				if ($objCB->type == 'group')
+				{
+					$strGroup = $objCB->alias;
+				}
+				else
+				{
+					$arrElements[$strGroup][] = $objCB->alias;					
+				}
+			}
 		}
 		
-		// return an empty array if nothing found
-		if (!$arrCTB)
+		// Add standard content elements
+		if (!\Config::get('hideLegacyCTE'))
 		{
-			$arrCTB = array();
+			unset($GLOBALS['TL_CTE']['CTB']);
+			
+			foreach ($GLOBALS['TL_CTE'] as $k=>$v)
+			{
+				foreach (array_keys($v) as $kk)
+				{
+					$arrElements[$k][] = $kk;
+				}
+			}
 		}
 
-		// hide the contao content elements
-		if (\Config::get('overwriteCTE'))
-		{
-			$arrCTE = $arrCTB;
-		}
-		else
-		{
-			$arrCTE = array_merge($arrCTB, $GLOBALS['TL_CTE_LEGACY']);
-		}
-		
-		// legacy support
-		if ($dc->value != '' && !in_array($dc->value, array_keys(array_reduce($arrCTE, 'array_merge', array()))))
+		// Legacy support
+		if ($dc->value != '' && !in_array($dc->value, array_reduce($arrElements, 'array_merge', array())))
 		{
 			return array($dc->value);
 		}
 		
-		$groups = array();
-		
-		foreach ($arrCTE as $k=>$v)
-		{
-			foreach (array_keys($v) as $kk)
-			{
-				$groups[$k][] = $kk;
-			}
-		}	
-	
-		return $groups;		
+		return $arrElements;
 	}
 
 

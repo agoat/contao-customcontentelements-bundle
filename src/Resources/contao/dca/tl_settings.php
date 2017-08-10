@@ -13,7 +13,7 @@
 
 
 // legacy mode
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('{frontend_legend}', '{elements_legend},overwriteCTE,disableVisualSelect;{frontend_legend}', $GLOBALS['TL_DCA']['tl_settings']['palettes']['default']);
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('{frontend_legend}', '{elements_legend},hideLegacyCTE,disableVisualSelect;{frontend_legend}', $GLOBALS['TL_DCA']['tl_settings']['palettes']['default']);
 
 // more file types
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('validImageTypes', 'validImageTypes,validVideoTypes,validAudioTypes', $GLOBALS['TL_DCA']['tl_settings']['palettes']['default']);
@@ -21,9 +21,9 @@ $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] = str_replace('validIma
 
 
 // fields
-$GLOBALS['TL_DCA']['tl_settings']['fields']['overwriteCTE'] = array
+$GLOBALS['TL_DCA']['tl_settings']['fields']['hideLegacyCTE'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['overwriteCTE'],
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['hideLegacyCTE'],
 	'inputType'               => 'checkbox',
 	'eval'                    => array('tl_class'=>'w50'),
 );
