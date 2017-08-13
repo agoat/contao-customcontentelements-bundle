@@ -17,8 +17,8 @@ namespace Agoat\ContentElements;
 use Contao\ContentElement;
 use Contao\System;
 use Contao\TemplateLoader;
-use Agoat\ContentBlocks\Template;
-use Agoat\ContentBlocks\Pattern;
+use Agoat\ContentElements\Template;
+use Agoat\ContentElements\Pattern;
 
 
 class ContentBlockElement extends ContentElement
@@ -40,23 +40,22 @@ class ContentBlockElement extends ContentElement
 	/**
 	 * Initialize the object
 	 *
-	 * @param \ContentModel $objElement
+	 * @param \ContentModel $objModel
 	 * @param string        $strColumn
 	 */
-	public function __construct($objElement, $strColumn='main')
+	public function __construct($objModel, $strColumn='main')
 	{
-		if ($objElement instanceof \Model)
+		if ($objModel instanceof \Model)
 		{
-			$this->objModel = $objElement;
+			$this->objModel = $objModel;
 		}
-		elseif ($objElement instanceof \Model\Collection)
+		elseif ($objModel instanceof \Model\Collection)
 		{
-			$this->objModel = $objElement->current();
+			$this->objModel = $objModel->current();
 		}
 		
-		$this->arrData = $objElement->row();
+		$this->arrData = $objModel->row();
 		$this->strColumn = $strColumn;
-		
 	}	
 	
 
@@ -68,51 +67,36 @@ class ContentBlockElement extends ContentElement
 	public function generate()
 	{		
 		// get the content element model object
-		$this->objBlock = \ContentBlocksModel::findOneByAlias($this->type);
+		$this->objElement = \ElementsModel::findOneByAlias($this->type);
 
-		if ($this->objBlock === null)
+		if ($this->objElement === null)
 		{
 			return;
 		}
 
-		// don´t show invisible content block elements
-		if ($this->objBlock->invisible)
+		// Don´t show invisible content elements
+		if ($this->objElement->invisible)
 		{
-			System::log('Content block element "'.$this->type.'" with parent record "' . $this->ptable . '.id=' . $this->pid . '" is invisible and will not be shown', __METHOD__, TL_ERROR);
+			System::log('Content element "'.$this->type.'" with parent record "' . $this->ptable . '.id=' . $this->pid . '" is invisible and will not be shown', __METHOD__, TL_ERROR);
 			return;
 		}
 		
-		// register the custom template
-		if (!array_key_exists($this->objBlock->template, TemplateLoader::getFiles()))
+		// Register the custom template
+		if (!array_key_exists($this->objElement->template, TemplateLoader::getFiles()))
 		{
-			TemplateLoader::addFile($this->objBlock->template, $this->objBlock->getRelated('pid')->templates);
+			TemplateLoader::addFile($this->objElement->template, $this->objElement->getRelated('pid')->templates);
 		}
 
-		// set the template file
-		$this->strTemplate = $this->objBlock->template;
-		
-		
-		// add the contentblocks backend stylesheets (depreciated)
-		if (TL_MODE == 'BE')
-		{
-			$objFile = \FilesModel::findByPk($this->objBlock->stylesheet);
-		
-			if ($objFile !== null)
-			{
-				$GLOBALS['TL_CB_CSS'][] = $objFile->path . '|static';
-			}
-		}
-		
-		
-		// content element output
+		$this->strTemplate = $this->objElement->template;
+				
 		if (TL_MODE == 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start != '' && $this->start > time()) || ($this->stop != '' && $this->stop < time())))
 		{
 			return '';
 		}
 
 		$this->Template = new Template($this->strTemplate);
-		
-		// deliver some general element data
+	
+		// Deliver some general element data
 		$this->Template->setData(
 			array (
 				'id' => $this->id,
@@ -139,7 +123,7 @@ class ContentBlockElement extends ContentElement
 	protected function compile()
 	{		
 		// get the pattern model collection
-		$colPattern = \ContentPatternModel::findPublishedByPidAndTable($this->objBlock->id, 'tl_content_blocks');
+		$colPattern = \PatternModel::findPublishedByPidAndTable($this->objElement->id, 'tl_elements');
 
 		if ($colPattern === null)
 		{
@@ -149,17 +133,16 @@ class ContentBlockElement extends ContentElement
 		// get correct element id (included content element) see #37
 		$intCid = ($this->origId) ? $this->origId : $this->id;
 		
-		// get values for content block
-		$colValues = \ContentValueModel::findByCid($intCid);
+		// get data for content elements
+		$colData = \DataModel::findByCid($intCid);
 
-		if ($colValues !== null)
+		if ($colData !== null)
 		{
-			foreach ($colValues as $objValue)
+			foreach ($colData as $objData)
 			{
-				$arrValues[$objValue->pid][$objValue->rid] = $objValue;
+				$arrData[$objData->pid][$objData->rid] = $objData;
 			}							
 		}
-		
 		
 		// prepare values for every pattern
 		foreach($colPattern as $objPattern)
@@ -169,7 +152,6 @@ class ContentBlockElement extends ContentElement
 			{
 				continue;
 			}
-
 			
 			$strClass = Pattern::findClass($objPattern->type);
 				
@@ -183,8 +165,8 @@ class ContentBlockElement extends ContentElement
 				$objPatternClass->cid = $intCid;
 				$objPatternClass->rid = 0;
 				$objPatternClass->Template = $this->Template;
-				$objPatternClass->arrValues = $arrValues;
-				$objPatternClass->Value = $arrValues[$objPattern->id][0];
+				$objPatternClass->arrData = $arrData;
+				$objPatternClass->Value = $arrData[$objPattern->id][0];
 				
 				$objPatternClass->compile();
 			}

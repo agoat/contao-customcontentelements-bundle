@@ -651,10 +651,10 @@ class tl_pattern extends Backend
 		}
 		
 		// get pattern model and call view method
-		$objPattern = new ContentPatternModel();
+		$objPattern = new \PatternModel();
 		$objPattern->setRow($arrRow);
 		
-		$strClass = \Agoat\ContentBlocks\Pattern::findClass($objPattern->type);
+		$strClass = \Agoat\ContentElements\Pattern::findClass($objPattern->type);
 				
 		if (!class_exists($strClass))
 		{
@@ -899,8 +899,8 @@ class tl_pattern extends Backend
 		}
 
 		// Check if the content block is in use
-		$objContentPattern = \ContentPatternModel::findById($dc->id);
-		$objContentBlock = \ContentBlocksModel::findById($objContentPattern->pid);
+		$objContentPattern = \PatternModel::findById($dc->id);
+		$objContentBlock = \ElementsModel::findById($objContentPattern->pid);
 		
 		if (\ContentModel::countBy('type', $objContentBlock->alias) > 0)
 		{

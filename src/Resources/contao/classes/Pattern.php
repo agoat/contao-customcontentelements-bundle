@@ -125,12 +125,12 @@ abstract class Pattern extends Controller
 			// load default value
 			if ($arrFieldDCA['default'])
 			{
-				array_unshift($arrFieldDCA['load_callback'], array('tl_content_contentblocks', 'defaultValue'));
+				array_unshift($arrFieldDCA['load_callback'], array('tl_content_elements', 'defaultValue'));
 			}
 
 			// load/save database values first/last
-			array_unshift($arrFieldDCA['load_callback'], array('tl_content_contentblocks', 'loadFieldValue'));
-			array_push($arrFieldDCA['save_callback'], array('tl_content_contentblocks', 'saveFieldAndClear'));
+			array_unshift($arrFieldDCA['load_callback'], array('tl_content_elements', 'loadFieldValue'));
+			array_push($arrFieldDCA['save_callback'], array('tl_content_elements', 'saveFieldAndClear'));
 		}
 
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$this->virtualFieldAlias;		

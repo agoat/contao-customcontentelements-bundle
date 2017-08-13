@@ -250,7 +250,7 @@ class Controller extends \Contao\Controller
 	/**
 	 * Hide tl_content_value versions
 	 */
-	public function hideContentValueVersions ($objTemplate)
+	public function hideDataTableVersions ($objTemplate)
 	{
 		if ($objTemplate instanceof \BackendTemplate)
 		{
@@ -263,7 +263,7 @@ class Controller extends \Contao\Controller
 				$objDatabase = \Database::getInstance();
 
 				// Get the total number of versions
-				$objTotal = $objDatabase->prepare("SELECT COUNT(*) AS count FROM tl_version WHERE NOT fromTable=\"tl_content_value\" AND version>1" . (!$objUser->isAdmin ? " AND userid=?" : ""))
+				$objTotal = $objDatabase->prepare("SELECT COUNT(*) AS count FROM tl_version WHERE NOT fromTable=\"tl_data\" AND version>1" . (!$objUser->isAdmin ? " AND userid=?" : ""))
 										->execute($objUser->id);
 
 				$intLast   = ceil($objTotal->count / 30);
@@ -277,7 +277,7 @@ class Controller extends \Contao\Controller
 
 				
 				// Get the versions
-				$objVersions = $objDatabase->prepare("SELECT pid, tstamp, version, fromTable, username, userid, description, editUrl, active FROM tl_version WHERE NOT fromTable=\"tl_content_value\"" . (!$objUser->isAdmin ? " AND userid=?" : "") . " ORDER BY tstamp DESC, pid, version DESC")
+				$objVersions = $objDatabase->prepare("SELECT pid, tstamp, version, fromTable, username, userid, description, editUrl, active FROM tl_version WHERE NOT fromTable=\"tl_data\"" . (!$objUser->isAdmin ? " AND userid=?" : "") . " ORDER BY tstamp DESC, pid, version DESC")
 										   ->limit(30, $intOffset)
 										   ->execute($objUser->id);
 
@@ -351,9 +351,9 @@ class Controller extends \Contao\Controller
 
 		$db = \Database::getInstance();
 
-		if ($db->tableExists("tl_content_blocks"))
+		if ($db->tableExists("tl_elements"))
 		{		
-			$arrElements = $db->prepare("SELECT * FROM tl_content_blocks ORDER BY sorting ASC")
+			$arrElements = $db->prepare("SELECT * FROM tl_elements ORDER BY sorting ASC")
 							  ->execute()
 							  ->fetchAllAssoc();	
 		}
@@ -366,7 +366,7 @@ class Controller extends \Contao\Controller
 		// Add content blocks as content elements
 		foreach ($arrElements as $arrElement)
 		{
-			$GLOBALS['TL_CTE']['CTB'][$arrElement['alias']] = 'Agoat\ContentBlocks\ContentBlockElement';
+			$GLOBALS['TL_CTE']['CTB'][$arrElement['alias']] = 'Agoat\ContentElements\ContentBlockElement';
 			$GLOBALS['TL_LANG']['CTE'][$arrElement['alias']] = array($arrElement['title'],$arrElement['description']);
 		}
 	}

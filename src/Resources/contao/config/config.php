@@ -43,7 +43,7 @@ $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements
 $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controller','addLayoutJS');
 
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','hideContentValueVersions');
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','hideDataTableVersions');
 
 $GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareContentBlockTables');
 $GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentElements\\Theme','importContentBlockTables');

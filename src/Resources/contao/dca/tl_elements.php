@@ -181,7 +181,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 			'inputType'               => 'select',
 			'default'				  => 'element_standard',
 			'flag'                    => 11,
-			'options_callback'        => array('tl_elements', 'getContentBlockTemplates'),
+			'options_callback'        => array('tl_elements', 'getContentElementTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
@@ -260,7 +260,6 @@ class tl_elements extends Backend
 				return '<div class="cte_type ctb_element ' . $key . '" style="position: relative; margin: 0; padding: 0 0 0 80px; line-height: 41px; pointer-events: none;"><div class="cte_img" style="position: absolute; left: 6px; top: 0px; width: 60px; height: 40px; border: 1px solid #ccc;  background: #eee' . $strBackground .  ';background-size: 60px 40px;"></div>' . $arrRow['title'] . $strDefault . '</div>';
 		}
 	}
-
 	
 
 	public function setDefaultType ($varValue, DataContainer $dc)
@@ -281,9 +280,9 @@ class tl_elements extends Backend
 	public function generateAlias (DataContainer $dc)
 	{
 		$db = Database::getInstance();
-		
+
 		// Generate alias from title and id
-		$alias = \StringUtil::generateAlias($dc->activeRecord->title.'-'.$dc->activeRecord->id);
+		$alias = \StringUtil::generateAlias(\ThemeModel::findById($dc->activeRecord->pid)->name . '-' . $dc->activeRecord->title);
 
 		if ($alias != $dc->activeRecord->alias)
 		{
@@ -293,7 +292,7 @@ class tl_elements extends Backend
 		
 			if ($dc->activeRecord->alias)
 			{
-				// Also change the type (=alias) in tl_content
+				// Also change the type (=alias) in tl_content table
 				$db->prepare("UPDATE tl_content SET type=? WHERE type=?")
 				   ->execute($alias, $dc->activeRecord->alias);
 			}
@@ -306,7 +305,7 @@ class tl_elements extends Backend
 	 *
 	 * @return array
 	 */
-	public function getContentBlockTemplates(DataContainer $dc)
+	public function getContentElementTemplates(DataContainer $dc)
 	{
 		$arrTemplates = array();
 
@@ -381,9 +380,9 @@ class tl_elements extends Backend
 		}
 
 		// Check if the content block is in use
-		$objContentBlock = \ContentBlocksModel::findById($dc->id);
+		$objElement = \ElementsModel::findById($dc->id);
 		
-		if (\ContentModel::countBy('type', $objContentBlock->alias) > 0)
+		if (\ContentModel::countBy('type', $objElement->alias) > 0)
 		{
 			\Message::addInfo('Be aware on changes. The content block element is already in use!!');
 		}
