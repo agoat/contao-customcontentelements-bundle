@@ -42,11 +42,11 @@ class PatternPageTree extends Pattern
 				),
 				'load_callback'		=> array
 				(
-					array('tl_content_contentblocks', 'prepareOrderPageValue'),
+					array('tl_content_elements', 'prepareOrderPageValue'),
 				),
 				'save_callback'		=> array
 				(
-					array('tl_content_contentblocks', 'saveOrderPageValue'),
+					array('tl_content_elements', 'saveOrderPageValue'),
 				),
 			));
 		}

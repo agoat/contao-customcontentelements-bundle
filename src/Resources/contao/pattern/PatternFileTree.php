@@ -81,11 +81,11 @@ class PatternFileTree extends Pattern
 				),
 				'load_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_contentblocks', 'prepareOrderSRCValue'),
+					array('tl_content_elements', 'prepareOrderSRCValue'),
 				),
 				'save_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_contentblocks', 'saveOrderSRCValue'),
+					array('tl_content_elements', 'saveOrderSRCValue'),
 				),
 			));
 			
@@ -128,7 +128,7 @@ class PatternFileTree extends Pattern
 				),
 				'load_callback'	=>	array
 				(
-					array('tl_content_contentblocks','defaultValue')
+					array('tl_content_elements','defaultValue')
 				),
 			));	
 		}
