@@ -11,7 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Contao;
+namespace Agoat\ContentElements;
 
 
 
@@ -116,7 +116,7 @@ class VisualSelectMenu extends \Widget
 		$strClass = 'tl_select';
 		$strStyle = '<style>.group-result {padding-top: 5px !important; line-height: 20px !important;}';
 		$count = 1;
-
+dump($this->arrOptions);
 		if ($this->multiple)
 		{
 			$this->strName .= '[]';

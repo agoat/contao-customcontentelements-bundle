@@ -13,17 +13,16 @@
 
 namespace Contao;
 
-use Contao\Model;
 
 
-class ContentPatternModel extends Model
+class PatternModel extends Model
 {
 
 	/**
 	 * Table name
 	 * @var string
 	 */
-	protected static $strTable = 'tl_content_pattern';
+	protected static $strTable = 'tl_pattern';
 
 	
 	/**

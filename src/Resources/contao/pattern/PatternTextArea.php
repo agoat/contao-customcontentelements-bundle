@@ -11,10 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+
+namespace Agoat\ContentElements;
 
 use Contao\TemplateLoader;
-use Agoat\ContentBlocks\Pattern;
 use Symfony\Component\Filesystem\Filesystem;
 
 

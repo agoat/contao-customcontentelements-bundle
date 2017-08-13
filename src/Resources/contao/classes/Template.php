@@ -11,15 +11,15 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\File;
 use Contao\TemplateLoader;
 use Contao\FrontendTemplate;
 use Contao\BackendTemplate;
 use Contao\StringUtil;
-use Agoat\ContentBlocks\Controller;
-use Agoat\ContentBlocks\Pattern;
+use Agoat\ContentElements\Controller;
+use Agoat\ContentElements\Pattern;
 
 
 class Template extends FrontendTemplate

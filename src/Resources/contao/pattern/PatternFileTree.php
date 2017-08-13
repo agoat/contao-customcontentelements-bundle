@@ -11,9 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
-
-use Agoat\ContentBlocks\Pattern;
+namespace Agoat\ContentElements;
 
 
 class PatternFileTree extends Pattern

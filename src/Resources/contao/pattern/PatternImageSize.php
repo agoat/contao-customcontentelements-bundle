@@ -11,11 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\System;
 use Contao\StringUtil;
-use Agoat\ContentBlocks\Pattern;
 
 
 class PatternImageSize extends Pattern

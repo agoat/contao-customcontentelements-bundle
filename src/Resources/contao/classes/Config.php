@@ -12,7 +12,7 @@
  */
 
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 
 class Config

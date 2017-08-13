@@ -16,7 +16,7 @@
 /**
  * Table tl_content_element
  */
-$GLOBALS['TL_DCA']['tl_content_value'] = array
+$GLOBALS['TL_DCA']['tl_data'] = array
 (
 	// Config
 	'config' => array

@@ -11,10 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
-use Agoat\ContentBlocks\Pattern;
 use Contao\Module;
+
 
 class PatternModule extends Pattern
 {

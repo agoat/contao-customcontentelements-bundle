@@ -8,8 +8,9 @@
  * @license LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
+use Contao\Theme:
 use Patchwork\Utf8;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *
  * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
-class Theme extends \Contao\Theme
+class Theme extends Theme
 {
 
 	/**

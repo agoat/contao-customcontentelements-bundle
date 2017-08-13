@@ -12,9 +12,8 @@
  */
 
  
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
  
-use Agoat\ContentBlocks\Controller;
 use \Contao\FilesModel;
 
 /**

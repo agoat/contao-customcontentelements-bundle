@@ -13,17 +13,16 @@
 
 namespace Contao;
 
-use Contao\Model;
 
 
-class ContentValueModel extends Model
+class DataModel extends Model
 {
 
 	/**
 	 * Table name
 	 * @var string
 	 */
-	protected static $strTable = 'tl_content_value';
+	protected static $strTable = 'tl_data';
 
 
 	/**

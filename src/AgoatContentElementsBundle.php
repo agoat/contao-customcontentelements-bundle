@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
  
-namespace Agoat\ContentBlocksBundle;
+namespace Agoat\ContentElementsBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -17,6 +17,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Arne Stappen (alias aGoat) <https://github.com/agoat>
  */
-class AgoatContentBlocksBundle extends Bundle
+class AgoatContentElementsBundle extends Bundle
 {
 }

@@ -14,9 +14,9 @@
 
  
 /**
- * Table tl_content_pattern
+ * Table tl_pattern
  */
-$GLOBALS['TL_DCA']['tl_content_pattern'] = array
+$GLOBALS['TL_DCA']['tl_pattern'] = array
 (
 	// Config
 	'config' => array
@@ -24,16 +24,16 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		'dataContainer'               => 'Table',
 		'switchToEdit'                => false,
 		'enableVersioning'            => true,
-		'ptable'                      => 'tl_content_blocks',
+		'ptable'                      => 'tl_elements',
 		'dynamicPtable'				  => true,
 		'onload_callback' => array
 		(
-			//array('tl_content_pattern', 'checkPermission'),
-			array('tl_content_pattern', 'showAlreadyUsedHint')
+			//array('tl_pattern', 'checkPermission'),
+			array('tl_pattern', 'showAlreadyUsedHint')
 		),
 		'onsubmit_callback'			  => array
 		(
-			array('tl_content_pattern', 'saveGroups'),
+			array('tl_pattern', 'saveGroups'),
 		),
 		'sql' => array
 		(
@@ -54,7 +54,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			'fields'                  => array('sorting'),
 			'headerFields'            => array('title','description','template'),
 			'panelLayout'             => 'filter;search,limit',
-			'child_record_callback'   => array('tl_content_pattern', 'previewElementPattern')
+			'child_record_callback'   => array('tl_pattern', 'previewElementPattern')
 		),
 		'global_operations' => array
 		(
@@ -70,41 +70,41 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		(
 			'editheader' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['editheader'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'edit.svg',
 			),
 			'copy' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['copy'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset()"'
 			),
 			'cut' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['cut'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['cut'],
 				'href'                => 'act=paste&amp;mode=cut',
 				'icon'                => 'cut.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset()"'
 			),
 			'delete' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['delete'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'toggle' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['toggle'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['toggle'],
 				'icon'                => 'visible.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_content_pattern', 'toggleIcon')
+				'button_callback'     => array('tl_pattern', 'toggleIcon')
 			),
 			'show' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_pattern']['show'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.svg'
 			)
@@ -159,7 +159,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'ptable' => array
 		(
-			'sql'                     => "varchar(64) NOT NULL default 'tl_content_blocks'"
+			'sql'                     => "varchar(64) NOT NULL default 'tl_elements'"
 		),
 		'sorting' => array
 		(
@@ -175,19 +175,19 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'type' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['type'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['type'],
 			'default'                 => 'textfield',
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getPattern'),
+			'options_callback'        => array('tl_pattern', 'getPattern'),
 			'reference'               => &$GLOBALS['TL_LANG']['CTP'],
 			'eval'                    => array('helpwizard'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'alias' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['alias'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['alias'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
@@ -195,7 +195,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'invisible' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['invisible'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['invisible'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -204,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'label' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['label'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['label'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
@@ -212,7 +212,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'description' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['description'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['description'],
 			'exclude'                 => true,
 			'inputType'               => 'textarea',
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'long clr'),
@@ -220,7 +220,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'mandatory' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['mandatory'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['mandatory'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -229,7 +229,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'classLong' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['classLong'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['classLong'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -237,7 +237,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'classClr' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['classClr'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['classClr'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -245,7 +245,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'hidden' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['hidden'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['hidden'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -253,7 +253,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'explanation' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['explanation'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['explanation'],
 			'exclude'                 => true,
 			'inputType'               => 'textarea',
 			'eval'                    => array('mandatory'=>true, 'rte'=>'tinyExplanation'),
@@ -261,7 +261,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'style' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['style'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['style'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50 clr'),
@@ -269,7 +269,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'canChangeStart' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeStart'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canChangeStart'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12 clr'),
@@ -277,7 +277,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'canChangeStop' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeStop'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canChangeStop'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -285,7 +285,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'groups' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['groups'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['groups'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'foreignKey'              => 'tl_member_group.name',
@@ -295,7 +295,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'canChangeGroups' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeGroups'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canChangeGroups'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -304,19 +304,19 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 
 		'rteTemplate' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['rteTemplate'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['rteTemplate'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'default'				  => 'be_tinyMCE_standard',
 			'flag'                    => 11,
-			'options_callback'        => array('tl_content_pattern', 'getRteTemplates'),
+			'options_callback'        => array('tl_pattern', 'getRteTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 
 		'highlight' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['highlight'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['highlight'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options'                 => array('HTML', 'HTML5', 'XML', 'JavaScript', 'CSS', 'SCSS', 'PHP', 'JSON', 'Markdown'),
@@ -325,7 +325,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'canChangeHighlight' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeHighlight'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canChangeHighlight'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -335,21 +335,21 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 
 		'source' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['source'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['source'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options'                 => array('all', 'image', 'video', 'audio', 'custom'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_source'],
+			'reference'               => &$GLOBALS['TL_LANG']['tl_pattern_source'],
 			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 clr'),
 			'save_callback' => array
 			(
-				array ('tl_content_pattern','setSourceOptions')
+				array ('tl_pattern','setSourceOptions')
 			),
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'customExtension' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['customExtension'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['customExtension'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
@@ -358,7 +358,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 
 		'size' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['size'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['size'],
 			'exclude'                 => true,
 			'inputType'               => 'imageSize',
 			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
@@ -371,7 +371,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'canChangeSize' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeSize'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canChangeSize'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -379,7 +379,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'sizeList' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['sizeList'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['sizeList'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'eval'                    => array('multiple'=>true, 'includeBlankOption'=>true, 'size'=>10, 'tl_class'=>'w50 clr', 'chosen'=>true),
@@ -389,17 +389,17 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 			},
 			'load_callback' => array
 			(
-				array ('tl_content_pattern','defaultSizes')
+				array ('tl_pattern','defaultSizes')
 			),
 			'save_callback' => array
 			(
-				array ('tl_content_pattern','defaultSizes')
+				array ('tl_pattern','defaultSizes')
 			),
 			'sql'                     => "blob NULL"		
 		),
 		'canEnterSize' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canEnterSize'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canEnterSize'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -408,7 +408,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 
 		'multiSource' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiSource'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['multiSource'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 m12 clr'),
@@ -416,7 +416,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'multiPage' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiPage'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['multiPage'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -424,7 +424,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'multiArticle' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiArticle'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['multiArticle'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -432,7 +432,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'insideRoot' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['insideRoot'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['insideRoot'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12 clr'),
@@ -440,17 +440,17 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'sortBy' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['sortBy'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['sortBy'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options'                 => array('custom', 'name_asc', 'name_desc', 'date_asc', 'date_desc', 'random', 'html5media'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern_sortby'],
+			'reference'               => &$GLOBALS['TL_LANG']['tl_pattern_sortby'],
 			'eval'                    => array('tl_class'=>'w50 clr'),
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'canChangeSortBy' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['canChangeSortBy'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canChangeSortBy'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -458,7 +458,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'metaIgnore' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['metaIgnore'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['metaIgnore'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -466,7 +466,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'numberOfItems' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['numberOfItems'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['numberOfItems'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'natural', 'tl_class'=>'w50 clr'),
@@ -475,7 +475,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 
 		'minLength' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['minLength'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['minLength'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'default'                 => '0',
@@ -484,7 +484,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'maxLength' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['maxLength'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['maxLength'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'default'                 => '255',
@@ -493,16 +493,16 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'rgxp' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['rgxp'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['rgxp'],
 			'inputType'               => 'select',
 			'options'                 => array('natural', 'prcnt', 'digit', 'alpha', 'alnum', 'extnd', 'date', 'time', 'datim', 'phone', 'email', 'url'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern'],
+			'reference'               => &$GLOBALS['TL_LANG']['tl_pattern'],
 			'eval'                    => array('helpwizard'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(16) NOT NULL default ''"
 		),
 		'defaultValue' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['defaultValue'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['defaultValue'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
@@ -510,34 +510,34 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'multiple' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiple'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['multiple'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options'				  => array(2, 3, 4),
 			'eval'                    => array('submitOnChange'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array ('tl_content_pattern','setMultipleOption')
+				array ('tl_pattern','setMultipleOption')
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'picker' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['picker'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['picker'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'options'				  => array('datetime', 'color', 'page', 'unit'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_pattern'],
+			'reference'               => &$GLOBALS['TL_LANG']['tl_pattern'],
 			'eval'                    => array('submitOnChange'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array ('tl_content_pattern','setPickerOptions')
+				array ('tl_pattern','setPickerOptions')
 			),
 			'sql'                     => "varchar(16) NOT NULL default ''"
 		),
 		'units' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['units'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['units'],
 			'exclude'                 => true,
 			'inputType'               => 'optionWizard',
 			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'clr'),
@@ -545,7 +545,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'options' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['options'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['options'],
 			'exclude'                 => true,
 			'inputType'               => 'optionWizard',
 			'eval'                    => array('allowHtml'=>true, 'tl_class'=>'clr'),
@@ -553,7 +553,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'blankOption' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['blankOption'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['blankOption'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -561,7 +561,7 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'multiSelect' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['multiSelect'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['multiSelect'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
@@ -569,27 +569,27 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
 		),
 		'form' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['form'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['form'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getForms'),
+			'options_callback'        => array('tl_pattern', 'getForms'),
 			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50 wizard'),
 			'wizard' => array
 			(
-				array('tl_content_pattern', 'editForm')
+				array('tl_pattern', 'editForm')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'module' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_pattern']['module'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['module'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_content_pattern', 'getModules'),
+			'options_callback'        => array('tl_pattern', 'getModules'),
 			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50 wizard'),
 			'wizard' => array
 			(
-				array('tl_content_pattern', 'editModule')
+				array('tl_pattern', 'editModule')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -604,11 +604,11 @@ $GLOBALS['TL_DCA']['tl_content_pattern'] = array
  *
  * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
-class tl_content_pattern extends Backend
+class tl_pattern extends Backend
 {
 
 
-	protected $table = 'tl_content_pattern';
+	protected $table = 'tl_pattern';
 	
 	
 	
@@ -875,7 +875,7 @@ class tl_content_pattern extends Backend
 			$groups = is_array($dc->activeRecord->groups) ? serialize($dc->activeRecord->groups) : $dc->activeRecord->groups;
 			
 			// save alias to database
-			$db->prepare("UPDATE tl_content SET groups=? WHERE type=(SELECT alias FROM tl_content_blocks WHERE id=?)")
+			$db->prepare("UPDATE tl_content SET groups=? WHERE type=(SELECT alias FROM tl_elements WHERE id=?)")
 			   ->execute($groups, $dc->activeRecord->pid);
 		
 		}
@@ -1028,7 +1028,7 @@ class tl_content_pattern extends Backend
 		   ->execute($intId);
 					   
 		$objVersions->create();
-		$this->log('A new version of record "' . $this->table . '.id='.$intId.'" has been created'.$this->getParentEntries('tl_content_pattern', $intId), __METHOD__, TL_GENERAL);
+		$this->log('A new version of record "' . $this->table . '.id='.$intId.'" has been created'.$this->getParentEntries('tl_pattern', $intId), __METHOD__, TL_GENERAL);
 	}
 	
 	

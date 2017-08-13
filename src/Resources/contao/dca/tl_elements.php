@@ -14,9 +14,9 @@
 
  
 /**
- * Table tl_content_blocks
+ * Table tl_elements
  */
-$GLOBALS['TL_DCA']['tl_content_blocks'] = array
+$GLOBALS['TL_DCA']['tl_elements'] = array
 (
 	// Config
 	'config' => array
@@ -25,15 +25,15 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_theme',
-		'ctable'                      => array('tl_content_pattern'),
+		'ctable'                      => array('tl_pattern'),
 		'onload_callback' => array
 		(
-			//array('tl_content_blocks', 'checkPermission'),
-			array('tl_content_blocks', 'showAlreadyUsedHint')
+			//array('tl_elements', 'checkPermission'),
+			array('tl_elements', 'showAlreadyUsedHint')
 		),
 		'onsubmit_callback'			  => array
 		(
-			array('tl_content_blocks', 'generateAlias')
+			array('tl_elements', 'generateAlias')
 		),
 		'sql' => array
 		(
@@ -54,7 +54,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 			'fields'                  => array('sorting'),
 			'headerFields'            => array('name', 'author', 'tstamp'),
 			'panelLayout'             => 'filter;search,limit',
-			'child_record_callback'   => array('tl_content_blocks', 'listElements')
+			'child_record_callback'   => array('tl_elements', 'listElements')
 		),
 		'global_operations' => array
 		(
@@ -70,41 +70,41 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		(
 			'edit' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['edit'],
-				'href'                => 'table=tl_content_pattern',
+				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['edit'],
+				'href'                => 'table=tl_pattern',
 				'icon'                => 'edit.svg',
-				'button_callback'     => array('tl_content_blocks', 'elementButtons')
+				'button_callback'     => array('tl_elements', 'elementButtons')
 			),
 			'editheader' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['editheader'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['copy'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.svg',
-				'button_callback'     => array('tl_content_blocks', 'elementButtons')
+				'button_callback'     => array('tl_elements', 'elementButtons')
 			),
 			'delete' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['delete'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'toggle' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['toggle'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['toggle'],
 				'icon'                => 'visible.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_content_blocks', 'toggleIcon')
+				'button_callback'     => array('tl_elements', 'toggleIcon')
 			),
 			'show' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_content_blocks']['show'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.svg'
 			)
@@ -141,19 +141,19 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		),
 		'type' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['type'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['type'],
 			'default'                 => 'element',
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
 			'options'       	  => array('group', 'element'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_content_blocks_type'],
+			'reference'               => &$GLOBALS['TL_LANG']['tl_elements_type'],
 			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'title' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['title'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['title'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -167,7 +167,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		),
 		'description' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['description'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['description'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>256, 'tl_class'=>'long clr'),
@@ -175,19 +175,19 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		),
 		'template' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['template'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['template'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
 			'default'				  => 'element_standard',
 			'flag'                    => 11,
-			'options_callback'        => array('tl_content_blocks', 'getContentBlockTemplates'),
+			'options_callback'        => array('tl_elements', 'getContentBlockTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'singleSRC' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['singleSRC'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['singleSRC'],
 			'exclude'                 => true,
 			'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'filesOnly'=>true, 'extensions'=>'jpg,png,gif', 'tl_class'=>'w50 clr'),
@@ -195,16 +195,16 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
 		),
 		'defaultType' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['defaultType'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['defaultType'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50'),
-			'save_callback'   		  => array(array('tl_content_blocks', 'setDefaultType')),
+			'save_callback'   		  => array(array('tl_elements', 'setDefaultType')),
 			'sql'                     => "char(1) NOT NULL default '0'"
 		),
 		'invisible' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content_blocks']['invisible'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['invisible'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -221,7 +221,7 @@ $GLOBALS['TL_DCA']['tl_content_blocks'] = array
  *
  * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
-class tl_content_blocks extends Backend
+class tl_elements extends Backend
 {
 
 	/**
@@ -270,7 +270,7 @@ class tl_content_blocks extends Backend
 		if ($varValue)
 		{
 			// there can be only one default element
-			$db->prepare("UPDATE tl_content_blocks SET defaultType='' WHERE NOT id=? AND pid=?")
+			$db->prepare("UPDATE tl_elements SET defaultType='' WHERE NOT id=? AND pid=?")
 			   ->execute($dc->activeRecord->id, $dc->activeRecord->pid);
 		}
 		
@@ -288,7 +288,7 @@ class tl_content_blocks extends Backend
 		if ($alias != $dc->activeRecord->alias)
 		{
 			// Save alias to database
-			$db->prepare("UPDATE tl_content_blocks SET alias=? WHERE id=?")
+			$db->prepare("UPDATE tl_elements SET alias=? WHERE id=?")
 			   ->execute($alias, $dc->activeRecord->id);
 		
 			if ($dc->activeRecord->alias)
@@ -443,7 +443,7 @@ class tl_content_blocks extends Backend
 		}
 		
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->hasAccess('tl_content_blocks::invisible', 'alexf'))
+		if (!$this->User->hasAccess('tl_elements::invisible', 'alexf'))
 		{
 			return '';
 		}
@@ -484,16 +484,16 @@ class tl_content_blocks extends Backend
 		}		
 		
 		// Check the field access
-		if (!$this->User->hasAccess('tl_content_blocks::invisible', 'alexf'))
+		if (!$this->User->hasAccess('tl_elements::invisible', 'alexf'))
 		{
 			$this->log('Not enough permissions to publish/unpublish content block element ID "'.$intId.'"', __METHOD__, TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 	
 		// The onload_callbacks vary depending on the dynamic parent table (see #4894)
-		if (is_array($GLOBALS['TL_DCA']['tl_content_blocks']['config']['onload_callback']))
+		if (is_array($GLOBALS['TL_DCA']['tl_elements']['config']['onload_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_content_blocks']['config']['onload_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA']['tl_elements']['config']['onload_callback'] as $callback)
 			{
 				if (is_array($callback))
 				{
@@ -508,19 +508,19 @@ class tl_content_blocks extends Backend
 		}
 		
 		// Check permissions to publish
-		if (!$this->User->hasAccess('tl_content_blocks::invisible', 'alexf'))
+		if (!$this->User->hasAccess('tl_elements::invisible', 'alexf'))
 		{
 			$this->log('Not enough permissions to show/hide content block element ID "'.$intId.'"', __METHOD__, TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 		
-		$objVersions = new Versions('tl_content_blocks', $intId);
+		$objVersions = new Versions('tl_elements', $intId);
 		$objVersions->initialize();
 		
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_content_blocks']['fields']['invisible']['save_callback']))
+		if (is_array($GLOBALS['TL_DCA']['tl_elements']['fields']['invisible']['save_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_content_blocks']['fields']['invisible']['save_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA']['tl_elements']['fields']['invisible']['save_callback'] as $callback)
 			{
 				if (is_array($callback))
 				{
@@ -535,11 +535,11 @@ class tl_content_blocks extends Backend
 		}
 		
 		// Update the database
-		$db->prepare("UPDATE tl_content_blocks SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
+		$db->prepare("UPDATE tl_elements SET tstamp=". time() .", invisible='" . ($blnVisible ? '' : 1) . "' WHERE id=?")
 		   ->execute($intId);
 					   
 		$objVersions->create();
-		$this->log('A new version of record "tl_content_blocks.id='.$intId.'" has been created'.$this->getParentEntries('tl_content_blocks', $intId), __METHOD__, TL_GENERAL);
+		$this->log('A new version of record "tl_elements.id='.$intId.'" has been created'.$this->getParentEntries('tl_elements', $intId), __METHOD__, TL_GENERAL);
 	}
 	
 }

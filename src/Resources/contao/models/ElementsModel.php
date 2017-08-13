@@ -14,14 +14,14 @@
 namespace Contao;
 
 
-class ContentBlocksModel extends \Contao\Model
+class ElementsModel extends Model
 {
 
 	/**
 	 * Table name
 	 * @var string
 	 */
-	protected static $strTable = 'tl_content_blocks';
+	protected static $strTable = 'tl_elements';
 
 
 

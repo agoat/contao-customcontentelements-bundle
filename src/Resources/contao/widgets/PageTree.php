@@ -9,7 +9,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 
 /**

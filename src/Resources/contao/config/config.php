@@ -15,7 +15,7 @@
  /**
  * Register back end module (tables, css, overwritten classes)
  */
-array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_content_blocks', 'tl_content_pattern');
+array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_pattern');
 
 $GLOBALS['BE_MOD']['design']['themes']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
 $GLOBALS['BE_MOD']['content']['article']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
@@ -29,28 +29,27 @@ if (isset($bundles['ContaoNewsBundle']))
 
 
 /**
-
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentBlocks\\Controller','registerBlockElements');
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentBlocks\\Controller','registerBlockElements');
+$GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentElements\\Controller','registerBlockElements');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Controller','registerBlockElements');
 
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentBlocks\\Controller','setNewsArticleCallbacks');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Controller','setNewsArticleCallbacks');
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addPageLayoutToBE');
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','addPageLayoutToBE');
 
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addContentBlockCSS');
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentBlocks\\Controller','addContentBlockJS');
-$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentBlocks\\Controller','addLayoutJS');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements\\Controller','addContentBlockCSS');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements\\Controller','addContentBlockJS');
+$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controller','addLayoutJS');
 
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentBlocks\\Controller','hideContentValueVersions');
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','hideContentValueVersions');
 
-$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentBlocks\\Theme','compareContentBlockTables');
-$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentBlocks\\Theme','importContentBlockTables');
-$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentBlocks\\Theme','exportContentBlockTables');
+$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareContentBlockTables');
+$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentElements\\Theme','importContentBlockTables');
+$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentElements\\Theme','exportContentBlockTables');
 
-$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Agoat\\ContentBlocks\\Config','loadParameters');
+$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Agoat\\ContentElements\\Config','loadParameters');
  
  
 /**
@@ -60,32 +59,32 @@ $GLOBALS['TL_CTP'] = array
 (
 	'input' => array
 	(
-		'textfield'		=> 'Agoat\ContentBlocks\PatternTextField',
-		'textarea'		=> 'Agoat\ContentBlocks\PatternTextArea',
-		'selectfield'	=> 'Agoat\ContentBlocks\PatternSelectField',
-		'checkbox'		=> 'Agoat\ContentBlocks\PatternCheckBox',
-		'filetree'		=> 'Agoat\ContentBlocks\PatternFileTree',
-		'pagetree'		=> 'Agoat\ContentBlocks\PatternPageTree',
-		'article'		=> 'Agoat\ContentBlocks\PatternArticle',
-		'listwizard'	=> 'Agoat\ContentBlocks\PatternListWizard',
-		'tablewizard'	=> 'Agoat\ContentBlocks\PatternTableWizard',
-		'code'			=> 'Agoat\ContentBlocks\PatternCode',
+		'textfield'		=> 'Agoat\ContentElements\PatternTextField',
+		'textarea'		=> 'Agoat\ContentElements\PatternTextArea',
+		'selectfield'	=> 'Agoat\ContentElements\PatternSelectField',
+		'checkbox'		=> 'Agoat\ContentElements\PatternCheckBox',
+		'filetree'		=> 'Agoat\ContentElements\PatternFileTree',
+		'pagetree'		=> 'Agoat\ContentElements\PatternPageTree',
+		'article'		=> 'Agoat\ContentElements\PatternArticle',
+		'listwizard'	=> 'Agoat\ContentElements\PatternListWizard',
+		'tablewizard'	=> 'Agoat\ContentElements\PatternTableWizard',
+		'code'			=> 'Agoat\ContentElements\PatternCode',
 	),
 	'layout' => array
 	(
-		'section'		=> 'Agoat\ContentBlocks\PatternSection',
-		'explanation'	=> 'Agoat\ContentBlocks\PatternExplanation',
+		'section'		=> 'Agoat\ContentElements\PatternSection',
+		'explanation'	=> 'Agoat\ContentElements\PatternExplanation',
 	),
 	'element' => array
 	(
-		'visibility'	=> 'Agoat\ContentBlocks\PatternVisibility',
-		'protection'	=> 'Agoat\ContentBlocks\PatternProtection',
+		'visibility'	=> 'Agoat\ContentElements\PatternVisibility',
+		'protection'	=> 'Agoat\ContentElements\PatternProtection',
 	),
 	'system' => array
 	(
-		'imagesize'		=> 'Agoat\ContentBlocks\PatternImageSize',
-		'form'			=> 'Agoat\ContentBlocks\PatternForm',
-		'module'		=> 'Agoat\ContentBlocks\PatternModule',
+		'imagesize'		=> 'Agoat\ContentElements\PatternImageSize',
+		'form'			=> 'Agoat\ContentElements\PatternForm',
+		'module'		=> 'Agoat\ContentElements\PatternModule',
 	),
 );
 
@@ -123,12 +122,12 @@ $GLOBALS['TL_CTP_SYS'] = array('section', 'explanation', 'visibility', 'protecti
 /**
  * Back end form fields (widgets)
  */
-$GLOBALS['BE_FFL']['explanation'] = 'Explanation';
-$GLOBALS['BE_FFL']['visualselect'] = 'VisualSelectMenu';
-$GLOBALS['BE_FFL']['fileTree'] = '\Agoat\ContentBlocks\FileTree';
-$GLOBALS['BE_FFL']['pageTree'] = '\Agoat\ContentBlocks\PageTree';
+$GLOBALS['BE_FFL']['explanation'] 	= '\Agoat\ContentElements\Explanation';
+$GLOBALS['BE_FFL']['visualselect'] 	= '\Agoat\ContentElements\VisualSelectMenu';
+$GLOBALS['BE_FFL']['fileTree'] 		= '\Agoat\ContentElements\FileTree';
+$GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\ContentElements\PageTree';
 
-$GLOBALS['BE_FFL']['multigroup'] = 'MultiGroup';
-$GLOBALS['BE_FFL']['multigroupstart'] = 'MultiGroupStart';
-$GLOBALS['BE_FFL']['multigroupstop'] = 'MultiGroupStop';
+$GLOBALS['BE_FFL']['multigroup'] 		= 'MultiGroup';
+$GLOBALS['BE_FFL']['multigroupstart'] 	= 'MultiGroupStart';
+$GLOBALS['BE_FFL']['multigroupstop'] 	= 'MultiGroupStop';
 

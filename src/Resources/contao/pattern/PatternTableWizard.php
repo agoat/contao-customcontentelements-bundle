@@ -11,11 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\StringUtil;
-use Agoat\ContentBlocks\Pattern;
-
 
 
 class PatternTableWizard extends Pattern

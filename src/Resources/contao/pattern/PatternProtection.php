@@ -11,10 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\Database;
-use Agoat\ContentBlocks\Pattern;
 
 
 class PatternProtection extends Pattern

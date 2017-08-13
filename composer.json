@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Agoat\\ContentBlocksBundle\\": "src/"
+            "Agoat\\ContentElementsBundle\\": "src/"
         },
         "classmap": [
             "src/Resources/contao"
@@ -33,10 +33,5 @@
             "src/Resources/contao/languages",
             "src/Resources/contao/templates"
         ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Agoat\\ContentBlocksBundle\\Test\\": "tests/"
-        }
     }
-}
+ }

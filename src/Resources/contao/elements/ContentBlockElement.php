@@ -12,10 +12,10 @@
  */
 
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
-use Contao\System;
 use Contao\ContentElement;
+use Contao\System;
 use Contao\TemplateLoader;
 use Agoat\ContentBlocks\Template;
 use Agoat\ContentBlocks\Pattern;

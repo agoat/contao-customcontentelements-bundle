@@ -147,7 +147,7 @@ class tl_content_contentblocks extends tl_content
 		{
 			return array($dc->value);
 		}
-		
+dump($arrElements);		
 		return $arrElements;
 	}
 
