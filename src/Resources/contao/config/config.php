@@ -17,14 +17,14 @@
  */
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_pattern');
 
-$GLOBALS['BE_MOD']['design']['themes']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
-$GLOBALS['BE_MOD']['content']['article']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
+$GLOBALS['BE_MOD']['design']['themes']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
+$GLOBALS['BE_MOD']['content']['article']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
 
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
 if (isset($bundles['ContaoNewsBundle']))
 {
-	$GLOBALS['BE_MOD']['content']['news']['stylesheet'][] = 'bundles/agoatcontentblocks/style.css';
+	$GLOBALS['BE_MOD']['content']['news']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
 }
 
 

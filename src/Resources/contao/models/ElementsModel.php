@@ -42,6 +42,25 @@ class ElementsModel extends Model
 		return static::findBy($arrColumns, $intPid, $arrOptions);
 	}
 
+
+	/**
+	 * Find published content blocks by theme id
+	 *
+	 * @param mixed   $varId      The numeric ID or alias name
+	 * @param integer $intPid     The page ID
+	 * @param array   $arrOptions An optional options array
+	 *
+	 * @return static The model or null if there is no article
+	 */
+	public function findPublishedByAlias($strAlias, array $arrOptions=array())
+	{
+		$t = static::$strTable;
+		$arrColumns = array("$t.alias=? AND $t.invisible=''");
+	
+		return static::findBy($arrColumns, $strAlias, $arrOptions);
+	}
+
+
 	/**
 	 * Find published content blocks by theme id
 	 *
@@ -58,6 +77,7 @@ class ElementsModel extends Model
 	
 		return static::findOneBy($arrColumns, $intPid, $arrOptions);
 	}
+
 
 	/**
 	 * Find published content blocks by theme id

@@ -366,14 +366,14 @@ class Controller extends \Contao\Controller
 		// Add content blocks as content elements
 		foreach ($arrElements as $arrElement)
 		{
-			$GLOBALS['TL_CTE']['CTB'][$arrElement['alias']] = 'Agoat\ContentElements\ContentBlockElement';
+			$GLOBALS['TL_CTE']['CTB'][$arrElement['alias']] = 'Agoat\ContentElements\ContentElement';
 			$GLOBALS['TL_LANG']['CTE'][$arrElement['alias']] = array($arrElement['title'],$arrElement['description']);
 		}
 	}
 
 	
 	/**
-	 * Get the theme ID for an article
+	 * Get the layout ID for an article
 	 *
 	 * @param string  $strTable The name of the table (article or news) 
 	 * @param integer $intId    An article or a news article ID

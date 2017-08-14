@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+	<file datatype="php" original="system/modules/elements/languages/en/tl_pattern.php" source-language="en">
+		<body>
+ 			<trans-unit id="tl_pattern.type_legend">
+				<source>Pattern type</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.type.0">
+				<source>Pattern type</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.type.1">
+				<source>Choose the type of block pattern.</source>
+			</trans-unit>
+ 
+ 
+			<trans-unit id="tl_pattern.textfield_legend">
+				<source>Text field settings</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.minLength.0">
+				<source>Minimum length</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.minLength.1">
+				<source>Require the field value to be a certain number of characters long.</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.maxLength.0">
+				<source>Maximum length</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.maxLength.1">
+				<source>Limit the field length to a certain number of characters.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.rgxp.0">
+				<source>Input validation</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.rgxp.1">
+				<source>Validate the input against a regular expression.</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.defaultValue.0">
+				<source>Default value</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.defaultValue.1">
+				<source>Here you can enter a default value for the field.</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.multiple.0">
+				<source>Multiple input fields</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiple.1">
+				<source>Set the number of input fields.</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.picker.0">
+				<source>Picker</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.picker.1">
+				<source>Select a value Picker.</source>
+			</trans-unit>
+ 
+
+			<trans-unit id="tl_pattern.textarea_legend">
+				<source>Text area settings</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.rteTemplate.0">
+				<source>Text area template/configuration</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.rteTemplate.1">
+				<source>Select the configuration template file for the text area field.</source>
+			</trans-unit>
+
+ 
+			<trans-unit id="tl_pattern.select_legend">
+				<source>Select field settings</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.options.0">
+				<source>Options</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.options.1">
+				<source>Enter a list of values (with labels).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.blankOption.0">
+				<source>Blank option</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.blankOption.1">
+				<source>Adds a blank option for the drop down menu.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiSelect.0">
+				<source>Multiple selection</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiSelect.1">
+				<source>Allow to select more than one option.</source>
+			</trans-unit>
+
+ 
+ 			<trans-unit id="tl_pattern.source_legend">
+				<source>Source select settings</source>
+			</trans-unit>
+ 			<trans-unit id="tl_pattern.source.0">
+				<source>Source type</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.source.1">
+				<source>Select what type of files will be selectable (can be defined in the settings for images, videos and audio).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.size.0">
+				<source>Image size</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.size.1">
+				<source>Select the image dimensions and the resize mode.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeSize.0">
+				<source>Size is selectable</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeSize.1">
+				<source>The size select field will be displayed below the file selection field.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.sizeList.0">
+				<source>Sizes</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.sizeList.1">
+				<source>Select which sizes will be available for selection.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canEnterSize.0">
+				<source>Individual size</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canEnterSize.1">
+				<source>The size can be entered individually (Relative or extact dimension).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.customExtension.0">
+				<source>Custom extensions</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.customExtension.1">
+				<source>Enter a comma separeted list of file extensions.</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern.multiSource_legend">
+				<source>Multiple source selection</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiSource.0">
+				<source>Multiple source selection</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiSource.1">
+				<source>Allow to select more than one file.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.sortBy.0">
+				<source>Order by</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.sortBy.1">
+				<source>Choose the sort order.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeSortBy.0">
+				<source>Order is selectable</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeSortBy.1">
+				<source>The order select field will be displayed below the file selection field.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.numberOfItems.0">
+				<source>Limit</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.numberOfItems.1">
+				<source>Enter a number to limit the output of files. Set to 0 to show all.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.metaIgnore.0">
+				<source>Ignore files without meta data</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.metaIgnore.1">
+				<source>Do not show files without meta data matching the page language.</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern.page_legend">
+				<source>Page selection settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiPage.0">
+				<source>Multiple page selection</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiPage.1">
+				<source>Allow to select more than one page.</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern.article_legend">
+				<source>Article selection settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.insideRoot.0">
+				<source>Restrict to website root</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.insideRoot.1">
+				<source>Restrict the selection to the current website root.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiArticle.0">
+				<source>Multiple article selection</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.multiArticle.1">
+				<source>Allow to select more than one article.</source>
+			</trans-unit>
+
+
+ 			<trans-unit id="tl_pattern.section_legend">
+				<source>Section settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.hidden.0">
+				<source>Hidden</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.hidden.1">
+				<source>The section will be hidden by default.</source>
+			</trans-unit>
+
+			
+ 			<trans-unit id="tl_pattern.subpattern_legend">
+				<source>Sub pattern settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.subPatternType.0">
+				<source>Sub pattern type</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.subPatternType.1">
+				<source>Choose the type of sub pattern.</source>
+			</trans-unit>
+			
+			<trans-unit id="tl_pattern.suboption">
+				<source>Sub pattern option:</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern.multipattern_legend">
+				<source>Multi group settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.numberOfGroups.0">
+				<source>Total number of groups</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.numberOfGroups.1">
+				<source>Here you can limit the total number of groups (between 1 and 100).</source>
+			</trans-unit>
+
+			
+			<trans-unit id="tl_pattern.explanation_legend">
+				<source>Explanation settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.explanation.0">
+				<source>Explanation text</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.explanation.1">
+				<source>Enter an explanation text.</source>
+			</trans-unit>
+
+ 
+			<trans-unit id="tl_pattern.label_legend">
+				<source>Label/Description</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.label.0">
+				<source>Label</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.label.1">
+				<source>Enter a label for the input field.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.description.0">
+				<source>Description</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.description.1">
+				<source>Here you can enter a description for the input field.</source>
+			</trans-unit>
+
+		
+			<trans-unit id="tl_pattern.pattern_legend">
+				<source>Pattern field settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.alias.0">
+				<source>Alias</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.alias.1">
+				<source>Enter an alias name that will be used as variable name in the template (e.g. $this->alias).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.mandatory.0">
+				<source>Mandatory</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.mandatory.1">
+				<source>Set if the input field must not by empty.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.classClr.0">
+				<source>New row</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.classClr.1">
+				<source>Start a new row for the input field.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.classLong.0">
+				<source>Full width</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.classLong.1">
+				<source>Let the input field go over the whole width.</source>
+			</trans-unit>
+
+			
+			<trans-unit id="tl_pattern.visibility_legend">
+				<source>Visibility settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeStart.0">
+				<source>Show start date field</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeStart.1">
+				<source>The start date can be entered.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeStop.0">
+				<source>Show stop date field</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeStop.1">
+				<source>The stop date can be entered.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.start.0">
+				<source>Show from</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.start.1">
+				<source>Do not show the element on the website before this day.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.stop.0">
+				<source>Show until</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.stop.1">
+				<source>Do not show the element on the website on and after this day.</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern.protection_legend">
+				<source>Protection settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.groups.0">
+				<source>Allowed member groups</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.groups.1">
+				<source>These groups will be able to see the content block element.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeGroups.0">
+				<source>Groups are selectable</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeGroups.1">
+				<source>The allowed member groups field will be displayed.</source>
+			</trans-unit>
+
+			
+			<trans-unit id="tl_pattern.code_legend">
+				<source>Code settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.highlight.0">
+				<source>Syntax highlighting</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.highlight.1">
+				<source>Select a scripting language.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeHighlight.0">
+				<source>Highlighting is selectable</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canChangeHighlight.1">
+				<source>The highlight select field will be displayed above the code area.</source>
+			</trans-unit>
+
+
+			<trans-unit id="tl_pattern.form_legend">
+				<source>Form settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.form.0">
+				<source>Form</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.form.1">
+				<source>Select the form to be included.</source>
+			</trans-unit>
+
+			
+			<trans-unit id="tl_pattern.module_legend">
+				<source>Module settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.module.0">
+				<source>Module</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.module.1">
+				<source>Select the module to be included.</source>
+			</trans-unit>
+
+			
+			
+			<trans-unit id="tl_pattern.invisible_legend">
+				<source>Visibility</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.invisible.0">
+				<source>Invisible</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.invisible.1">
+				<source>Hide the pattern in the backend.</source>
+			</trans-unit>
+
+			
+			<trans-unit id="tl_pattern_subPatternType.button.0">
+				<source>CheckBox</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_subPatternType.options.0">
+				<source>Select field</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern_source.all.0">
+				<source>All files</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_source.image.0">
+				<source>Images</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_source.video.0">
+				<source>Videos</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_source.audio.0">
+				<source>Audio</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_source.custom.0">
+				<source>Custom extensions</source>
+			</trans-unit>
+
+			<trans-unit id="tl_pattern_sortby.custom.0">
+				<source>Custom order</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_sortby.name_asc.0">
+				<source>File name (ascending)</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_sortby.name_desc.0">
+				<source>File name (descending)</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_sortby.date_asc.0">
+				<source>Date (ascending)</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_sortby.date_desc.0">
+				<source>Date (descending)</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_sortby.random.0">
+				<source>Random order</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern_sortby.html5media.0">
+				<source>HTML5 preferred source order</source>
+			</trans-unit>
+
+
+			<trans-unit id="tl_pattern.natural.0">
+				<source>Natural numbers</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.natural.1">
+				<source>Allows non-negative natural numeric characters.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.prcnt.0">
+				<source>Percentage</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.prcnt.1">
+				<source>Allow numbers between 0 and 100.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.digit.0">
+				<source>Numeric characters</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.digit.1">
+				<source>Allows numeric characters, minus (-), full stop (.) and space ( ).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.alpha.0">
+				<source>Alphabetic characters</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.alpha.1">
+				<source>Allows alphabetic characters, minus (-), full stop (.) and space ( ).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.alnum.0">
+				<source>Alphanumeric characters</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.alnum.1">
+				<source>Allows alphabetic and numeric characters, minus (-), full stop (.), underscore (_) and space ( ).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.extnd.0">
+				<source>Extended alphanumeric characters</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.extnd.1">
+				<source>Allows everything except special characters which are usually encoded for security reasons (#/()&lt;=&gt;).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.date.0">
+				<source>Date</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.date.1">
+				<source>Checks whether the input matches the global date format.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.time.0">
+				<source>Time</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.time.1">
+				<source>Checks whether the input matches the global time format.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.datim.0">
+				<source>Date and time</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.datim.1">
+				<source>Checks whether the input matches the global date and time format.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.phone.0">
+				<source>Phone number</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.phone.1">
+				<source>Allows numeric characters, plus (+), minus (-), slash (/), parentheses () and space ( ).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.email.0">
+				<source>E-mail address</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.email.1">
+				<source>Checks whether the input is a valid e-mail address.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.url.0">
+				<source>URL format</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.url.1">
+				<source>Checks whether the input is a valid URL.</source>
+			</trans-unit>
+	  
+			<trans-unit id="tl_pattern.datetime.0">
+				<source>Date/time picker</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.datetime.1">
+				<source>Checks whether the input matches the global date and time format.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.color.0">
+				<source>Color picker</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.color.1">
+				<source>Allows numeric characters, plus (+), minus (-), slash (/), parentheses () and space ( ).</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.page.0">
+				<source>Page picker</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.page.1">
+				<source>Checks whether the input is a valid e-mail address.</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.unit.0">
+				<source>Unit selection</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.unit.1">
+				<source>Checks whether the input is a valid URL.</source>
+			</trans-unit>
+	  
+			<trans-unit id="tl_pattern.protected.0">
+				<source>Protect element</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.protected.1">
+				<source>Show the content element to certain member groups only.</source>
+			</trans-unit>
+
+
+
+
+
+	  
+ 			<trans-unit id="tl_pattern.new.0">
+				<source>New block pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.new.1">
+				<source>Create a new block pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.show.0">
+				<source>Block pattern details</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.show.1">
+				<source>Show the details of block pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.edit.0">
+				<source>Edit pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.edit.1">
+				<source>Edit pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.editheader.0">
+				<source>Edit content pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.editheader.1">
+				<source>Edit content pattern settings</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.copy.0">
+				<source>Duplicate block pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.copy.1">
+				<source>Duplicate block pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.cut.0">
+				<source>Move block pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.cut.1">
+				<source>Move block pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.delete.0">
+				<source>Delete block pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.delete.1">
+				<source>Delete block pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.pasteafter.0">
+				<source>Paste after</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.pasteafter.1">
+				<source>Paste after block pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.pasteinto.0">
+				<source>Paste into</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.pasteinto.1">
+				<source>Paste into page ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.pastenew.0">
+				<source>Add new at the top</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.pastenew.1">
+				<source>Add new after block pattern ID %s</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.toggle.0">
+				<source>Publish/unpublish block pattern</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.toggle.1">
+				<source>Publish/unpublish block pattern ID %s</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -147,6 +147,15 @@
 			<trans-unit id="CTE.ctb">
 				<source>Content blocks</source>
 			</trans-unit>
+			<trans-unit id="CTE.deleted">
+				<source>Deleted content element</source>
+			</trans-unit>
+			<trans-unit id="CTE.invisible">
+				<source>Invisible content element</source>
+			</trans-unit>
+			<trans-unit id="CTE.legacy">
+				<source>Legacy content element</source>
+			</trans-unit>
 
 			<trans-unit id="ERR.fieldNameExists">
 				<source>The field name "%s" already exists for this content block element!</source>

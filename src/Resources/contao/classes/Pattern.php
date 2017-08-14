@@ -185,21 +185,21 @@ abstract class Pattern extends Controller
 	
 	
 	/**
-	 * generate a field alias with the right syntax
+	 * Generate a field alias with the right syntax
 	 *
-	 * @param string $strName The field name (tl_content_value column name)
+	 * @param string $strName The field name 
 	 *
 	 * @return string The field alias
 	 */
 	protected function virtualFieldName($strName)
 	{
-		if (!$this->rid)
+		if (!$this->parentID)
 		{
-			$this->rid = 0;
+			$this->parentID = 0;
 		}
-	
-		// field alias syntax: tablecolumn_patternId_recursiveId
-		return $strName.'-'.$this->id.'-'.$this->rid;
+
+		// Field alias syntax: FieldName:PatternAlias:ParentID
+		return $strName . ':' . $this->patternAlias . ':' . $this->parentID;
 	}
 
 	

@@ -12,16 +12,19 @@
  */
 
 
+// Child table
+$GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = array('tl_data');
 
+ 
 // Table callbacks
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_elements', 'buildPaletteAndFields');
 $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_elements', 'saveFieldData');
 
-$GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][] = array('tl_content_elements', 'copyRelatedData');
-$GLOBALS['TL_DCA']['tl_content']['config']['ondelete_callback'][] = array('tl_content_elements', 'deleteRelatedData');
+//$GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][] = array('tl_content_elements', 'copyRelatedData');
+//$GLOBALS['TL_DCA']['tl_content']['config']['ondelete_callback'][] = array('tl_content_elements', 'deleteRelatedData');
 
-$GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = array('tl_content_elements', 'createRelatedDataVersion');
-$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_elements', 'restoreRelatedDataVersion');
+//$GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = array('tl_content_elements', 'createRelatedDataVersion');
+//$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_elements', 'restoreRelatedDataVersion');
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_elements', 'addCteType');
 
@@ -48,7 +51,7 @@ class tl_content_elements extends tl_content
 	/**
 	 * @var array returned field Data
 	 *
-	 * array[duplicatId][patternId][columnName]
+	 * array[patternAlias][parentID][columnName]
 	 */
 	protected $arrLoadedData = array();
 
@@ -73,12 +76,20 @@ class tl_content_elements extends tl_content
 	 */
 	public function addCteType($arrRow)
 	{	
-		// get block element
-		$objBlock = \ElementsModel::findOneByAlias($arrRow['type']);
-		
 		$return = \tl_content::addCteType($arrRow);
-		return ($objBlock->invisible) ? substr_replace($return, ' <span style="color: #b3b3b3;">(invisible content block)</div>', strpos($return, '</div>')) : $return;
-
+		
+		$objElement = \ElementsModel::findOneByAlias($arrRow['type']);
+	
+		if ($objElement === null)
+		{
+			$tag = '<span style="color: #222;">' . $GLOBALS['TL_LANG']['CTE']['deleted'] . '</span>';
+		}
+		else if ($objElement->invisible)
+		{
+			$tag = ' <span style="color: #c6c6c6;">(' . $GLOBALS['TL_LANG']['CTE']['invisible'] . ')</span>';
+		}
+		
+		return ($tag) ? substr_replace($return, $tag . '</div>', strpos($return, '</div>')) : $return;
 	}
 	
 	/**
@@ -150,27 +161,28 @@ class tl_content_elements extends tl_content
 		// Legacy support
 		if ($dc->value != '' && !in_array($dc->value, array_reduce($arrElements, 'array_merge', array())))
 		{
-			return array($dc->value);
+			$objLegacy = \ElementsModel::findOneByAlias($dc->value);
+			
+			if ($objLegacy === null)
+			{
+				$arrLegacy = array('deleted' => array ($dc->value));
+			}
+			else if ($objLegacy->invisible)
+			{
+				$arrLegacy = array('invisible' => array ($dc->value));
+			}
+			else
+			{
+				$arrLegacy = array('legacy' => array ($dc->value));
+			}	
+			
+			// Add current at top of the list
+			$arrElements = array_merge($arrLegacy, $arrElements);
 		}
-	
+
 		return $arrElements;
 	}
 
-
-	/**
-	 * Dynamically set the ace syntax
-	 */
-	public function setAceCodeHighlighting($value, $dc)
-	{
-		$id = explode('-', $dc->field);
-		if (!empty($this->arrLoadedData[$id[1]][$id[2]]['highlight']))
-		{
-			$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['rte'] = 'ace|' . strtolower($this->arrLoadedData[$id[1]][$id[2]]['highlight']);
-		}
-
-		return $value;
-	}
-	
 	
 	/**
 	 * set default value for new records
@@ -232,7 +244,6 @@ class tl_content_elements extends tl_content
 		
 		$intId = (isset($_GET['target'])) ? explode('.', \Input::get('target'))[2] : $dc->id;
 		
-		// get content element
 		$objContent = \ContentModel::findByPk($intId);
 	
 		if ($objContent === null)
@@ -241,19 +252,19 @@ class tl_content_elements extends tl_content
 		}
 
 		// get block element
-		$objBlock = \ElementsModel::findOneByAlias($objContent->type);
+		$objElement = \ElementsModel::findOneByAlias($objContent->type);
 			
-		if ($objBlock === null)
+		if ($objElement === null)
 		{
 			return;
 		}
 
 		// add default palette (for type selection)
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$objBlock->alias] = '{type_legend},type';
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$objElement->alias] = '{type_legend},type';
 
 					
 		// add the pattern to palettes
-		$colPattern = \PatternModel::findPublishedByPidAndTable($objBlock->id, 'tl_elements', array('order'=>'sorting ASC'));
+		$colPattern = \PatternModel::findPublishedByPidAndTable($objElement->id, 'tl_elements', array('order'=>'sorting ASC'));
 
 		if ($colPattern === null)
 		{
@@ -272,9 +283,10 @@ class tl_content_elements extends tl_content
 			else
 			{
 				$objPatternClass = new $strClass($objPattern);
-				$objPatternClass->cid = $objContent->id;
-				$objPatternClass->rid = 0;
-				$objPatternClass->alias = $objBlock->alias;			
+				$objPatternClass->pid = $objContent->id;
+				$objPatternClass->patternAlias = $objPattern->alias;
+				$objPatternClass->parentID = 0;
+				$objPatternClass->alias = $objElement->alias;			
 
 				$objPatternClass->construct();
 			}
@@ -287,12 +299,13 @@ class tl_content_elements extends tl_content
 	 */
 	public function saveFieldData (&$dc)
 	{
-		foreach ($this->arrModifiedData as $pid => $pattern)
+dump($this->arrModifiedData);
+		foreach ($this->arrModifiedData as $parentID => $patternAlias)
 		{
-			foreach ($pattern as $rid => $fields)
+			foreach ($patternAlias as $alias => $fields)
 			{
 				$bolVersion = false;
-				$objData = \DataModel::findByCidandPidandRid($dc->activeRecord->id,$pid,$rid);
+				$objData = \DataModel::findByPidAndPatternAndParent($dc->activeRecord->id,$alias,$parentID);
 			
 				if ($objData === null)
 				{
@@ -300,9 +313,9 @@ class tl_content_elements extends tl_content
 					$objData = new \DataModel();
 				}
 			
-				$objData->cid = $dc->activeRecord->id;
-				$objData->pid = $pid;
-				$objData->rid = $rid;
+				$objData->pid = $dc->activeRecord->id;
+				$objData->pattern = $alias;
+				$objData->parent = $parentID;
 				$objData->tstamp = time();
 			
 				foreach ($fields as $k=>$v)
@@ -486,11 +499,11 @@ class tl_content_elements extends tl_content
 
 		$this->loadContentData($dc->id);
 
-		$id = explode('-', $dc->field);	
+		list($fieldName, $patternAlias, $parentID) = explode(':', $dc->field, 3);
 
-		if (!empty($this->arrLoadedData[$id[1]][$id[2]][$id[0]]))
+		if (!empty($this->arrLoadedData[$parentID][$patternAlias][$fieldName]))
 		{
-			return $this->arrLoadedData[$id[1]][$id[2]][$id[0]];
+			return $this->arrLoadedData[$parentID][$patternAlias][$fieldName];
 		}
 		
 		return $value;
@@ -501,8 +514,8 @@ class tl_content_elements extends tl_content
 	 */
 	public function saveFieldAndClear ($value, $dc)
 	{
-		$id = explode('-', $dc->field);
-		$this->arrModifiedData[$id[1]][$id[2]][$id[0]] = $value;
+		list($fieldName, $patternAlias, $parentID) = explode(':', $dc->field, 3);
+		$this->arrModifiedData[$parentID][$patternAlias][$fieldName] = $value;
 
 		return null;
 	}
@@ -566,23 +579,39 @@ class tl_content_elements extends tl_content
 	}
 	
 	/**
-	 * load the content Data from the tl_content_value database
+	 * Load the content data from the tl_data table
 	 */
 	protected function loadContentData ($intId)
 	{
 		if (empty($this->arrLoadedData))
 		{
-			$colValue = \DataModel::findByCid($intId);
+			$colData = \DataModel::findByPid($intId);
 			
-			if ($colValue !== null)
+			if ($colData !== null)
 			{
-				foreach ($colValue as $objValue)
+				foreach ($colData as $objData)
 				{
-					$this->arrLoadedData[$objValue->pid][$objValue->rid] = $objValue->row();
+					$this->arrLoadedData[$objData->parent][$objData->pattern] = $objData->row();
 				}							
 			}
 		}
 	}
+
+	
+	/**
+	 * Dynamically set the ace syntax
+	 */
+	public function setAceCodeHighlighting($value, $dc)
+	{
+		list($fieldName, $patternAlias, $parentID) = explode(':', $dc->field, 3);
+		if (!empty($this->arrLoadedData[$parentID][$patternAlias]['highlight']))
+		{
+			$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['rte'] = 'ace|' . strtolower($this->arrLoadedData[$parentID][$patternAlias]['highlight']);
+		}
+
+		return $value;
+	}
+	
 
 	/**
 	 * set default value for new records

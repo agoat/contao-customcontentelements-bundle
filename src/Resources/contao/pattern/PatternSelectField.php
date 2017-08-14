@@ -53,7 +53,7 @@ class PatternSelectField extends Pattern
 		}
 
 		// Generate a select field
-		$this->generateDCA(($this->multiSelect) ? 'multiSelectField' : 'selectField', array
+		$this->generateDCA(($this->multiSelect) ? 'multiSelectField' : 'singleSelectField', array
 		(
 			'inputType' 	=>	'select',
 			'label'			=>	array($this->label, $this->description),
@@ -129,7 +129,7 @@ class PatternSelectField extends Pattern
 		}
 		else
 		{
-			$this->writeToTemplate(substr($this->Value->selectField,1));
+			$this->writeToTemplate(substr($this->Value->singleSelectField,1));
 		}
 	}
 	

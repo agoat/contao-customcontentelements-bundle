@@ -25,32 +25,7 @@ class DataModel extends Model
 	protected static $strTable = 'tl_data';
 
 
-	/**
-	 * Find all values by their content id
-	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
-	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
-	 */
-	public static function findByCid($varCid, array $arrOptions=array())
-	{
-		$t = static::$strTable;
-		
-		$arrOptions = array_merge
-		(		
-			array
-			(
-				'column'	=>	array("$t.cid=?"),
-				'value'		=>	array($varCid),
-			),
-			$arrOptions
-		);
 
-		return static::find($arrOptions);
-	}
-
-	
 	/**
 	 * Find all values by their content and pattern id
 	 *
@@ -59,7 +34,7 @@ class DataModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findByCidandPid($varCid, $varPid, array $arrOptions=array())
+	public static function findByPidAndPattern($varPid, $strPattern, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
@@ -67,8 +42,8 @@ class DataModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.cid=?","$t.pid=?"),
-				'value'		=>	array($varCid, $varPid),
+				'column'	=>	array("$t.pid=?","$t.pattern=?"),
+				'value'		=>	array($varPid, $strPattern),
 				'order'		=>	"$t.rid ASC",
 			),
 			$arrOptions
@@ -85,7 +60,7 @@ class DataModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findByCidandPidandRid($varCid, $varPid, $varRid, array $arrOptions=array())
+	public static function findByPidAndPatternAndParent($varPid, $strPattern, $intParent, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
@@ -93,10 +68,8 @@ class DataModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.cid=?","$t.pid=?","$t.rid=?"),
-				'value'		=>	array($varCid, $varPid, $varRid),
-				'return'	=>	'Model',
-				'limit'		=>	1
+				'column'	=>	array("$t.pid=?","$t.pattern=?","$t.parent=?"),
+				'value'		=>	array($varPid, $strPattern, $intParent),
 			),
 			$arrOptions
 		);
