@@ -13,7 +13,7 @@
 
 namespace Agoat\ContentElements;
 
-use Contao\TemplateLoader;
+use Contao\StringUtil;
 
 
 class PatternCode extends Pattern
@@ -51,9 +51,12 @@ class PatternCode extends Pattern
 				'tl_class'		=> 	'clr',
 				'rte'			=>	'ace|' . strtolower($this->highlight),
 				'preserveTags'	=>	true,
-			)
+			),
+			'load_callback'		=> (!$this->canChangeHighlight) ?: array
+			(
+				array('tl_content_elements', 'setAceCodeHighlighting'),
+			),
 		));
-		
 	}
 	
 
@@ -71,16 +74,17 @@ class PatternCode extends Pattern
 		}
 
 		$strPreview .= '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
-		$this->selector = $selector = 'ctrl_textarea' . $this->id;
-		$type = strtolower($this->highlight);
+
+		$selector = 'ctrl_textarea' . $this->id;
 
 		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
-		ob_start();
-		include(TemplateLoader::getPath('be_ace', 'html5'));
-		$strPreview .= ob_get_contents();
-		ob_end_clean();
-			
+		$objTemplate = new \BackendTemplate('be_ace');
+		$objTemplate->selector = $selector;
+		$objTemplate->type = strtolower($this->highlight);
+		
+		$strPreview .= $objTemplate->parse();
+		
 		$strPreview .= '<p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
 
 		return $strPreview;
@@ -92,8 +96,7 @@ class PatternCode extends Pattern
 	 */
 	public function compile()
 	{
-		// prepare value(s)		
-		$this->writeToTemplate(array('code' => $this->Value->text, 'highlight' => ($this->canChangeHighlight) ? $this->Value->highlight : $this->highlight));
+		$this->writeToTemplate(array('code' => ($this->htmlspecialchars) ? StringUtil::specialchars($this->Value->text) : $this->Value->text, 'highlight' => ($this->canChangeHighlight) ? $this->Value->highlight : $this->highlight));
 	}
 	
 }
