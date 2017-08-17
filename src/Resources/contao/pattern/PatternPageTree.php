@@ -26,7 +26,7 @@ class PatternPageTree extends Pattern
 		
 		if ($this->multiPage)
 		{
-			// the multiPage field
+			// The multiPage field
 			$this->generateDCA('multiPage', array
 			(
 				'inputType' =>	'pageTree',
@@ -35,24 +35,27 @@ class PatternPageTree extends Pattern
 				(
 					'multiple'		=>	true,				
 					'fieldType'		=>	'checkbox', 
-					'orderField'	=>	$this->virtualFieldName('orderPage'),
+					'orderField'	=>	$this->pattern . '-orderPage',
 					'files'			=>	true,
 					'mandatory'		=>	($this->mandatory) ? true : false, 
 					'tl_class'		=>	'clr',
 				),
 				'load_callback'		=> array
 				(
-					array('tl_content_elements', 'prepareOrderPageValue'),
+					array('tl_content_elements', 'prepareOrderValue'),
 				),
 				'save_callback'		=> array
 				(
-					array('tl_content_elements', 'saveOrderPageValue'),
+					array('tl_content_elements', 'saveOrderValue'),
 				),
 			));
+
+			// The orderPage field
+			$this->generateDCA('orderPage', array(), false, false);
 		}
 		else
 		{
-			// the multiPage field
+			// The singlePage field
 			$this->generateDCA('singlePage', array
 			(
 				'inputType' =>	'pageTree',

@@ -107,18 +107,45 @@ abstract class Pattern extends Controller
 	}	
 
 	/**
-	 * construct the DCA array
+	 * Construct the DCA array
 	 *
 	 */
-	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolLoadSaveCallback=true)
+	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolVisble=true, $bolCallbacks=true)
 	{
-		$this->virtualFieldAlias = $this->virtualFieldName($strFieldName);
+		$strVirtualField = $this->pattern . '-' . $strFieldName;
 		
-		// add some standard field attributes
-		$arrFieldDCA['eval']['doNotSaveEmpty'] = true;
-		
-		if ($bolLoadSaveCallback)
+		// Add to palette
+		if ($bolVisble)
 		{
+/*			Using the subpalette system of the DC_TABLE not possible because of direct database check 
+			(see https://github.com/contao/core-bundle/blob/2a85914f4ba858780ffbac38a468acb7028772c7/src/Resources/contao/drivers/DC_Table.php#L3191)
+
+			if (!empty($this->parent))
+			{
+				if (isset($GLOBALS['TL_DCA']['tl_content']['subpalettes'][$this->parent]))
+				{
+					$GLOBALS['TL_DCA']['tl_content']['subpalettes'][$this->parent] .= ',' . $strVirtualField;	
+				}
+				else
+				{
+					$GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = $this->parent;	
+					$GLOBALS['TL_DCA']['tl_content']['subpalettes'][$this->parent] = $strVirtualField;	
+				}
+			}
+			else
+			{
+				$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',' . $strVirtualField;	
+			}
+*/			
+
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',' . $strVirtualField;	
+		}
+
+		// Add necessary virtual field callbacks
+		if ($bolCallbacks)
+		{
+			$arrFieldDCA['eval']['doNotSaveEmpty'] = true;
+			
 			$arrFieldDCA['load_callback'] = is_array($arrFieldDCA['load_callback']) ? $arrFieldDCA['load_callback'] : array();
 			$arrFieldDCA['save_callback'] = is_array($arrFieldDCA['save_callback']) ? $arrFieldDCA['save_callback'] : array();
 			
@@ -132,12 +159,18 @@ abstract class Pattern extends Controller
 			array_unshift($arrFieldDCA['load_callback'], array('tl_content_elements', 'loadFieldValue'));
 			array_push($arrFieldDCA['save_callback'], array('tl_content_elements', 'saveFieldAndClear'));
 		}
+		
+		// Virtual field data
+		$arrFieldDCA = array_merge($arrFieldDCA, array
+		(
+			'column' 	=> $strFieldName,
+			'pattern' 	=> $this->pattern,
+			'parent'	=> ($this->parent) ? $this->parent : '',
+			'data'		=> (isset($this->data[$strFieldName])) ? $this->data[$strFieldName] : null
+		));
 
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$this->virtualFieldAlias;		
-
-		// add field informations
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$this->virtualFieldAlias] = $arrFieldDCA;
-
+		// Add field informations
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$strVirtualField] = $arrFieldDCA;
 	}
 
 	
@@ -193,13 +226,16 @@ abstract class Pattern extends Controller
 	 */
 	protected function virtualFieldName($strName)
 	{
-		if (!$this->parentID)
+		// Field alias syntax: PatternAlias:Fieldname
+		if ($this->parent)
 		{
-			$this->parentID = 0;
+			return $this->pattern . ':' . $strName . ':' . $this->parent;
 		}
-
-		// Field alias syntax: FieldName:PatternAlias:ParentID
-		return $strName . ':' . $this->patternAlias . ':' . $this->parentID;
+		else
+		{
+			return $this->pattern . ':' . $strName;
+		}
+		
 	}
 
 	

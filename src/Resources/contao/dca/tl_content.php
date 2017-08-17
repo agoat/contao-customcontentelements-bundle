@@ -18,13 +18,7 @@ $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = array('tl_data');
  
 // Table callbacks
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_elements', 'buildPaletteAndFields');
-$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_elements', 'saveFieldData');
-
-//$GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][] = array('tl_content_elements', 'copyRelatedData');
-//$GLOBALS['TL_DCA']['tl_content']['config']['ondelete_callback'][] = array('tl_content_elements', 'deleteRelatedData');
-
-//$GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = array('tl_content_elements', 'createRelatedDataVersion');
-//$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_elements', 'restoreRelatedDataVersion');
+$GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_elements', 'saveData');
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_elements', 'addCteType');
 
@@ -232,11 +226,11 @@ class tl_content_elements extends tl_content
 
 	
 	/**
-	 * build palettes and field DCA and load Data from tl_content_value
+	 * Build palette and field DCA
 	 */
 	public function buildPaletteAndFields ($dc)
 	{
-		// build the content block elements palette and fields only when editing a content element (see #5)
+		// Build the content block elements palette and fields only when editing a content element (see #5)
 		if (\Input::get('act') != 'edit' && \Input::get('act') != 'show' && !isset($_GET['target']))
 		{
 			return;
@@ -251,7 +245,7 @@ class tl_content_elements extends tl_content
 			return;
 		}
 
-		// get block element
+		// Get block element
 		$objElement = \ElementsModel::findOneByAlias($objContent->type);
 			
 		if ($objElement === null)
@@ -259,18 +253,31 @@ class tl_content_elements extends tl_content
 			return;
 		}
 
-		// add default palette (for type selection)
+		// Add default palette (for type selection)
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$objElement->alias] = '{type_legend},type';
 
-					
-		// add the pattern to palettes
-		$colPattern = \PatternModel::findPublishedByPidAndTable($objElement->id, 'tl_elements', array('order'=>'sorting ASC'));
+		// Add pattern to palette
+		$colPattern = \PatternModel::findVisibleByPid($objElement->id);
 
 		if ($colPattern === null)
 		{
 			return;
 		}
-
+		
+		$colData = \DataModel::findByPid($intId);
+		
+		if ($colData !== null)
+		{
+			foreach ($colData as $objData)
+			{
+				$arrData[$objData->pattern] = $objData->row();
+			}							
+		}
+		else
+		{
+			$arrData = null;
+		}
+		
 		foreach($colPattern as $objPattern)
 		{
 			// construct dca for pattern
@@ -284,207 +291,14 @@ class tl_content_elements extends tl_content
 			{
 				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->pid = $objContent->id;
-				$objPatternClass->patternAlias = $objPattern->alias;
-				$objPatternClass->parentID = 0;
+				$objPatternClass->pattern = $objPattern->alias;
 				$objPatternClass->alias = $objElement->alias;			
+				$objPatternClass->data = (isset($arrData[$objPattern->alias])) ? $arrData[$objPattern->alias] : null;			
 
 				$objPatternClass->construct();
 			}
 		}
 	}	
-
-	
-	/**
-	 * save field Data to tl_content_value table
-	 */
-	public function saveFieldData (&$dc)
-	{
-dump($this->arrModifiedData);
-		foreach ($this->arrModifiedData as $parentID => $patternAlias)
-		{
-			foreach ($patternAlias as $alias => $fields)
-			{
-				$bolVersion = false;
-				$objData = \DataModel::findByPidAndPatternAndParent($dc->activeRecord->id,$alias,$parentID);
-			
-				if ($objData === null)
-				{
-					// if no dataset exist make a new one
-					$objData = new \DataModel();
-				}
-			
-				$objData->pid = $dc->activeRecord->id;
-				$objData->pattern = $alias;
-				$objData->parent = $parentID;
-				$objData->tstamp = time();
-			
-				foreach ($fields as $k=>$v)
-				{
-					if ($objData->$k != $v)
-					{
-						$bolVersion = true;
-						$objData->$k = $v;
-					}
-				}
-				
-				$objData->save();
-				
-				if ($bolVersion)
-				{
-					$dc->blnCreateNewVersion = true;
-				}
-			}
-		}
-	}
-
-	
-	/**
-	 * delete related Datas when a content element is deleted
-	 */
-	public function deleteRelatedData ($dc, $intUndoId)
-	{
-		$db = Database::getInstance();
-		
-		// get the undo database row
-		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
-					  ->execute($intUndoId) ;
-			
-		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
-		
-		$colData = \DataModel::findByCid($dc->activeRecord->id);
-		
-		if ($colData === null)
-		{
-			return;
-		}
-
-		foreach ($colData as $objData)
-		{
-			// get Data row(s)
-			$arrData['tl_data'][] = $objData->row();
-
-			$objData->delete();
-		}
-	
-		// save back to the undo database row
-		$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
-		   ->execute(serialize($arrData), $intUndoId);
-	}
-
-	
-	/**
-	 * copy related Data when a content element is copied
-	 */
-	public function copyRelatedData ($intId, $dc)
-	{
-		$colData = \DataModel::findByCid($dc->id);
-
-		if ($colData === null)
-		{
-			return;
-		}
-		
-		foreach ($colData as $objValue)
-		{
-			$objNewValue = clone $objValue;
-			$objNewValue->cid = $intId;
-			$objNewValue->save();
-		} 
-	}
-
-	/**
-	 * save new version with the content element for each pattern value
-	 */
-	public function createRelatedDataVersion ($strTable, $intPid, $intVersion, $row)
-	{
-		$db = Database::getInstance();
-		
-		// get tl_content_Data collection
-		$colData = \DataModel::findByCid($intPid);
-	
-		if ($colData === null)
-		{
-			return;
-		}
-		
-		$this->import('BackendUser', 'User');
-		
-		foreach ($colData as $objData)
-		{
-			$db->prepare("UPDATE tl_version SET active='' WHERE pid=? AND fromTable=?")
-			   ->execute($objData->id, 'tl_data');
-				   
-			$db->prepare("INSERT INTO tl_version (pid, tstamp, version, fromTable, username, userid, active, data) VALUES (?, ?, ?, ?, ?, ?, 1, ?)")
-			   ->execute($objData->id, time(), $intVersion, 'tl_data', $this->User->username, $this->User->id, serialize($objData->row()));
-		} 			
-		
-	}
-
-	/**
-	 * restore Data for each pattern value with the content element 
-	 */
-	public function restoreRelatedDataVersion ($strTable, $intPid, $intVersion, $data)
-	{
-		$db = Database::getInstance();
-		
-		// get tl_content_Data collection
-		$colData = \DataModel::findByCid($intPid);
-	
-		if ($colData === null)
-		{
-			return; 
-		}
-
-		foreach ($colData as $objData)
-		{
-
-			// get Data version (don´t use the version class because the callback is inside the restore method)
-			$objVersion = $db->prepare("SELECT * FROM tl_version WHERE fromTable=? AND pid=? AND version=?")
-							 ->limit(1)
-							 ->execute('tl_data', $objData->id, $intVersion);
-	
-			if ($objVersion->numRows < 1)
-			{
-				break;
-			}
-			
-			$data = \StringUtil::deserialize($objVersion->data);
-			
-			if (!is_array($data))
-			{
-				break;
-			}
-	
-				
-			// Get the currently available fields
-			$arrFields = array_flip($this->Database->getFieldnames('tl_data'));
-			
-			// Unset fields that do not exist (see #5219)
-			$data = array_intersect_key($data, $arrFields);
-				
-			$this->loadDataContainer('tl_content_value');
-	
-			// Reset fields added after storing the version to their default value (see #7755)
-			foreach (array_diff_key($arrFields, $data) as $k=>$v)
-			{
-				$data[$k] = \Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA']['tl_data']['fields'][$k]['sql']);
-			}
-		
-			
-			$db->prepare("UPDATE tl_data %s WHERE id=?")
-			   ->set($data)
-			   ->execute($objData->id);
-			
-			$db->prepare("UPDATE tl_version SET active='' WHERE fromTable=? AND pid=?")
-			   ->execute('tl_data', $objData->id);
-			
-			$db->prepare("UPDATE tl_version SET active=1 WHERE fromTable=? AND pid=? AND version=?")
-			   ->execute('tl_data', $objData->id, $intVersion);
-			
-			
-		}
-		
-	}
 
 	
 	/**
@@ -497,116 +311,119 @@ dump($this->arrModifiedData);
 			return $value;
 		}
 
-		$this->loadContentData($dc->id);
-
-		list($fieldName, $patternAlias, $parentID) = explode(':', $dc->field, 3);
-
-		if (!empty($this->arrLoadedData[$parentID][$patternAlias][$fieldName]))
+		if (!empty($GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['data']))
 		{
-			return $this->arrLoadedData[$parentID][$patternAlias][$fieldName];
+			return $GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['data'];
 		}
 		
 		return $value;
+
 	}
+
+	
+	/**
+	 * save field Data to tl_content_value table
+	 */
+	public function saveData (&$dc)
+	{
+		// Save all modified values
+		foreach ($this->arrModifiedData as $field => $value)
+		{
+			// Get virtual field attributes from DCA
+			$pattern = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['pattern'];
+			$parent = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['parent'];
+			$column = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['column'];
+
+			$objData = \DataModel::findOneByPidAndPatternAndParent($dc->activeRecord->id, $pattern, $parent);
+
+			if ($objData === null)
+			{
+				// if no dataset exist make a new one
+				$objData = new \DataModel();
+			}
+
+			$objData->pid = $dc->activeRecord->id;
+			$objData->pattern = $pattern;
+			$objData->parent = $parent;
+			$objData->tstamp = time();
+		
+			if ($objData->$column != $value)
+			{
+				$dc->blnCreateNewVersion = true;
+				$objData->$column = $value;
+			}
+		
+			$objData->save();
+		}
+	}
+
 
 	/**
 	 * save field value to tl_content_value table
 	 */
 	public function saveFieldAndClear ($value, $dc)
 	{
-		list($fieldName, $patternAlias, $parentID) = explode(':', $dc->field, 3);
-		$this->arrModifiedData[$parentID][$patternAlias][$fieldName] = $value;
-
+		$this->arrModifiedData[$dc->field] = $value;
+		
 		return null;
 	}
 
-
 	
 	/**
-	 * prepare the virtual orderSRC field (filetree widget)
+	 * prepare the virtual order field
 	 */
-	public function prepareOrderSRCValue ($value, $dc)
+	public function prepareOrderValue ($value, $dc)
 	{
-		$this->loadContentData($dc->id);
+		$orderField = $GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderField'];
+		$orderData = \StringUtil::deserialize($GLOBALS['TL_DCA']['tl_content']['fields'][$orderField]['data']);
 		
-		// Prepare the order field
-		$id = explode('-', $dc->field);
-		$orderSRC = \StringUtil::deserialize($this->arrLoadedData[$id[1]][$id[2]]['orderSRC']);
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderSRC-'.$id[1].'-'.$id[2]] = (is_array($orderSRC)) ? $orderSRC : array();
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval'][$orderField] = (is_array($orderData)) ? $orderData : array();
 
 		return $value;
 	}
 
 	/**
-	 * save the virtual orderSRC field (filetree widget)
+	 * save the virtual order field
 	 */
-	public function saveOrderSRCValue ($value, $dc)
+	public function saveOrderValue ($value, $dc)
 	{
-		// Prepare the order field
-		$id = explode('-', $dc->field);
-		$orderSRC = (\Input::post('orderSRC-'.$id[1].'-'.$id[2])) ? array_map('\StringUtil::uuidToBin', explode(',', \Input::post('orderSRC-'.$id[1].'-'.$id[2]))) : false;
-		$this->arrModifiedData[$id[1]][$id[2]]['orderSRC'] = $orderSRC;
-		
-		return $value;
-	}
+		$orderField = $GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderField'];
 
-	/**
-	 * prepare the virtual orderPage field (pagetree widget)
-	 */
-	public function prepareOrderPageValue ($value, $dc)
-	{
-		$this->loadContentData($dc->id);
-
-		// Prepare the order field
-		$id = explode('-', $dc->field);
-		$orderPage = \StringUtil::deserialize($this->arrLoadedData[$id[1]][$id[2]]['orderPage']);
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['orderPage-'.$id[1].'-'.$id[2]] = (is_array($orderPage)) ? $orderPage : array();
-
-		return $value;
-	}
-
-	/**
-	 * save the virtual orderPage field (pagetree widget)
-	 */
-	public function saveOrderPageValue ($value, $dc)
-	{
-		// Prepare the order field
-		$id = explode('-', $dc->field);
-		$orderPage = (\Input::post('orderPage-'.$id[1].'-'.$id[2])) ? explode(',', \Input::post('orderPage-'.$id[1].'-'.$id[2])) : false;
-		$this->arrModifiedData[$id[1]][$id[2]]['orderPage'] = $orderPage;
-		
-		return $value;
-	}
+		$orderData = \Input::post($orderField);
 	
-	/**
-	 * Load the content data from the tl_data table
-	 */
-	protected function loadContentData ($intId)
-	{
-		if (empty($this->arrLoadedData))
+		if ($orderData)
 		{
-			$colData = \DataModel::findByPid($intId);
-			
-			if ($colData !== null)
+			// Convert UUID to binary data for file sources
+			if ($GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['inputType'] == 'fileTree')
 			{
-				foreach ($colData as $objData)
-				{
-					$this->arrLoadedData[$objData->parent][$objData->pattern] = $objData->row();
-				}							
+				$this->arrModifiedData[$orderField] = array_map('\StringUtil::uuidToBin', explode(',', $orderData));
+			}
+			else
+			{
+				$this->arrModifiedData[$orderField] = explode(',', $orderData);
 			}
 		}
+		else
+		{
+			$this->arrModifiedData[$orderField] = NULL;
+		}
+
+		return $value;
 	}
 
+	
 	
 	/**
 	 * Dynamically set the ace syntax
 	 */
 	public function setAceCodeHighlighting($value, $dc)
 	{
-		list($fieldName, $patternAlias, $parentID) = explode(':', $dc->field, 3);
-		if (!empty($this->arrLoadedData[$parentID][$patternAlias]['highlight']))
+		$pattern = $GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['pattern'];
+		$highlight = $GLOBALS['TL_DCA']['tl_content']['fields'][$pattern . '-highlight']['data'];
+
+		if (!empty($highlight))
 		{
-			$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['rte'] = 'ace|' . strtolower($this->arrLoadedData[$parentID][$patternAlias]['highlight']);
+			$GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['eval']['rte'] = 'ace|' . strtolower($highlight);
 		}
 
 		return $value;

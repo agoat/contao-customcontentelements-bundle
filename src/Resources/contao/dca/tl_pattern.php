@@ -144,6 +144,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		'source_image'				  => 'size,canChangeSize,sizeList,canEnterSize',
 		'source_custom'				  => 'customExtension',
 		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore',
+		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore,canSelectFolder',
 		'picker_unit'				  => 'units',
 	),
 	// Fields
@@ -419,6 +420,14 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 m12 clr'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'canSelectFolder' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['canSelectFolder'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50 m12 clr'),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'multiPage' => array
@@ -868,7 +877,6 @@ class tl_pattern extends Backend
 	{
 		return $this->getTemplateGroup('be_tinyMCE');
 	}
-
 	
 
 	public function saveGroups ($dc)

@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocksBundle\DependencyInjection;
+namespace Agoat\ContentElementsBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * @author Arne Stappen <https://github.com/agoat>
  */
-class AgoatContentBlocksExtension extends Extension
+class AgoatContentElementsExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -36,6 +36,5 @@ class AgoatContentBlocksExtension extends Extension
 		{
 			$container->setParameter('contao.audio.valid_extensions', ['m4a', 'mp3', 'wma', 'mpeg', 'wav', 'ogg']);
 		}		
-		
     }
 }

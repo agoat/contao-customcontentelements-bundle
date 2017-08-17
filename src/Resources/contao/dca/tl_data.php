@@ -52,9 +52,9 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 		(
 			'sql'	=> "varchar(64) NOT NULL default ''"
 		),
-		'parent' => array	// tl_data.id of parent pattern (subpattern data)
+		'parent' => array	// tl_pattern.alias of parent pattern (subpattern data)
 		(
-			'sql'	=> "int(10) unsigned NOT NULL default '0'"
+			'sql'	=> "varchar(64) NOT NULL default ''"
 		),
 		'tstamp' => array
 		(

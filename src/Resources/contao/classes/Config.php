@@ -24,13 +24,13 @@ class Config
 	public function loadParameters()
 	{
 		$container = \System::getContainer();
-		
+	
 		if ($container->hasParameter('contao.video.valid_extensions'))
 		{
 			$GLOBALS['TL_CONFIG']['validVideoTypes'] = implode(',', $container->getParameter('contao.video.valid_extensions'));
 		}
 		
-		if ($container->hasParameter('contao.audio.imagine_options'))
+		if ($container->hasParameter('contao.audio.valid_extensions'))
 		{
 			$GLOBALS['TL_CONFIG']['validAudioTypes'] = implode(',', $container->getParameter('contao.audio.valid_extensions'));
 		}

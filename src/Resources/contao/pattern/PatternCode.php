@@ -49,7 +49,7 @@ class PatternCode extends Pattern
 			(
 				'mandatory'		=>	($this->mandatory) ? true : false, 
 				'tl_class'		=> 	'clr',
-				'rte'			=>	'ace|' . strtolower($this->highlight),
+				'rte'			=>	'ace|' . (($this->highlight) ? strtolower($this->highlight) : 'text'),
 				'preserveTags'	=>	true,
 			),
 			'load_callback'		=> (!$this->canChangeHighlight) ?: array

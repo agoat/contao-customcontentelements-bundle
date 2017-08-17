@@ -161,6 +161,12 @@
 			<trans-unit id="tl_pattern.metaIgnore.1">
 				<source>Do not show files without meta data matching the page language.</source>
 			</trans-unit>
+			<trans-unit id="tl_pattern.canSelectFolder.0">
+				<source>Folders are selectable</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.canSelectFolder.1">
+				<source>Folders and Files can be selected (When source type is 'images' the images inside the folder are selected).</source>
+			</trans-unit>
 
 			<trans-unit id="tl_pattern.page_legend">
 				<source>Page selection settings</source>
@@ -386,7 +392,7 @@
 			</trans-unit>
 
 			<trans-unit id="tl_pattern_source.all.0">
-				<source>All files</source>
+				<source>Downloadable files</source>
 			</trans-unit>
 			<trans-unit id="tl_pattern_source.image.0">
 				<source>Images</source>

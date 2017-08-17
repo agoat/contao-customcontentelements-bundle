@@ -116,7 +116,7 @@ class ContentElement extends \Contao\ContentElement
 	protected function compile()
 	{		
 		// get the pattern model collection
-		$colPattern = \PatternModel::findPublishedByPidAndTable($this->objElement->id, 'tl_elements');
+		$colPattern = \PatternModel::findVisibleByPid($this->objElement->id);
 
 		if ($colPattern === null)
 		{
@@ -133,10 +133,10 @@ class ContentElement extends \Contao\ContentElement
 		{
 			foreach ($colData as $objData)
 			{
-				$arrData[$objData->pattern][$objData->parent] = $objData;
+				$arrData[$objData->pattern] = $objData;
 			}							
 		}
-		
+	
 		// prepare values for every pattern
 		foreach($colPattern as $objPattern)
 		{
@@ -160,8 +160,8 @@ class ContentElement extends \Contao\ContentElement
 				$objPatternClass->parentID = 0;
 				$objPatternClass->Template = $this->Template;
 				$objPatternClass->arrData = $arrData;
-				$objPatternClass->Value = $arrData[$objPattern->alias][0];
-				
+				$objPatternClass->Value = $arrData[$objPattern->alias];
+			
 				$objPatternClass->compile();
 			}
 		}

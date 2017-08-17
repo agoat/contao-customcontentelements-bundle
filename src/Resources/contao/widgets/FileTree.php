@@ -72,7 +72,7 @@ class FileTree extends \Widget
 			$this->strOrderName = $this->orderField . str_replace($this->strField, '', $this->strName);
 			
 			// Don't try to load virtual pattern fields from database
-			if (strpos($this->orderField,':') === false)
+			if ($this->Database->fieldExists($this->orderField, $this->strTable))
 			{
 				// Retrieve the order value
 				$objRow = $this->Database->prepare("SELECT {$this->orderField} FROM {$this->strTable} WHERE id=?")
@@ -111,7 +111,7 @@ class FileTree extends \Widget
 			if ($arrNew !== $this->{$this->orderField})
 			{
 				// Don't try to save virtual pattern fields to database 
-				if (strpos($this->orderField,':') === false)
+				if ($this->Database->fieldExists($this->orderField, $this->strTable))
 				{
 					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
@@ -223,12 +223,17 @@ class FileTree extends \Widget
 		$arrSet = array();
 		$arrValues = array();
 		$blnHasOrder = ($this->orderField != '' && is_array($this->{$this->orderField}));
-
+	
 		if (!empty($this->varValue)) // Can be an array
 		{
 			$objFiles = \FilesModel::findMultipleByUuids((array)$this->varValue);
 			$allowedDownload = \StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
 
+			if ($this->extensions)
+			{
+				$allowedDownload = \StringUtil::trimsplit(',', strtolower($this->extensions));
+			}
+		
 			if ($objFiles !== null)
 			{
 				while ($objFiles->next())

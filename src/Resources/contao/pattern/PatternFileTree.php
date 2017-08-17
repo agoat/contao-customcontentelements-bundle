@@ -21,12 +21,12 @@ class PatternFileTree extends Pattern
 	 */
 	public function construct()
 	{
-		// set some options
+		// Set some options
 		switch ($this->source)
 		{
 			case 'image':
 				$extensions = \Config::get('validImageTypes');
-				$orderField = $this->virtualFieldName('orderSRC');
+				$orderField = $this->pattern . '-orderSRC';
 				$isGallery = true;
 				$isDownloads = false;
 				break;
@@ -35,26 +35,26 @@ class PatternFileTree extends Pattern
 				$extensions = \Config::get('validVideoTypes');
 				$orderField = false;
 				$isGallery = false;
-				$isDownloads = false;
+				$isDownloads = true;
 				break;
 				
 			case 'audio':
 				$extensions = \Config::get('validAudioTypes');
 				$orderField = false;
 				$isGallery = false;
-				$isDownloads = false;
+				$isDownloads = true;
 				break;
 				
 			case 'custom':
 				$extensions = $this->customExtension;
-				$orderField = $this->virtualFieldName('orderSRC');
+				$orderField = $this->pattern . '-orderSRC';
 				$isGallery = false;
-				$isDownloads = true;
+				$isDownloads = ($this->canSelectFolder) ? true : false;
 				break;
 				
 			default:
 				$extensions = \Config::get('allowedDownload');
-				$orderField = $this->virtualFieldName('orderSRC');
+				$orderField = $this->pattern . '-orderSRC';
 				$isGallery = false;
 				$isDownloads = true;
 				break;				
@@ -62,7 +62,8 @@ class PatternFileTree extends Pattern
 
 		if ($this->multiSource)
 		{
-			// the multiSRC field
+
+			// The multiSRC field
 			$this->generateDCA('multiSRC', array
 			(
 				'inputType' =>	'fileTree',
@@ -73,6 +74,7 @@ class PatternFileTree extends Pattern
 					'fieldType'		=>	'checkbox', 
 					'orderField'	=>	$orderField,
 					'files'			=>	true,
+					'filesOnly'		=>	!$this->canSelectFolder,
 					'extensions' 	=>	$extensions,
 					'isGallery'		=>	$isGallery,
 					'isDownloads'	=>	$isDownloads,
@@ -81,14 +83,19 @@ class PatternFileTree extends Pattern
 				),
 				'load_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_elements', 'prepareOrderSRCValue'),
+					array('tl_content_elements', 'prepareOrderValue'),
 				),
 				'save_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_elements', 'saveOrderSRCValue'),
+					array('tl_content_elements', 'saveOrderValue'),
 				),
 			));
-			
+
+			// The orderSRC field
+			if ($orderField)
+			{
+				$this->generateDCA('orderSRC', array(), false, false);
+			}
 		}
 		else
 		{
@@ -99,8 +106,8 @@ class PatternFileTree extends Pattern
 				'label'		=>	array($this->label, $this->description),
 				'eval'     	=> 	array
 				(
-					'filesOnly'		=>	true, 
 					'fieldType'		=>	'radio', 
+					'files'			=>	true, 
 					'extensions' 	=>	$extensions,
 					'mandatory'		=>	($this->mandatory) ? true : false, 
 					'tl_class'		=>	'clr',
@@ -114,8 +121,8 @@ class PatternFileTree extends Pattern
 		{
 			$this->generateDCA('size', array
 			(
-				'label'				=> &$GLOBALS['TL_LANG']['tl_content']['size'],
 				'inputType'			=> 'imageSize',
+				'label'				=> &$GLOBALS['TL_LANG']['tl_content']['size'],
 				'options'			=> $this->getImageSizeList(),
 				'default'			=> $this->size,
 				'reference'			=> &$GLOBALS['TL_LANG']['MSC'],
@@ -289,13 +296,13 @@ class PatternFileTree extends Pattern
 		}
 		
 		global $objPage;
+		
 		$allowedDownload = \StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
 		$allowedVideo = \StringUtil::trimsplit(',', strtolower(\Config::get('validVideoTypes')));
 		$allowedAudio = \StringUtil::trimsplit(',', strtolower(\Config::get('validAudioTypes')));
 		
 		$files = array();
 		$auxDate = array();
-		
 
 		// Get all files
 		while ($objFiles->next())
@@ -478,26 +485,26 @@ class PatternFileTree extends Pattern
 					$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objSubfiles->path);
 
 					
-					// Add the image
+					// Add the file
 					$files[$objSubfiles->path] = array
 					(
-						'id'        => $objFiles->id,
-						'uuid'      => $objFiles->uuid,
-						'name'      => $objFile->basename,
-						'path' 		=> $objFiles->path . '/' . $objFile->basename,
+						'id'        => $objSubfiles->id,
+						'uuid'      => $objSubfiles->uuid,
+						'name'      => $objSubfiles->basename,
+						'path' 		=> $objSubfiles->path,
 						'size'		=> ($this->canChangeSize) ? $this->Value->size : $this->size,
 						'alt'       => $arrMeta['title'],
 						'title'     => $arrMeta['title'],
 						'imageUrl'  => $arrMeta['link'],
 						'caption'   => $arrMeta['caption'],
 						'href'      => $strHref,
-						'filesize'  => $this->getReadableSize($objFile->filesize, 1),
-						'icon'      => TL_ASSETS_URL . 'assets/contao/images/' . $objFile->icon,
-						'mime'      => $objFile->mime,
-						'extension' => $objFile->extension
+						'filesize'  => $this->getReadableSize($objSubfiles->filesize, 1),
+						'icon'      => TL_ASSETS_URL . 'assets/contao/images/' . $objSubfiles->icon,
+						'mime'      => $objSubfiles->mime,
+						'extension' => $objSubfiles->extension
 					);
 					
-					$auxDate[] = $objFile->mtime;
+					$auxDate[] = $objSubfiles->mtime;
 				}
 			}
 		}
@@ -526,7 +533,7 @@ class PatternFileTree extends Pattern
 				if ($this->Value->orderSRC != '')
 				{
 					$tmp = \StringUtil::deserialize($this->Value->orderSRC);
-					
+				
 					if (!empty($tmp) && is_array($tmp))
 					{
 						// Remove all values
@@ -547,7 +554,7 @@ class PatternFileTree extends Pattern
 						{
 							$arrOrder = array_merge($arrOrder, array_values($files));
 						}
-						
+							
 						// Remove empty (unreplaced) entries
 						$files = array_values(array_filter($arrOrder));
 						
@@ -631,7 +638,15 @@ class PatternFileTree extends Pattern
 	public function getImageSizeList()
 	{
 		$arrSizes = \System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
-		$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(\StringUtil::deserialize($this->sizeList)));
+
+		if (is_array($this->sizeList))
+		{
+			$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(\StringUtil::deserialize($this->sizeList)));
+		}
+		else
+		{
+			$arrSizes['image_sizes'] = array();
+		}
 		
 		if ($this->canEnterSize)
 		{
