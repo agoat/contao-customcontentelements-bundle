@@ -44,20 +44,8 @@ class tl_content_elements extends tl_content
 {
 	/**
 	 * @var array returned field Data
-	 *
-	 * array[patternAlias][parentID][columnName]
-	 */
-	protected $arrLoadedData = array();
-
-	/**
-	 * @var array returned field Data
 	 */
 	protected $arrModifiedData = array();
-
-	/**
-	 * @var string default content element type
-	 */
-	protected $strDefaultType = '';
 	
 	
 	/**

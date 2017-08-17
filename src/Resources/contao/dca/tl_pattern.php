@@ -40,6 +40,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
+				'pid,ptable,sorting' => 'index',
 				'pid,ptable,invisible,sorting' => 'index',
 				'pid,ptable,suboption,invisible,sorting' => 'index'
 			)

@@ -31,7 +31,7 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 			(
 				'id' => 'primary',
 				'pid' => 'index',
-				'pid,pattern' => 'index',
+				'pid,parent' => 'index',
 				'pid,pattern,parent' => 'index'
 			)
 		)
