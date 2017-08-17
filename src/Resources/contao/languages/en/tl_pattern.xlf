@@ -348,6 +348,12 @@
 			<trans-unit id="tl_pattern.canChangeHighlight.1">
 				<source>The highlight select field will be displayed above the code area.</source>
 			</trans-unit>
+			<trans-unit id="tl_pattern.htmlspecialchars.0">
+				<source>Convert special characters to HTML entities</source>
+			</trans-unit>
+			<trans-unit id="tl_pattern.htmlspecialchars.1">
+				<source>The code will be be converted for screen printing.</source>
+			</trans-unit>
 
 
 			<trans-unit id="tl_pattern.form_legend">

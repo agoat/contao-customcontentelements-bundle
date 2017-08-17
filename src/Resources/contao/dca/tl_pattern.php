@@ -144,7 +144,6 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 	(
 		'source_image'				  => 'size,canChangeSize,sizeList,canEnterSize',
 		'source_custom'				  => 'customExtension',
-		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore',
 		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore,canSelectFolder',
 		'picker_unit'				  => 'units',
 	),
