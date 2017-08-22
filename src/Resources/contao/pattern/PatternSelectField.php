@@ -117,19 +117,19 @@ class PatternSelectField extends Pattern
 	{
 		if ($this->multiSelect)
 		{
-			if (is_array($arrValues = \StringUtil::deserialize($this->Value->multiSelectField)))
+			if (is_array($arrData = \StringUtil::deserialize($this->data->multiSelectField)))
 			{
-				foreach ($arrValues as &$value)
+				foreach ($arrData as &$data)
 				{
-					$value = substr($value,1);
+					$data = substr($data,1);
 				}
 				
-				$this->writeToTemplate($arrValues);
+				$this->writeToTemplate($arrData);
 			}
 		}
 		else
 		{
-			$this->writeToTemplate(substr($this->Value->singleSelectField,1));
+			$this->writeToTemplate(substr($this->data->singleSelectField,1));
 		}
 	}
 	

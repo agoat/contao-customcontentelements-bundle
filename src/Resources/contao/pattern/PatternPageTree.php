@@ -35,7 +35,7 @@ class PatternPageTree extends Pattern
 				(
 					'multiple'		=>	true,				
 					'fieldType'		=>	'checkbox', 
-					'orderField'	=>	$this->pattern . '-orderPage',
+					'orderField'	=>	$this->virtualFieldName('orderPage'),
 					'files'			=>	true,
 					'mandatory'		=>	($this->mandatory) ? true : false, 
 					'tl_class'		=>	'clr',
@@ -92,10 +92,9 @@ class PatternPageTree extends Pattern
 	 */
 	public function compile()
 	{
-		// prepare value(s)
 		if ($this->multiPage)
 		{
-			$objPages = \PageModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiPage));
+			$objPages = \PageModel::findMultipleByIds(\StringUtil::deserialize($this->data->multiPage));
 
 			// Return if there are no pages
 			if ($objPages === null)
@@ -106,9 +105,9 @@ class PatternPageTree extends Pattern
 			$arrPages = array();
 
 			// Sort the array keys according to the given order
-			if ($this->Value->orderPage != '')
+			if ($this->data->orderPage != '')
 			{
-				$tmp = \StringUtil::deserialize($this->Value->orderPage);
+				$tmp = \StringUtil::deserialize($this->data->orderPage);
 
 				if (!empty($tmp) && is_array($tmp))
 				{
@@ -128,7 +127,7 @@ class PatternPageTree extends Pattern
 		}
 		else
 		{
-			if (($objPage = \PageModel::findById($this->Value->singlePage)) !== null)
+			if (($objPage = \PageModel::findById($this->data->singlePage)) !== null)
 			{
                 $this->writeToTemplate($objPage->row());
             }

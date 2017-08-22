@@ -67,7 +67,7 @@ class PatternListWizard extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(StringUtil::deserialize($this->Value->listItems));
+		$this->writeToTemplate(StringUtil::deserialize($this->data->listItems));
 	}
 	
 }

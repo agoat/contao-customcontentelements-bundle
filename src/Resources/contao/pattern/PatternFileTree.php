@@ -26,7 +26,7 @@ class PatternFileTree extends Pattern
 		{
 			case 'image':
 				$extensions = \Config::get('validImageTypes');
-				$orderField = $this->pattern . '-orderSRC';
+				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = true;
 				$isDownloads = false;
 				break;
@@ -47,14 +47,14 @@ class PatternFileTree extends Pattern
 				
 			case 'custom':
 				$extensions = $this->customExtension;
-				$orderField = $this->pattern . '-orderSRC';
+				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = false;
 				$isDownloads = ($this->canSelectFolder) ? true : false;
 				break;
 				
 			default:
 				$extensions = \Config::get('allowedDownload');
-				$orderField = $this->pattern . '-orderSRC';
+				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = false;
 				$isDownloads = true;
 				break;				
@@ -250,7 +250,7 @@ class PatternFileTree extends Pattern
 	
 		if ($this->multiSource)
 		{
-			$multiSRC = \StringUtil::deserialize($this->Value->multiSRC);
+			$multiSRC = \StringUtil::deserialize($this->data->multiSRC);
 			
 			// Return if there are no files
 			if (!is_array($multiSRC) || empty($multiSRC))
@@ -263,12 +263,12 @@ class PatternFileTree extends Pattern
 		else
 		{
 			// Return if there is no file
-			if ($this->Value->singleSRC == '')
+			if ($this->data->singleSRC == '')
 			{
 				return '';
 			}
 		
-			$objFiles = \FilesModel::findMultipleByUuids(array($this->Value->singleSRC));
+			$objFiles = \FilesModel::findMultipleByUuids(array($this->data->singleSRC));
 		}
 
 		if ($objFiles === null)
@@ -388,7 +388,7 @@ class PatternFileTree extends Pattern
 					'uuid'      => $objFiles->uuid,
 					'name'      => $objFile->basename,
 					'path' 		=> $objFiles->path,
-					'size'		=> ($this->canChangeSize) ? $this->Value->size : $this->size,
+					'size'		=> ($this->canChangeSize) ? $this->data->size : $this->size,
 					'alt'       => $arrMeta['title'],
 					'title'     => $arrMeta['title'],
 					'imageUrl'  => $arrMeta['link'],
@@ -492,7 +492,7 @@ class PatternFileTree extends Pattern
 						'uuid'      => $objSubfiles->uuid,
 						'name'      => $objSubfiles->basename,
 						'path' 		=> $objSubfiles->path,
-						'size'		=> ($this->canChangeSize) ? $this->Value->size : $this->size,
+						'size'		=> ($this->canChangeSize) ? $this->data->size : $this->size,
 						'alt'       => $arrMeta['title'],
 						'title'     => $arrMeta['title'],
 						'imageUrl'  => $arrMeta['link'],
@@ -510,7 +510,7 @@ class PatternFileTree extends Pattern
 		}
 		
 		// Sort array
-		switch (($this->canChangeSortBy) ? $this->Value->sortBy : $this->sortBy)
+		switch (($this->canChangeSortBy) ? $this->data->sortBy : $this->sortBy)
 		{
 			default:
 			case 'name_asc':
@@ -530,9 +530,9 @@ class PatternFileTree extends Pattern
 				break;
 			
 			case 'custom':
-				if ($this->Value->orderSRC != '')
+				if ($this->data->orderSRC != '')
 				{
-					$tmp = \StringUtil::deserialize($this->Value->orderSRC);
+					$tmp = \StringUtil::deserialize($this->data->orderSRC);
 				
 					if (!empty($tmp) && is_array($tmp))
 					{

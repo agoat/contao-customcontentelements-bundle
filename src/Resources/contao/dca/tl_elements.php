@@ -40,6 +40,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
+				'pid' => 'index',
 				'alias' => 'index',
 				'pid,invisible,sorting' => 'index'				
 			)
@@ -123,7 +124,6 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 	(
 		'id' => array
 		(
-		//	'relation'                => array('type'=>'hasMany', 'load'=>'lazy', 'table'=>'tl_content_pattern', 'field'=>'pid'),
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
 		),
 		'pid' => array
@@ -146,7 +146,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options'       	  => array('group', 'element'),
+			'options'       	 	 => array('group', 'element'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_elements_type'],
 			'eval'                    => array('chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
@@ -158,6 +158,10 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 			'search'                  => true,
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
+			'save_callback' => array
+			(
+				array('tl_elements', 'checkTitle')
+			),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'alias' => array
@@ -179,7 +183,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'default'				  => 'element_standard',
+			'default'				  => 'ce_simple',
 			'flag'                    => 11,
 			'options_callback'        => array('tl_elements', 'getContentElementTemplates'),
 			'eval'                    => array('tl_class'=>'w50'),
@@ -277,13 +281,29 @@ class tl_elements extends Backend
 	}
 
 	
+	public function checkTitle ($varValue, DataContainer $dc)
+	{
+		$db = Database::getInstance();
+
+		$objTitle = $db->prepare("SELECT id FROM tl_elements WHERE NOT id=? AND pid=? AND title=?")
+					   ->execute($dc->activeRecord->id, $dc->activeRecord->pid, $varValue);
+
+		if ($objTitle->numRows > 0)
+		{
+			throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+		}
+		
+		return $varValue;
+	}
+	
+	
 	public function generateAlias (DataContainer $dc)
 	{
 		$db = Database::getInstance();
 
-		// Generate alias from title and id
+		// Generate alias from theme name and title
 		$alias = \StringUtil::generateAlias(\ThemeModel::findById($dc->activeRecord->pid)->name . '-' . $dc->activeRecord->title);
-
+		
 		if ($alias != $dc->activeRecord->alias)
 		{
 			// Save alias to database
@@ -310,12 +330,12 @@ class tl_elements extends Backend
 		$arrTemplates = array();
 
 		// Get the default templates
-		foreach (\TemplateLoader::getPrefixedFiles('cb_') as $strTemplate)
+		foreach (\TemplateLoader::getPrefixedFiles('ce_') as $strTemplate)
 		{
 			$arrTemplates[$strTemplate][] = 'root';
 		}
 
-		$arrCustomized = glob(TL_ROOT . '/templates/cb_*');
+		$arrCustomized = glob(TL_ROOT . '/templates/ce_*');
 
 		// Add the customized templates
 		if (is_array($arrCustomized))
@@ -330,7 +350,7 @@ class tl_elements extends Backend
 		// Add the customized theme templates
 		$theme = \ThemeModel::findById($dc->activeRecord->pid);
 		
-		$arrCustomized = glob(TL_ROOT . '/' . $theme->templates . '/' . 'cb_*');
+		$arrCustomized = glob(TL_ROOT . '/' . $theme->templates . '/' . 'ce_*');
 		if (is_array($arrCustomized))
 		{
 			foreach ($arrCustomized as $strFile)
@@ -384,7 +404,11 @@ class tl_elements extends Backend
 		
 		if (\ContentModel::countBy('type', $objElement->alias) > 0)
 		{
-			\Message::addInfo('Be aware on changes. The content block element is already in use!!');
+			\Message::addInfo($GLOBALS['TL_LANG']['MSC']['elementInUse']);
+		}
+	}
+
+
 		}
 
 	}
@@ -415,6 +439,7 @@ class tl_elements extends Backend
 		}
 		
 	}	
+
 	
 	/**
 	 * Return the "toggle visibility" button
@@ -457,6 +482,7 @@ class tl_elements extends Backend
 		return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['invisible'] ? 0 : 1) . '"').'</a> ';
 	}	
 
+	
 	/**
 	 * Toggle the visibility of an element
 	 *
@@ -539,7 +565,6 @@ class tl_elements extends Backend
 					   
 		$objVersions->create();
 		$this->log('A new version of record "tl_elements.id='.$intId.'" has been created'.$this->getParentEntries('tl_elements', $intId), __METHOD__, TL_GENERAL);
-	}
-	
+	}	
 }
 

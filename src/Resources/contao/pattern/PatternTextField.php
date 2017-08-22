@@ -25,8 +25,7 @@ class PatternTextField extends Pattern
 	 */
 	public function construct()
 	{
-		
-		
+				
 		$class = ($this->classClr) ? 'w50 clr' : 'w50';
 		$class = ($this->classLong) ? 'long clr' : $class;
 		$class .= ($this->picker) ? ' wizard' : '';
@@ -132,7 +131,7 @@ class PatternTextField extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->Value->multiTextField) : $this->Value->singleTextField : StringUtil::deserialize($this->Value->inputUnit));	
+		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->data->multiTextField) : $this->data->singleTextField : StringUtil::deserialize($this->data->inputUnit));	
 	}
 	
 }

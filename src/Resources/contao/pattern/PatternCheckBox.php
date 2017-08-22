@@ -53,7 +53,7 @@ class PatternCheckBox extends Pattern
 	public function compile()
 	{
 		
-		$this->writeToTemplate(($this->Value->checkBox) ? true : false);
+		$this->writeToTemplate(($this->data->checkBox) ? true : false);
 		
 	}
 	

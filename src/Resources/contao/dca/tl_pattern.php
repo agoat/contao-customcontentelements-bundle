@@ -902,7 +902,7 @@ class tl_pattern extends Backend
 	 */
 	public function showAlreadyUsedHint($dc)
 	{
-		if ($_POST || \Input::get('act') != 'edit')
+		if ($GLOBALS['_POST'] || \Input::get('act') != 'edit')
 		{
 			return;
 		}
@@ -914,14 +914,19 @@ class tl_pattern extends Backend
 		}
 
 		// Check if the content block is in use
-		$objContentPattern = \PatternModel::findById($dc->id);
-		$objContentBlock = \ElementsModel::findById($objContentPattern->pid);
+		$objPattern = \PatternModel::findById($dc->id);
 		
-		if (\ContentModel::countBy('type', $objContentBlock->alias) > 0)
+		while ($objPattern->ptable != 'tl_elements')
 		{
-			\Message::addInfo('Be aware on changes. The content block element is already in use!!');
+			$objPattern = \PatternModel::findById($objPattern->pid);
 		}
-
+		
+		$objElement = \ElementsModel::findById($objPattern->pid);
+		
+		if (\ContentModel::countBy('type', $objElement->alias) > 0)
+		{
+			\Message::addInfo($GLOBALS['TL_LANG']['MSC']['elementInUse']);
+		}
 	}
 
 	

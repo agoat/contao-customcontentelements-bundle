@@ -96,7 +96,7 @@ class PatternCode extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(array('code' => ($this->htmlspecialchars) ? StringUtil::specialchars($this->Value->text) : $this->Value->text, 'highlight' => ($this->canChangeHighlight) ? $this->Value->highlight : $this->highlight));
+		$this->writeToTemplate(array('code' => ($this->htmlspecialchars) ? StringUtil::specialchars($this->data->text) : $this->data->text, 'highlight' => ($this->canChangeHighlight) ? $this->data->highlight : $this->highlight));
 	}
 	
 }

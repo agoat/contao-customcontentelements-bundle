@@ -344,7 +344,7 @@ class Controller extends \Contao\Controller
 	public function registerBlockElements ()
 	{
 		// Don´t register twice
-		if (isset($GLOBALS['TL_CTE']['CTB'])) 
+		if (isset($GLOBALS['TL_CTE']['CTE'])) 
 		{
 			return;
 		}
@@ -366,7 +366,7 @@ class Controller extends \Contao\Controller
 		// Add content blocks as content elements
 		foreach ($arrElements as $arrElement)
 		{
-			$GLOBALS['TL_CTE']['CTB'][$arrElement['alias']] = 'Agoat\ContentElements\ContentElement';
+			$GLOBALS['TL_CTE']['CTE'][$arrElement['alias']] = 'Agoat\ContentElements\ContentElement';
 			$GLOBALS['TL_LANG']['CTE'][$arrElement['alias']] = array($arrElement['title'],$arrElement['description']);
 		}
 	}

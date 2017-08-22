@@ -12,7 +12,7 @@
  */
 
 
- /**
+/**
  * Register back end module (tables, css, overwritten classes)
  */
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_pattern');
@@ -42,18 +42,17 @@ $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements\\Controller','addContentBlockJS');
 $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controller','addLayoutJS');
 
+//$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','hideDataTableVersions');
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','hideDataTableVersions');
-
-$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareContentBlockTables');
-$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentElements\\Theme','importContentBlockTables');
-$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentElements\\Theme','exportContentBlockTables');
+$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareTables');
+$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentElements\\Theme','importTables');
+$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentElements\\Theme','exportTables');
 
 $GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Agoat\\ContentElements\\Config','loadParameters');
  
  
 /**
- * Content pattern
+ * Pattern elements
  */
 $GLOBALS['TL_CTP'] = array
 (

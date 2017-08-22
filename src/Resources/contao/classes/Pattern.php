@@ -112,7 +112,7 @@ abstract class Pattern extends Controller
 	 */
 	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolVisble=true, $bolCallbacks=true)
 	{
-		$strVirtualField = $this->pattern . '-' . $strFieldName;
+		$strVirtualField = $this->virtualFieldName($strFieldName);
 		
 		// Add to palette
 		if ($bolVisble)
@@ -138,7 +138,7 @@ abstract class Pattern extends Controller
 			}
 */			
 
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',' . $strVirtualField;	
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',' . $strVirtualField;	
 		}
 
 		// Add necessary virtual field callbacks
@@ -163,10 +163,11 @@ abstract class Pattern extends Controller
 		// Virtual field data
 		$arrFieldDCA = array_merge($arrFieldDCA, array
 		(
-			'column' 	=> $strFieldName,
+			'id' 		=> (isset($this->data->id)) ? $this->data->id : null,
 			'pattern' 	=> $this->pattern,
-			'parent'	=> ($this->parent) ? $this->parent : '',
-			'data'		=> (isset($this->data[$strFieldName])) ? $this->data[$strFieldName] : null
+			'parent'	=> (isset($this->parent)) ? $this->parent : 0,
+			'column' 	=> $strFieldName,
+			'data'		=> (isset($this->data->$strFieldName)) ? $this->data->$strFieldName : null
 		));
 
 		// Add field informations
@@ -174,6 +175,33 @@ abstract class Pattern extends Controller
 	}
 
 	
+	/**
+	 * Generate a field alias with the right syntax
+	 *
+	 * @param string $strName The field name 
+	 *
+	 * @return string The field alias
+	 */
+	protected function virtualFieldName($strFieldName)
+	{
+		$strVirtualField = $this->pattern . '-' . $strFieldName;
+		
+		if ($this->data !== null)
+		{
+			$strVirtualField .= '-' . $this->data->id;
+		}
+		
+		return $strVirtualField;
+
+		if ($this->parent)
+		{
+			$strVirtualField = $this->parent . '-' . $this->pattern . '-' . $strFieldName;
+		}
+		
+		return $strVirtualField;
+	}
+
+
 	/**
 	 * prepare a field view for the backend
 	 *
@@ -213,33 +241,6 @@ abstract class Pattern extends Controller
 	
 		$this->Template->{$this->alias} = $Value;
 	}
-
-
-	
-	
-	/**
-	 * Generate a field alias with the right syntax
-	 *
-	 * @param string $strName The field name 
-	 *
-	 * @return string The field alias
-	 */
-	protected function virtualFieldName($strName)
-	{
-		// Field alias syntax: PatternAlias:Fieldname
-		if ($this->parent)
-		{
-			return $this->pattern . ':' . $strName . ':' . $this->parent;
-		}
-		else
-		{
-			return $this->pattern . ':' . $strName;
-		}
-		
-	}
-
-	
-
 
 
 	/**

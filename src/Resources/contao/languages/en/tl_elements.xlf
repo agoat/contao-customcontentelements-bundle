@@ -3,14 +3,14 @@
 	<file datatype="php" original="system/modules/elements/languages/en/tl_elements.php" source-language="en">
 		<body>
 			<trans-unit id="tl_elements.type_legend">
-				<source>Block type</source>
+				<source>Element type</source>
 			</trans-unit>
 			
 			<trans-unit id="tl_elements.type.0">
-				<source>Block type</source>
+				<source>Element type</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.type.1">
-				<source>Choose the type of block element.</source>
+				<source>Choose the type of element element.</source>
 			</trans-unit>
  
  
@@ -22,7 +22,7 @@
 			</trans-unit>
 
 			<trans-unit id="tl_elements.title.0">
-				<source>Title</source>
+				<source>Title/Alias</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.title.1">
 				<source>Enter a title for the group or element, that will be shown in the element select menu when editing content.</source>
@@ -31,7 +31,7 @@
 				<source>Description</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.description.1">
-				<source>Enter a description for the content block.</source>
+				<source>Enter a description for the content element.</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.singleSRC.0">
 				<source>Pictogram/Image</source>
@@ -46,16 +46,16 @@
 			</trans-unit>
 
 			<trans-unit id="tl_elements.template.0">
-				<source>Block template</source>
+				<source>Element template</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.template.1">
-				<source>Select the template file for the content block.</source>
+				<source>Select the template file for the content element.</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.stylesheet.0">
 				<source>Backend stylesheet</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.stylesheet.1">
-				<source>Select a stylesheet file (css, scss or less) for the backend display of the content block.</source>
+				<source>Select a stylesheet file (css, scss or less) for the backend display of the content element.</source>
 			</trans-unit>
 
 
@@ -64,10 +64,10 @@
 			</trans-unit>
 
 			<trans-unit id="tl_elements.defaultType.0">
-				<source>Default content block</source>
+				<source>Default content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.defaultType.1">
-				<source>Set this content block as the default content elements.</source>
+				<source>Set this content element as the default element when adding a new one.</source>
 			</trans-unit>
 
 
@@ -79,7 +79,7 @@
 				<source>Invisible</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.invisible.1">
-				<source>Select and the content block will not be rendered in the frontend and will not be shown in the content element selection.</source>
+				<source>Select and the content element will not be rendered in the frontend and will not be shown in the content element selection.</source>
 			</trans-unit>
 
 
@@ -93,52 +93,52 @@
 			
 			
 			<trans-unit id="tl_elements.new.0">
-				<source>New content block</source>
+				<source>New content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.new.1">
-				<source>Create a new content block</source>
+				<source>Create a new content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.show.0">
-				<source>Content block details</source>
+				<source>Content element details</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.show.1">
-				<source>Show the details of content block ID %s</source>
+				<source>Show the details of content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.edit.0">
-				<source>Edit content block</source>
+				<source>Edit content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.edit.1">
-				<source>Edit content block ID %s</source>
+				<source>Edit content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.editheader.0">
-				<source>Edit content block</source>
+				<source>Edit content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.editheader.1">
-				<source>Edit content block settings</source>
+				<source>Edit content element settings</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.copy.0">
-				<source>Duplicate content block</source>
+				<source>Duplicate content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.copy.1">
-				<source>Duplicate content block ID %s</source>
+				<source>Duplicate content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.cut.0">
-				<source>Move content block</source>
+				<source>Move content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.cut.1">
-				<source>Move content block ID %s</source>
+				<source>Move content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.delete.0">
-				<source>Delete content block</source>
+				<source>Delete content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.delete.1">
-				<source>Delete content block ID %s</source>
+				<source>Delete content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.pasteafter.0">
 				<source>Paste after</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.pasteafter.1">
-				<source>Paste after content block ID %s</source>
+				<source>Paste after content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.pasteinto.0">
 				<source>Paste into</source>
@@ -150,13 +150,13 @@
 				<source>Add new at the top</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.pastenew.1">
-				<source>Add new after content block ID %s</source>
+				<source>Add new after content element ID %s</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.toggle.0">
-				<source>Publish/unpublish content block</source>
+				<source>Publish/unpublish content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.toggle.1">
-				<source>Publish/unpublish content block ID %s</source>
+				<source>Publish/unpublish content element ID %s</source>
 			</trans-unit>
 		</body>
 	</file>

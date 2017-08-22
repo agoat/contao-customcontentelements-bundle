@@ -41,7 +41,7 @@ class DataModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.pid=?","$t.parent=''"),
+				'column'	=>	array("$t.pid=?","$t.parent=0"),
 				'value'		=>	array($varPid)
 			),
 			$arrOptions
@@ -67,7 +67,7 @@ class DataModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.pid=?","$t.pattern=?","$t.parent=''"),
+				'column'	=>	array("$t.pid=?","$t.pattern=?","$t.parent=0"),
 				'value'		=>	array($varPid, $strPattern)
 			),
 			$arrOptions
@@ -111,7 +111,7 @@ class DataModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findOneByPidAndPatternAndParent($varPid, $strPattern, $intParent, array $arrOptions=array())
+	public static function findByPidAndPatternAndParent($varPid, $strPattern, $intParent, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
@@ -120,9 +120,7 @@ class DataModel extends Model
 			array
 			(
 				'column'	=>	array("$t.pid=?","$t.pattern=?","$t.parent=?"),
-				'value'		=>	array($varPid, $strPattern, $intParent),
-				'limit'		=> 1,
-				'return'	=> 'Model'
+				'value'		=>	array($varPid, $strPattern, $intParent)
 			),
 			$arrOptions
 		);
@@ -130,4 +128,6 @@ class DataModel extends Model
 		return static::find($arrOptions);
 	}
 
+	
+	
 }

@@ -145,7 +145,7 @@ class PatternArticle extends Pattern
 	{
 		if ($this->multiArticle)
 		{
-			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiSelectField));
+			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->data->multiSelectField));
 
 			// Return if there are no pages
 			if ($objArticles === null)
@@ -167,7 +167,7 @@ class PatternArticle extends Pattern
 		}
 		else
 		{
-			if (($objArticle = \ArticleModel::findById($this->Value->selectField)) !== null)
+			if (($objArticle = \ArticleModel::findById($this->data->selectField)) !== null)
 			{
 				$this->writeToTemplate($objArticle->row());
 			}

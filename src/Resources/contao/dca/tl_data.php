@@ -22,7 +22,6 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 	'config' => array
 	(
 		'dataContainer'               => 'Table',
-		'enableVersioning'            => true,
 		'ptable'                      => 'tl_content',
 
 		'sql' => array
@@ -52,9 +51,13 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 		(
 			'sql'	=> "varchar(64) NOT NULL default ''"
 		),
-		'parent' => array	// tl_pattern.alias of parent pattern (subpattern data)
+		'parent' => array	// data.id of parent pattern (subpattern)
 		(
-			'sql'	=> "varchar(64) NOT NULL default ''"
+			'sql'	=> "int(10) unsigned NOT NULL default '0'"
+		),
+		'sorting' => array	// pattern sorting (multipattern)
+		(
+			'sql'	=> "int(10) unsigned NOT NULL default '0'"
 		),
 		'tstamp' => array
 		(
@@ -133,11 +136,7 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 		'highlight' => array
 		(
 			'sql'	=> "varchar(64) NOT NULL default ''"
-		),
-		'count' => array
-		(
-			'sql'	=> "int(10) unsigned NOT NULL default '0'"
-		),
+		)
 	)
 );
 

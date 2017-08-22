@@ -10,7 +10,6 @@
 
 namespace Agoat\ContentElements;
 
-use Contao\Theme:
 use Patchwork\Utf8;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -20,7 +19,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *
  * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
-class Theme extends Theme
+class Theme extends \Contao\Theme
 {
 
 	/**
@@ -28,13 +27,13 @@ class Theme extends Theme
 	 *
 	 * compareThemeFiles Hook
 	 */
-	public function compareContentBlockTables ($xml, $objArchive)
+	public function compareTables ($xml, $objArchive)
 	{
 		// Store the field names of the theme tables
 		$arrDbFields = array
 		(
-			'tl_content_blocks'		=> $this->Database->getFieldNames('tl_content_blocks'),
-			'tl_content_pattern'	=> $this->Database->getFieldNames('tl_content_pattern'),
+			'tl_elements'	=> $this->Database->getFieldNames('tl_elements'),
+			'tl_pattern'	=> $this->Database->getFieldNames('tl_pattern'),
 		);
 			
 		$tables = $xml->getElementsByTagName('table');
@@ -48,7 +47,7 @@ class Theme extends Theme
 			$table = $tables->item($i)->getAttribute('name');
 
 			// Skip invalid tables
-			if ($table != 'tl_content_blocks' && $table != 'tl_content_pattern')
+			if ($table != 'tl_elements' && $table != 'tl_pattern')
 			{
 				continue;
 			}
@@ -86,7 +85,7 @@ class Theme extends Theme
 			$return .= "\n  " . '<p class="tl_green" style="margin:0">'. $GLOBALS['TL_LANG']['tl_theme']['tables_ok'] .'</p>';
 		}
 	
-		return "\n" . '<h4>'.$GLOBALS['TL_LANG']['tl_theme']['contentblocks_pattern'].'</h4>' . "\n" . $return;
+		return "\n" . '<h4>'.$GLOBALS['TL_LANG']['tl_theme']['elements'].'</h4>' . "\n" . $return;
 	}
 
 	
@@ -96,21 +95,22 @@ class Theme extends Theme
 	 *
 	 * extractThemeFiles Hook
 	 */
-	public function importContentBlockTables ($xml, $objArchive, $intThemeId, $arrMapper)
+	public function importTables ($xml, $objArchive, $intThemeId, $arrMapper)
 	{
 		// Store the field names of the theme tables
 		$arrDbFields = array
 		(
-			'tl_content_blocks'		=> $this->Database->getFieldNames('tl_content_blocks'),
-			'tl_content_pattern'	=> $this->Database->getFieldNames('tl_content_pattern')
+			'tl_elements'	=> $this->Database->getFieldNames('tl_elements'),
+			'tl_pattern'	=> $this->Database->getFieldNames('tl_pattern')
 		);
 			
 		// Lock the tables
 		$arrLocks = array
 		(
-			'tl_content_blocks'		=> 'WRITE',
-			'tl_content_pattern'	=> 'WRITE',
-			'tl_files'				=> 'READ'
+			'tl_elements'	=> 'WRITE',
+			'tl_pattern'	=> 'WRITE',
+			'tl_files'		=> 'READ',
+			'tl_theme'		=> 'READ'
 		);
 
 		// Load the DCAs of the locked tables (see #7345)
@@ -122,8 +122,8 @@ class Theme extends Theme
 		$this->Database->lockTables($arrLocks);
 
 		// Get the current auto_increment values
-		$tl_content_blocks = $this->Database->getNextId('tl_content_blocks');
-		$tl_content_pattern = $this->Database->getNextId('tl_content_pattern');
+		$tl_elements = $this->Database->getNextId('tl_elements');
+		$tl_pattern = $this->Database->getNextId('tl_pattern');
 
 		
 		$tables = $xml->getElementsByTagName('table');
@@ -157,7 +157,7 @@ class Theme extends Theme
 				}
 			}
 		}
-		
+
 		// Loop through the tables
 		for ($i=0; $i<$tables->length; $i++)
 		{
@@ -201,10 +201,9 @@ class Theme extends Theme
 					// Increment the parent IDs
 					elseif ($name == 'pid')
 					{
-						if ($table == 'tl_content_pattern')
+						if ($table == 'tl_pattern')
 						{
-							$oPid = $value;
-							$value = $arrMapper['tl_content_blocks'][$value];
+							$value = $arrMapper['tl_elements'][$value];
 						}
 						else
 						{
@@ -218,10 +217,14 @@ class Theme extends Theme
 						$value = '';
 					}
 
-					// Adjust content block alias
-					elseif ($table == 'tl_content_blocks' && $name == 'alias')
+					// Adjust element alias
+					elseif ($table == 'tl_elements' && $name == 'alias')
 					{
-						$value = \StringUtil::generateAlias($set['title'].'-'.$set['id']);
+						$objName = $this->Database->prepare("SELECT name FROM tl_theme WHERE id=?")
+												  ->limit(1)
+												  ->execute($set['pid']);
+
+						$value = \StringUtil::generateAlias($objName->name . '-' . $set['title']);			  
 					}
 
 
@@ -281,7 +284,7 @@ class Theme extends Theme
 					}
 
 					// Adjust the sizeList
-					elseif ($table == 'tl_content_pattern' && $name == 'sizeList')
+					elseif ($table == 'tl_pattern' && $name == 'sizeList')
 					{
 						$imageSizes = \StringUtil::deserialize($value, true);
 
@@ -318,7 +321,7 @@ class Theme extends Theme
 		// Unlock the tables
 		$this->Database->unlockTables();
 	
-		unset($tl_content_blocks, $tl_content_pattern);
+		unset($tl_elements, $tl_pattern);
 	}
 
 	
@@ -329,7 +332,7 @@ class Theme extends Theme
 	 *
 	 * exportTheme Hook
 	 */
-	public function exportContentBlockTables ($xml, $objArchive, $objThemeId)
+	public function exportTables ($xml, $objArchive, $objThemeId)
 	{
 
 		// Find tables node
@@ -337,18 +340,18 @@ class Theme extends Theme
 		
 		// Add the table (elements)
 		$table = $xml->createElement('table');
-		$table->setAttribute('name', 'tl_content_blocks');
+		$table->setAttribute('name', 'tl_elements');
 		$table = $tables->appendChild($table);
 
 		// Load the DCA
-		$this->loadDataContainer('tl_content_blocks');
+		$this->loadDataContainer('tl_elements');
 
 		// Get the order fields
-		$objDcaExtractor = \DcaExtractor::getInstance('tl_content_blocks');
+		$objDcaExtractor = \DcaExtractor::getInstance('tl_elements');
 		$arrOrder = $objDcaExtractor->getOrderFields();
 
 		// Get all content blocks
-		$objContentBlocks = $this->Database->prepare("SELECT * FROM tl_content_blocks WHERE pid=?")
+		$objContentBlocks = $this->Database->prepare("SELECT * FROM tl_elements WHERE pid=?")
 										->execute($objThemeId);
 
 		// Add the rows
@@ -362,14 +365,14 @@ class Theme extends Theme
 		
 		// Add the child table (pattern)
 		$table = $xml->createElement('table');
-		$table->setAttribute('name', 'tl_content_pattern');
+		$table->setAttribute('name', 'tl_pattern');
 		$table = $tables->appendChild($table);
 
 		// Load the DCA
-		$this->loadDataContainer('tl_content_pattern');
+		$this->loadDataContainer('tl_pattern');
 
 		// Get the order fields
-		$objDcaExtractor = \DcaExtractor::getInstance('tl_content_pattern');
+		$objDcaExtractor = \DcaExtractor::getInstance('tl_pattern');
 		$arrOrder = $objDcaExtractor->getOrderFields();
 
 		// Add pattern recursively
@@ -386,7 +389,7 @@ class Theme extends Theme
 	protected function addPatternData ($xml, $table, $arrOrder, $intParentID)
 	{
 			// Get all content patterns
-			$objContentPattern = $this->Database->prepare("SELECT * FROM tl_content_pattern WHERE pid=?")
+			$objContentPattern = $this->Database->prepare("SELECT * FROM tl_pattern WHERE pid=?")
 									   ->execute($intParentID);
 			
 			// Add the rows

@@ -67,7 +67,7 @@ class PatternTableWizard extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(StringUtil::deserialize($this->Value->tableItems));
+		$this->writeToTemplate(StringUtil::deserialize($this->data->tableItems));
 	}
 	
 }

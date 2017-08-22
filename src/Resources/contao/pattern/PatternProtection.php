@@ -75,10 +75,7 @@ class PatternProtection extends Pattern
 	 */
 	public function compile()
 	{
-		// nothing to compile
 		return;		
 	}
-
-
 	
 }

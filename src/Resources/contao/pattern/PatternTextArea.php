@@ -112,7 +112,7 @@ class PatternTextArea extends Pattern
 	{
 		// prepare value(s)
 		
-		$this->writeToTemplate($this->Value->text);
+		$this->writeToTemplate($this->data->text);
 	}
 	
 }

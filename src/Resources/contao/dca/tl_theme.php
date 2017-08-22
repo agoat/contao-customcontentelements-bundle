@@ -17,7 +17,7 @@ array_insert($GLOBALS['TL_DCA']['tl_theme']['list']['operations'], 3, array
 (
 	'ctb' => array
 	(
-		'label'               => &$GLOBALS['TL_LANG']['tl_theme']['ctb'],
+		'label'               => &$GLOBALS['TL_LANG']['tl_theme']['cte'],
 		'href'                => 'table=tl_elements',
 		'icon'                => 'bundles/agoatcontentelements/contentblocks.svg',
 		//'button_callback'     => array('tl_theme', 'editCss')

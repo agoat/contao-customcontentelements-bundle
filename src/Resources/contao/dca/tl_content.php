@@ -20,6 +20,9 @@ $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = array('tl_data');
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_elements', 'buildPaletteAndFields');
 $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] = array('tl_content_elements', 'saveData');
 
+$GLOBALS['TL_DCA']['tl_content']['config']['oncreate_version_callback'][] = array('tl_content_elements', 'createDataVersion');
+$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_version_callback'][] = array('tl_content_elements', 'restoreDataVersion');
+
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('tl_content_elements', 'addCteType');
 
 // Remove some filter options
@@ -43,9 +46,10 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['type']['default'] = false;
 class tl_content_elements extends tl_content
 {
 	/**
-	 * @var array returned field Data
+	 * @var array modified content data
 	 */
 	protected $arrModifiedData = array();
+
 	
 	
 	/**
@@ -60,9 +64,16 @@ class tl_content_elements extends tl_content
 	{	
 		$return = \tl_content::addCteType($arrRow);
 		
-		$objElement = \ElementsModel::findOneByAlias($arrRow['type']);
+		$arrCTE = array();
+
+		foreach ($GLOBALS['TL_CTE'] as $g)
+		{
+			$arrCTE = array_merge($arrCTE, array_keys($g));
+		}
 	
-		if ($objElement === null)
+		$objElement = \ElementsModel::findOneByAlias($arrRow['type']);
+			
+		if ($objElement === null && !in_array($arrRow['type'], $arrCTE))
 		{
 			$tag = '<span style="color: #222;">' . $GLOBALS['TL_LANG']['CTE']['deleted'] . '</span>';
 		}
@@ -109,7 +120,7 @@ class tl_content_elements extends tl_content
 		$colElements = \ElementsModel::findPublishedByPid($objLayout->pid);
 
 		$arrElements = array();
-		$strGroup = 'ctb';
+		$strGroup = 'cte';
 		
 		if ($colElements !== null)
 		{
@@ -129,7 +140,7 @@ class tl_content_elements extends tl_content
 		// Add standard content elements
 		if (!\Config::get('hideLegacyCTE'))
 		{
-			unset($GLOBALS['TL_CTE']['CTB']);
+			unset($GLOBALS['TL_CTE']['CTE']);
 			
 			foreach ($GLOBALS['TL_CTE'] as $k=>$v)
 			{
@@ -258,14 +269,14 @@ class tl_content_elements extends tl_content
 		{
 			foreach ($colData as $objData)
 			{
-				$arrData[$objData->pattern] = $objData->row();
+				$arrData[$objData->pattern] = $objData;
 			}							
 		}
 		else
 		{
 			$arrData = null;
 		}
-		
+	
 		foreach($colPattern as $objPattern)
 		{
 			// construct dca for pattern
@@ -280,7 +291,7 @@ class tl_content_elements extends tl_content
 				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->pid = $objContent->id;
 				$objPatternClass->pattern = $objPattern->alias;
-				$objPatternClass->alias = $objElement->alias;			
+				$objPatternClass->element = $objElement->alias;			
 				$objPatternClass->data = (isset($arrData[$objPattern->alias])) ? $arrData[$objPattern->alias] : null;			
 
 				$objPatternClass->construct();
@@ -304,8 +315,7 @@ class tl_content_elements extends tl_content
 			return $GLOBALS['TL_DCA']['tl_content']['fields'][$dc->field]['data'];
 		}
 		
-		return $value;
-
+		return null;
 	}
 
 	
@@ -314,33 +324,42 @@ class tl_content_elements extends tl_content
 	 */
 	public function saveData (&$dc)
 	{
+
 		// Save all modified values
 		foreach ($this->arrModifiedData as $field => $value)
 		{
 			// Get virtual field attributes from DCA
+			$id = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['id'];
 			$pattern = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['pattern'];
 			$parent = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['parent'];
 			$column = $GLOBALS['TL_DCA']['tl_content']['fields'][$field]['column'];
 
-			$objData = \DataModel::findOneByPidAndPatternAndParent($dc->activeRecord->id, $pattern, $parent);
+			if ($id !== null)
+			{
+				$objData = \DataModel::findByPK($id);
+			}
+			else
+			{
+				$objData = \DataModel::findByPidAndPatternAndParent($dc->activeRecord->id, $pattern, $parent);
+			}
 
 			if ($objData === null)
 			{
 				// if no dataset exist make a new one
 				$objData = new \DataModel();
+				$objData->tstamp = time();
 			}
 
 			$objData->pid = $dc->activeRecord->id;
 			$objData->pattern = $pattern;
 			$objData->parent = $parent;
-			$objData->tstamp = time();
 		
 			if ($objData->$column != $value)
 			{
 				$dc->blnCreateNewVersion = true;
 				$objData->$column = $value;
 			}
-		
+
 			$objData->save();
 		}
 	}
@@ -352,7 +371,7 @@ class tl_content_elements extends tl_content
 	public function saveFieldAndClear ($value, $dc)
 	{
 		$this->arrModifiedData[$dc->field] = $value;
-		
+
 		return null;
 	}
 
@@ -431,4 +450,80 @@ class tl_content_elements extends tl_content
 		return $value;
 	}
 
+	/**
+	 * Save data versions
+	 */
+	public function createDataVersion ($strTable, $intPid, $intVersion, $objRecord)
+	{
+		$db = Database::getInstance();
+		
+		$objData = $db->prepare("SELECT * FROM tl_data WHERE pid=?")
+					  ->execute($intPid);	
+			  
+		if ($objData === null)
+		{
+			return;
+		}
+
+		while ($objData->next())
+		{
+			$db->prepare("UPDATE tl_version SET active='' WHERE pid=? AND fromTable=?")
+			   ->execute($objData->id, 'tl_data');
+					   
+			$db->prepare("INSERT INTO tl_version (pid, tstamp, version, fromTable, active, data) VALUES (?, ?, ?, ?, 1, ?)")
+			   ->execute($intPid, time(), $intVersion, 'tl_data', serialize($objData->row()));
+		} 			
+	}
+	
+	
+	/**
+	 * Restore data versions
+	 */
+	public function restoreDataVersion ($strTable, $intPid, $intVersion, $content)
+	{
+		$db = Database::getInstance();
+		
+		$objData = $db->prepare("SELECT * FROM tl_version WHERE fromTable=? AND pid=? AND version=?")
+					  ->execute('tl_data', $intPid, $intVersion);
+
+		if ($objData->numRows < 1)
+		{
+			return;
+		}
+
+		$objStmt = $db->prepare("DELETE FROM tl_data WHERE pid=?")
+					  ->execute($intPid);
+		
+		while ($objData->next())
+		{
+			$data = \StringUtil::deserialize($objData->data);
+		
+			if (!is_array($data))
+			{
+				return;
+			}
+				
+			// Get the currently available fields
+			$arrFields = array_flip($this->Database->getFieldnames('tl_data'));
+			
+			// Unset fields that do not exist (see #5219)
+			$data = array_intersect_key($data, $arrFields);
+				
+			// Reset fields added after storing the version to their default value (see #7755)
+			foreach (array_diff_key($arrFields, $data) as $k=>$v)
+			{
+			//	$data[$k] = \Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA']['tl_data']['fields'][$k]['sql']);
+			}
+			
+			$db->prepare("INSERT INTO tl_data %s")
+			   ->set($data)
+			   ->execute($data['id']);
+			
+			$db->prepare("UPDATE tl_version SET active='' WHERE fromTable=? AND pid=?")
+			   ->execute('tl_data', $intPid);
+			
+			$db->prepare("UPDATE tl_version SET active=1 WHERE fromTable=? AND pid=? AND version=?")
+			   ->execute('tl_data', $intPid, $intVersion);
+		}
+	}
 }

@@ -155,13 +155,10 @@ class ContentElement extends \Contao\ContentElement
 			else
 			{
 				$objPatternClass = new $strClass($objPattern);
-				$objPatternClass->pid = $objContent->id;
-				$objPatternClass->patternAlias = $objPattern->alias;
-				$objPatternClass->parentID = 0;
+				$objPatternClass->pid = $intPid;
 				$objPatternClass->Template = $this->Template;
-				$objPatternClass->arrData = $arrData;
-				$objPatternClass->Value = $arrData[$objPattern->alias];
-			
+				$objPatternClass->data = $arrData[$objPattern->alias];
+		
 				$objPatternClass->compile();
 			}
 		}
