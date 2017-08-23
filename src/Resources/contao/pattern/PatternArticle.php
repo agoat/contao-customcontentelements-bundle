@@ -98,7 +98,7 @@ class PatternArticle extends Pattern
 		$wizard = (!$this->multiArticle) ? array(array('tl_content', 'editArticleAlias')) : false;
 		
 		// Add a selectField with the articles as options
-		$this->generateDCA(($this->multiArticle) ? 'multiSelectField' : 'selectField', array
+		$this->generateDCA(($this->multiArticle) ? 'multiSelectField' : 'singleSelectField', array
 		(
 			'inputType' => 'select',
 			'label'		=> array($this->label, $this->description),

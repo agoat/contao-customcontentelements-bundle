@@ -90,8 +90,6 @@ class PatternModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-
-
 	 public static function findVisibleByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
@@ -117,15 +115,13 @@ class PatternModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-
-
 	 public static function findVisibleByPidAndTable($intPid, $strParentTable, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
 		
 		// Also handle empty ptable fields
-		if ($strParentTable == 'tl_content_blocks')
+		if ($strParentTable == 'tl_elements')
 		{
 			$arrColumns = array("$t.pid=? AND ($t.ptable=? OR $t.ptable='') AND $t.invisible=''");
 		}
@@ -150,15 +146,13 @@ class PatternModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-
-
 	 public static function findVisibleByPidAndTableAndOption($intPid, $strParentTable, $strSubPatternOption, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
 		
 		// Also handle empty ptable fields
-		if ($strParentTable == 'tl_content_blocks')
+		if ($strParentTable == 'tl_elements')
 		{
 			$arrColumns = array("$t.pid=? AND ($t.ptable=? OR $t.ptable='') AND $t.suboption=? AND $t.invisible=''");
 		}
@@ -173,6 +167,24 @@ class PatternModel extends Model
 		}
 
 		return static::findBy($arrColumns, array($intPid, $strParentTable, $strSubPatternOption), $arrOptions);
+	}
+
+
+	/**
+	 * Count all pattern by their Pid and Type
+	 *
+	 * @param integer $arrPids        An array of section IDs
+	 * @param array   $arrOptions     An optional options array
+	 *
+	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 */
+	 public static function countByPidAndType($intPid, $strType, array $arrOptions=array())
+	{
+		$t = static::$strTable;
+		
+		$arrColumns = array("$t.pid=? AND ($t.ptable='tl_elements' OR $t.ptable='') AND $t.type=?");
+		
+		return static::countBy($arrColumns, array($intPid, $strType), $arrOptions);
 	}
 
 

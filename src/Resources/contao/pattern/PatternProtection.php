@@ -26,8 +26,8 @@ class PatternProtection extends Pattern
 	public function construct()
 	{
 		// element fields, so don´t use parent construct method
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',protected';
-		$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['class'] = 'clr';
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',protected';
+		$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['tl_class'] = 'clr'; // push to new row (clear)
 
 		// the groups field
 		if (!$this->canChangeGroups)
@@ -48,7 +48,7 @@ class PatternProtection extends Pattern
 		// the guests field
 		if ($this->canChangeGuests)
 		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',guests';
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',guests';
 		}
 		
 	}
@@ -59,7 +59,7 @@ class PatternProtection extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">' . $GLOBALS['TL_LANG']['tl_content_pattern']['protected'][0] . '</label></div><p class="tl_help tl_tip" title="">' . $GLOBALS['TL_LANG']['tl_content_pattern']['protected'][1] . '</p>';
+		$strPreview = '<div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="1" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][0] . '</label></div><p class="tl_help tl_tip" title="">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][1] . '</p>';
 		
 		if ($this->canChangeGroups)
 		{

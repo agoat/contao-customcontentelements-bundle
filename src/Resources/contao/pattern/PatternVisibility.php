@@ -25,18 +25,18 @@ class PatternVisibility extends Pattern
 	public function construct()
 	{
 		// element fields, so don´t use parent construct method
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',invisible';
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',invisible';
 		$GLOBALS['TL_DCA']['tl_content']['fields']['invisible']['eval']['tl_class'] = 'clr'; // push to new row (clear)
 	
 		// the start field
 		if ($this->canChangeStart)
 		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',start';
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',start';
 		}
 		// the stop field
 		if ($this->canChangeStop)
 		{
-			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',stop';
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',stop';
 		}		
 	}
 	

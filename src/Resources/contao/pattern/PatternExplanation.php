@@ -13,6 +13,8 @@
 
 namespace Agoat\ContentElements;
 
+use Contao\StringUtil;
+
 
 class PatternExplanation extends Pattern
 {
@@ -24,8 +26,10 @@ class PatternExplanation extends Pattern
 	public function construct()
 	{
 		
-		// an explanation field
-
+		// Set the pattern
+		$this->pattern = $this->type;
+	
+		// An explanation field
 		$this->generateDCA('explanation', array
 		(
 			'inputType' =>	'explanation',
@@ -33,8 +37,7 @@ class PatternExplanation extends Pattern
 			(
 				'explanation'	=>	\StringUtil::toHtml5($this->explanation), 
 			)
-		), false);
-	
+		), true, false);
 	}
 
 
