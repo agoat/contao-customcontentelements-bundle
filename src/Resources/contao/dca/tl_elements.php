@@ -35,6 +35,14 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 		(
 			array('tl_elements', 'generateAlias')
 		),
+		'oncopy_callback'			  => array
+		(
+			array('tl_elements', 'copySubPattern')
+		),
+		'ondelete_callback'			  => array
+		(
+			array('tl_elements', 'deleteSubPattern')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -409,7 +417,158 @@ class tl_elements extends Backend
 		}
 	}
 
-    
+
+	/**
+	 * Copy subpattern when copying content element
+	 */
+	public function copySubPattern ($insertID, $dc)
+	{
+		$db = Database::getInstance();
+		
+		$colOldPattern = \PatternModel::findByPidAndTable($dc->id, 'tl_elements');
+
+		if ($colOldPattern !== null)
+		{
+			$arrOldPatternId = $colOldPattern->fetchEach('id');
+		}
+			
+		$colPattern = \PatternModel::findByPidAndTable($insertID, 'tl_elements');
+
+		if ($colPattern !== null)
+		{
+			foreach ($colPattern as $i=>$objPattern)
+			{
+				if (\Agoat\ContentElements\Pattern::isSubPattern($objPattern->type))
+				{
+					// copy to subpattern table
+					$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+					   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
+
+					$colPattern = \PatternModel::findByPidAndTable($arrOldPatternId[$i], 'tl_subpattern');
+					
+					if ($colPattern !== null)
+					{
+						$arrPattern = $colPattern->fetchAll();
+						
+						foreach ($arrPattern as $k=>$v)
+						{
+							$arrPattern[$k]['pid'] = $objPattern->id;
+						}				
+					}
+
+					while (!empty($arrPattern))
+					{
+						$arrCurrent = array_shift($arrPattern);
+						
+						$arrValues = $arrCurrent;
+						
+						// Remove id
+						unset($arrValues['id']);
+						
+						$objInsertStmt = $db->prepare("INSERT INTO tl_pattern %s")
+											->set($arrValues)
+											->execute();
+						
+						$insertID = $objInsertStmt->insertId;
+						
+						if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
+						{
+							// copy to subpattern table
+							$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+							   ->execute($insertID, $insertID, $arrCurrent['label'], $arrCurrent['alias'], $arrCurrent['type'], $arrCurrent['subPatternType'], $arrCurrent['numberOfGroups']);
+
+							   $colSubPattern = \PatternModel::findByPidAndTable($arrCurrent['id'], 'tl_subpattern');
+							
+							if ($colSubPattern !== null)
+							{
+								$arrSubPattern = $colSubPattern->fetchAll();
+								
+								foreach ($arrSubPattern as $k=>$v)
+								{
+									$arrSubPattern[$k]['pid'] = $insertID;
+								}				
+							}
+								
+							foreach ($arrSubPattern as $k=>$v)
+							{
+								$arrSubPattern[$k]['pid'] = $insertID;
+							}
+
+							$arrPattern = array_merge($arrPattern, $arrSubPattern);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+
+	/**
+	 * Delete subpattern when deleting content element
+	 */
+	public function deleteSubPattern ($dc, $intUndoId)
+	{
+		$db = Database::getInstance();
+		
+		// get the undo database row
+		$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+					  ->execute($intUndoId);
+
+		$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
+		
+		if (is_array($arrData['tl_subpattern']))
+		{
+			foreach ($arrData['tl_subpattern'] as $arrSubPattern)
+			{
+				if (\Agoat\ContentElements\Pattern::isSubPattern($arrSubPattern['type']))
+				{			
+
+					$colPattern = \PatternModel::findByPidAndTable($arrSubPattern['id'], 'tl_subpattern');
+					
+					if ($colPattern !== null)
+					{
+						$arrPattern = $colPattern->fetchAll();
+					}
+
+					while (!empty($arrPattern))
+					{
+						$arrCurrent = array_shift($arrPattern);
+						
+						// Add row to undo array
+						$arrData['tl_pattern'][] = $arrCurrent;
+						
+						// Delete row in database
+						$db->prepare("DELETE FROM tl_pattern WHERE id=?")
+						   ->execute($arrCurrent['id']);
+						
+						if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
+						{
+							// Add related row to undo array
+							$arrData['tl_subpattern'][] = $db->prepare("SELECT * FROM tl_subpattern WHERE id=?")
+																	 ->execute($arrCurrent['id'])->fetchAssoc();
+							
+							// Delete row in database
+							$db->prepare("DELETE FROM tl_subpattern WHERE id=?")
+							   ->execute($arrCurrent['id']);
+							
+							$colSubPattern = \PatternModel::findByPidAndTable($arrCurrent['id'], 'tl_subpattern');
+							
+							if ($colSubPattern !== null)
+							{
+								$arrPattern = array_merge($arrPattern, $colSubPattern->fetchAll());
+							}
+						}
+					}
+				}
+			}
+			
+			// save to the undo database row
+			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+			   ->execute(serialize($arrData), $intUndoId);
+		}
+	}
+
+
 	/**
 	 * Return the pattern edit button
 	 *
