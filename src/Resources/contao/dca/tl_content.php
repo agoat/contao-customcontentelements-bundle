@@ -263,6 +263,8 @@ class tl_content_elements extends tl_content
 			return;
 		}
 		
+		$arrData = array();
+
 		$colData = \DataModel::findByPid($intId);
 		
 		if ($colData !== null)
@@ -271,10 +273,6 @@ class tl_content_elements extends tl_content
 			{
 				$arrData[$objData->pattern] = $objData;
 			}							
-		}
-		else
-		{
-			$arrData = null;
 		}
 	
 		foreach($colPattern as $objPattern)
@@ -288,11 +286,20 @@ class tl_content_elements extends tl_content
 			}
 			else
 			{
+				if (!isset($arrData[$objPattern->alias]))
+				{
+					$arrData[$objPattern->alias] = new \DataModel();
+					$arrData[$objPattern->alias]->pid = $objContent->id;
+					$arrData[$objPattern->alias]->pattern = $objPattern->alias;
+			
+					$arrData[$objPattern->alias]->save();
+				}
+				
 				$objPatternClass = new $strClass($objPattern);
 				$objPatternClass->pid = $objContent->id;
 				$objPatternClass->pattern = $objPattern->alias;
 				$objPatternClass->element = $objElement->alias;			
-				$objPatternClass->data = (isset($arrData[$objPattern->alias])) ? $arrData[$objPattern->alias] : null;			
+				$objPatternClass->data = $arrData[$objPattern->alias];			
 
 				$objPatternClass->construct();
 			}
@@ -358,6 +365,7 @@ class tl_content_elements extends tl_content
 			{
 				$dc->blnCreateNewVersion = true;
 				$objData->$column = $value;
+				$objData->tstamp = time();
 			}
 
 			$objData->save();
