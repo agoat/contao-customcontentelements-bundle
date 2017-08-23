@@ -191,7 +191,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['alias'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
+			'eval'                    => array('mandatory'=>true, 'rgxp'=>'folderalias', 'maxlength'=>64, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'invisible' => array
@@ -824,18 +824,26 @@ class tl_pattern extends Backend
 	 *
 	 * @return array
 	 */
-	public function getPattern()
+	public function getPattern($dc)
 	{
 		$pattern = array();
 		
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{
-			foreach (array_keys($v) as $kk)
+			foreach ($v as $kk=>$vv)
 			{
-				$pattern[$k][] = $kk;					
+					if (!$vv['unique'])
+					{
+						$pattern[$k][] = $kk;
+					}
+					
+					elseif (\PatternModel::countByPidAndType($dc->activeRecord->pid, $kk) < 1 || $dc->activeRecord->type == $kk)
+					{
+						$pattern[$k][] = $kk;
+					}
 			}
 		}
-		
+	
 		return $pattern;
 	}
 	

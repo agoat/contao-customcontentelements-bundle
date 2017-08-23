@@ -244,7 +244,7 @@ abstract class Pattern extends Controller
 
 
 	/**
-	 * Find a content element in the TL_CTE array and return the class name
+	 * Find a content pattern in the TL_CTP array and return the class name
 	 *
 	 * @param string $strName The content element name
 	 *
@@ -252,18 +252,90 @@ abstract class Pattern extends Controller
 	 */
 	public static function findClass($strName)
 	{
-		foreach ($GLOBALS['TL_CTP'] as $pp)
+		foreach ($GLOBALS['TL_CTP'] as $v)
 		{
-			foreach ($pp as $kk=>$vv)
+			foreach ($v as $kk=>$vv)
 			{
 				if ($kk == $strName)
 				{
-					return $vv;
+					return $vv['class'];
 				}
 			}
 		}
 		
-		return '';
+		return null;
+	}
+
+	
+	/**
+	 * Find a content pattern in the TL_CTP array and return true if the pattern saves data to db
+	 *
+	 * @param string $strName The content element name
+	 *
+	 * @return boolean Pattern data status
+	 */
+	public static function hasData($strName)
+	{
+		foreach ($GLOBALS['TL_CTP'] as $v)
+		{
+			foreach ($v as $kk=>$vv)
+			{
+				if ($kk == $strName)
+				{
+					return ($vv['data']) ?:false;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	
+	/**
+	 * Find a content pattern in the TL_CTP array and return true if the pattern has frontend output
+	 *
+	 * @param string $strName The content element name
+	 *
+	 * @return boolean Pattern data status
+	 */
+	public static function hasOutput($strName)
+	{
+		foreach ($GLOBALS['TL_CTP'] as $v)
+		{
+			foreach ($v as $kk=>$vv)
+			{
+				if ($kk == $strName)
+				{
+					return ($vv['output']) ?: false;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	
+	/**
+	 * Find a content pattern in the TL_CTP array and return true if the pattern is a subpattern
+	 *
+	 * @param string $strName The content element name
+	 *
+	 * @return boolean Pattern unique status
+	 */
+	public static function isSubPattern($strName)
+	{
+		foreach ($GLOBALS['TL_CTP'] as $v)
+		{
+			foreach ($v as $kk=>$vv)
+			{
+				if ($kk == $strName)
+				{
+					return ($vv['subpattern']) ?: false;
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	

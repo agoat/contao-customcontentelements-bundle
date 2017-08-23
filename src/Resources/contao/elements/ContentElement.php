@@ -136,12 +136,11 @@ class ContentElement extends \Contao\ContentElement
 				$arrData[$objData->pattern] = $objData;
 			}							
 		}
-	
+
 		// prepare values for every pattern
 		foreach($colPattern as $objPattern)
 		{
-			// don´t show the invisible or system pattern
-			if (in_array($objPattern->type, $GLOBALS['TL_CTP_SYS']))
+			if (!Pattern::hasOutput($objPattern->type))
 			{
 				continue;
 			}

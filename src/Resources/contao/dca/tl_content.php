@@ -279,6 +279,7 @@ class tl_content_elements extends tl_content
 		{
 			// construct dca for pattern
 			$strClass = \Agoat\ContentElements\Pattern::findClass($objPattern->type);
+			$bolData = \Agoat\ContentElements\Pattern::hasData($objPattern->type);
 				
 			if (!class_exists($strClass))
 			{
@@ -286,7 +287,7 @@ class tl_content_elements extends tl_content
 			}
 			else
 			{
-				if (!isset($arrData[$objPattern->alias]))
+				if ($bolData && !isset($arrData[$objPattern->alias]))
 				{
 					$arrData[$objPattern->alias] = new \DataModel();
 					$arrData[$objPattern->alias]->pid = $objContent->id;
@@ -331,7 +332,6 @@ class tl_content_elements extends tl_content
 	 */
 	public function saveData (&$dc)
 	{
-
 		// Save all modified values
 		foreach ($this->arrModifiedData as $field => $value)
 		{
