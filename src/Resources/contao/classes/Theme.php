@@ -318,7 +318,7 @@ class Theme extends \Contao\Theme
 				$this->Database->prepare("INSERT INTO $table %s")->set($set)->execute();
 
 				// Insert subpattern into database
-				if ($table == 'tl_pattern' && in_array($set['type'], $GLOBALS['TL_CTP_SUB']))
+				if ($table == 'tl_pattern' && Pattern::isSubPattern($set['type']))
 				{
 					$subSet['id'] = $set['id'];
 					$subSet['pid'] = $set['id'];
@@ -410,7 +410,7 @@ class Theme extends \Contao\Theme
 		{
 			$this->addDataRow($xml, $table, $objPattern->row(), $arrOrder);
 			
-			if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
+			if (Pattern::isSubPattern($objPattern->type))
 			{
 				$this->addPatternData($xml, $table, $arrOrder, $objPattern->id);
 			}
