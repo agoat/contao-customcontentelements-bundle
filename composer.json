@@ -1,7 +1,7 @@
 {
-    "name": "agoat/contao-contentblocks",
+    "name": "agoat/contao-contentblockelements",
     "type": "contao-bundle",
-    "description": "Contao content blocks extension",
+    "description": "Contao content elements extension",
     "license": "LGPL-3.0+",
     "authors": [
         {
