@@ -47,7 +47,7 @@ class Theme extends \Contao\Theme
 			$table = $tables->item($i)->getAttribute('name');
 
 			// Skip invalid tables
-			if ($table != 'tl_elements' && $table != 'tl_pattern')
+			if (!in_array($table, array_keys($arrDbFields)))
 			{
 				continue;
 			}
@@ -211,12 +211,6 @@ class Theme extends \Contao\Theme
 						}
 					}
 
-					// Handle fallback fields
-					elseif ($name == 'fallback')
-					{
-						$value = '';
-					}
-
 					// Adjust element alias
 					elseif ($table == 'tl_elements' && $name == 'alias')
 					{
@@ -293,7 +287,7 @@ class Theme extends \Contao\Theme
 							foreach ($imageSizes as $kk=>$vv)
 							{
 								$imageSizes[$kk] = $arrMapper['tl_image_size'][$vv];
-								if (empty($imageSizes[$kk])) unset($imageSizes[$kk]); // remove if no new size could be found
+								if (empty($imageSizes[$kk])) unset($imageSizes[$kk]); // Remove if no new size could be found
 							}
 						}
 						
@@ -323,8 +317,6 @@ class Theme extends \Contao\Theme
 	
 		unset($tl_elements, $tl_pattern);
 	}
-
-	
 	
 	
 	/**

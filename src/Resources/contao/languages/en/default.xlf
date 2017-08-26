@@ -170,6 +170,9 @@
 			<trans-unit id="MSC.group.delete">
 				<source>Delete group</source>
 			</trans-unit>
+			<trans-unit id="MSC.group.drag">
+				<source>Move group</source>
+			</trans-unit>
 			<trans-unit id="MSC.group.new.label">
 				<source>New group</source>
 			</trans-unit>
