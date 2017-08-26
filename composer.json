@@ -18,7 +18,8 @@
         "phpunit/phpunit": "~4.5"
     },
     "replace": {
-        "contao-legacy/contentblocks": "*"
+        "contao-legacy/contentblocks": "*",
+        "agoat/contao-contentblocks": "*"
     },
     "autoload": {
         "psr-4": {
