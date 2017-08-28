@@ -122,7 +122,7 @@ class PatternArticle extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
 		$strPreview .= '<optgroup label="&nbsp;Page1">';
 		$strPreview .= '<option value="article1">Article1</option>';

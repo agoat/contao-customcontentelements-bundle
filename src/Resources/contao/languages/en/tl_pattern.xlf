@@ -386,7 +386,7 @@
 				<source>Invisible</source>
 			</trans-unit>
 			<trans-unit id="tl_pattern.invisible.1">
-				<source>Hide the pattern in the backend.</source>
+				<source>Hide the element in the backend.</source>
 			</trans-unit>
 
 			
@@ -509,29 +509,17 @@
 				<source>Checks whether the input is a valid URL.</source>
 			</trans-unit>
 	  
-			<trans-unit id="tl_pattern.datetime.0">
+			<trans-unit id="tl_pattern.datetime">
 				<source>Date/time picker</source>
 			</trans-unit>
-			<trans-unit id="tl_pattern.datetime.1">
-				<source>Checks whether the input matches the global date and time format.</source>
-			</trans-unit>
-			<trans-unit id="tl_pattern.color.0">
+			<trans-unit id="tl_pattern.color">
 				<source>Color picker</source>
 			</trans-unit>
-			<trans-unit id="tl_pattern.color.1">
-				<source>Allows numeric characters, plus (+), minus (-), slash (/), parentheses () and space ( ).</source>
+			<trans-unit id="tl_pattern.link">
+				<source>Link picker (DCA picker)</source>
 			</trans-unit>
-			<trans-unit id="tl_pattern.page.0">
-				<source>Page picker</source>
-			</trans-unit>
-			<trans-unit id="tl_pattern.page.1">
-				<source>Checks whether the input is a valid e-mail address.</source>
-			</trans-unit>
-			<trans-unit id="tl_pattern.unit.0">
+			<trans-unit id="tl_pattern.unit">
 				<source>Unit selection</source>
-			</trans-unit>
-			<trans-unit id="tl_pattern.unit.1">
-				<source>Checks whether the input is a valid URL.</source>
 			</trans-unit>
 	  
 			<trans-unit id="tl_pattern.protected.0">

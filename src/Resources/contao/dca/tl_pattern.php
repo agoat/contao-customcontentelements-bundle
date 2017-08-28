@@ -542,7 +542,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['picker'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options'				  => array('datetime', 'color', 'page', 'unit'),
+			'options'				  => array('datetime', 'color', 'link', 'unit'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_pattern'],
 			'eval'                    => array('submitOnChange'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'save_callback' => array
@@ -725,7 +725,7 @@ class tl_pattern extends Backend
 				}
 				break;
 				
-			case 'page':
+			case 'link':
 				if ($dc->activeRecord->rgxp != 'url')
 				{
 					// change rgxp in database

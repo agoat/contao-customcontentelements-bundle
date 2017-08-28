@@ -25,9 +25,8 @@ class PatternExplanation extends Pattern
 	 */
 	public function construct()
 	{
-		
-		// Set the pattern
-		$this->pattern = $this->type;
+		// Set id as pattern as there is no alias
+		$this->pattern = $this->id;
 	
 		// An explanation field
 		$this->generateDCA('explanation', array
@@ -36,6 +35,7 @@ class PatternExplanation extends Pattern
 			'eval'		=>	array
 			(
 				'explanation'	=>	\StringUtil::toHtml5($this->explanation), 
+				'tl_class'		=>	'clr'
 			)
 		), true, false);
 	}
@@ -48,7 +48,7 @@ class PatternExplanation extends Pattern
 	 */
 	public function view()
 	{
-		return '<div style="padding-top:10px;">' . \StringUtil::toHtml5($this->explanation) . '</div>';
+		return '<div class="widget"><div class="tl_explanation">' . \StringUtil::toHtml5($this->explanation) . '</div></div>';
 	}
 
 

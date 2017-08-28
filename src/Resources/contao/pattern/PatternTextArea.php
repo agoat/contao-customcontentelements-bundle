@@ -66,12 +66,10 @@ class PatternTextArea extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$selector = 'ctrl_textarea' . $this->id;
 
-		$this->selector = 'ctrl_textarea' . $this->id;
-		$this->field = 'pre_' . $this->id;
-		
-		$strPreview .= '<textarea id="' . $this->selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
+		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
 		// register all tinyMCE template files
 		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
@@ -93,10 +91,10 @@ class PatternTextArea extends Pattern
 
 		if (array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
-			ob_start();
-			include(TemplateLoader::getPath($this->rteTemplate, 'html5'));
-			$strPreview .= ob_get_contents();
-			ob_end_clean();
+			$objTemplate = new \BackendTemplate($this->rteTemplate);
+			$objTemplate->selector = $selector;
+
+			$strPreview .= $objTemplate->parse();
 		}
 			
 		$strPreview .= '<p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	

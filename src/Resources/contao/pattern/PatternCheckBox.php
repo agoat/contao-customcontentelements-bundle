@@ -43,7 +43,7 @@ class PatternCheckBox extends Pattern
 	 */
 	public function view()
 	{
-		return '<div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
+		return '<div class="w50 widget m12"><div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div></div>';	
 	}
 
 

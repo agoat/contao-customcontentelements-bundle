@@ -77,7 +77,7 @@ class PatternSelectField extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="w50 widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
 
 		if (is_array($arrOptions = \StringUtil::deserialize($this->options)))

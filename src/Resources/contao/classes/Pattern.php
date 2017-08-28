@@ -192,13 +192,6 @@ abstract class Pattern extends Controller
 		}
 		
 		return $strVirtualField;
-
-		if ($this->parent)
-		{
-			$strVirtualField = $this->parent . '-' . $this->pattern . '-' . $strFieldName;
-		}
-		
-		return $strVirtualField;
 	}
 
 

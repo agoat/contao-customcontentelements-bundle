@@ -137,14 +137,12 @@ $GLOBALS['TL_CTP'] = array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternVisibility',
 			'unique'		=> true,
-			'data'			=> true,
 			'output'		=> true,
 		),
 		'protection' => array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternProtection',
 			'unique'		=> true,
-			'data'			=> true,
 			'output'		=> true,
 		),
 	),
@@ -165,7 +163,7 @@ $GLOBALS['TL_CTP'] = array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternModule',
 			'unique'		=> true,
-			'data'			=> true,
+			'output'			=> true,
 		)
 	)
 );
