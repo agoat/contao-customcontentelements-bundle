@@ -41,7 +41,7 @@ class Group extends \Widget
 		$return = '<div class="tl_group_header"><div class="tl_content_right click2edit">';
 		
 		// Add new group button
-		$return .= '<button onclick="AjaxRequest.insertGroup(this,\'' . $this->pattern . '\')" type="button" class="insert-handle" title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['top'] . '"' . (($this->insert) ? '' : 'disabled') . '>' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['group']['new']['label'] . '</button>';
+		$return .= '<button onclick="AjaxRequest.insertGroup(this,\'' . $this->pattern . '\', 0, ' . $this->max . ')" type="button" class="insert-handle" title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['top'] . '"' . (($this->insert) ? '' : 'disabled') . '>' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['group']['new']['label'] . '</button>';
 		
 		$return .= '</div></div>';
 
