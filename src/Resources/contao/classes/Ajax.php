@@ -34,14 +34,7 @@ class Ajax extends \Backend
 				}
 			case 'switchSubpattern':
 			case 'insertGroup':
-				if (\DataModel::findByPattern(\Input::post('pattern')) !== null)
-				{
-					throw new ResponseException($this->convertToResponse($dc->edit(false, 'sub_' . \Input::post('pattern'))));
-				}
-				else
-				{
-					throw new BadRequestHttpException('Bad request');
-				}
+				throw new ResponseException($this->convertToResponse($dc->edit(false, 'sub_' . \Input::post('pattern'))));
 				
 			case 'deleteGroup':
 			case 'moveGroup':
