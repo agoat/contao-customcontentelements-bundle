@@ -98,6 +98,18 @@ $GLOBALS['TL_DCA']['tl_content_value'] = array
 		(
 			'sql'                     => "mediumblob NULL"
 		),
+		'singleArticle' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'multiArticle' => array
+		(
+			'sql'                     => "blob NULL"
+		),
+		'orderArticle' => array
+		(
+			'sql'                     => "blob NULL"
+		),
 		'singlePage' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"

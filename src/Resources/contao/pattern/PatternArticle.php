@@ -25,97 +25,66 @@ class PatternArticle extends Pattern
 	 */
 	public function construct()
 	{
-		$this->import('BackendUser', 'User');
+		$arrNodes = false;
 		
-		$db = \Database::getInstance();
-	
-		$arrPids = array();
-		$arrArticle = array();
-		$arrRoot = $db->getChildRecords(0, 'tl_page');
-	
 		if ($this->insideRoot)
 		{
-			$objElement = $db->prepare("SELECT pid FROM tl_content WHERE id=?")
-							 ->limit(1)
-							 ->execute($this->cid);
-			
-			if ($objElement->numRows)
-			{
-				$objArticle = $db->prepare("SELECT pid FROM tl_article WHERE id=?")
-								 ->limit(1)
-								 ->execute($objElement->pid);
-			}
+			$objElement = \ContentModel::findById($this->cid);
+			$objArticle = \ArticleModel::findById((int) $objElement->pid);
+			$objPage = \PageModel::findWithDetails((int) $objArticle->pid);
 
-			// Limit pages to the website root
-			if ($objArticle->numRows)
+			if (!$this->insideLang)
 			{
-				$objPage = \PageModel::findWithDetails($objArticle->pid);
-				$arrRoot = $db->getChildRecords($objPage->rootId, 'tl_page');
-				array_unshift($arrRoot, $objPage->rootId);
+				$objRootPages = \PageModel::findByDns($objPage->domain);
+				
+				$arrNodes = $objRootPages->fetchEach('id');
+			}
+			else
+			{
+				$arrNodes = array($objPage->rootId);
 			}
 		}
-
-		unset($objArticle);
-
-		// Limit pages to the user's pagemounts
-		if ($this->User->isAdmin)
+		
+		if ($this->multiArticle)
 		{
-			$objArticle = $db->execute("SELECT a.id, a.pid, a.title, a.inColumn, p.title AS parent FROM tl_article a LEFT JOIN tl_page p ON p.id=a.pid" . (!empty($arrRoot) ? " WHERE a.pid IN(". implode(',', array_map('intval', array_unique($arrRoot))) .")" : "") . " ORDER BY parent, a.sorting");
+			$this->generateDCA('multiArticle', array
+			(
+				'inputType' => 'articleTree',
+				'label'		=> array($this->label, $this->description),
+				'eval'		=> array
+				(
+					'multiple'		=>	true,				
+					'fieldType'		=>	'checkbox', 
+					'orderField'	=>	$this->virtualFieldName('orderArticle'),
+					'mandatory'		=> ($this->mandatory) ? true : false, 
+					'rootNodes'		=>	$arrNodes,
+					'tl_class'		=> 'clr'
+				),
+				'load_callback'		=> array
+				(
+					array('tl_content_contentblocks', 'prepareOrderPageValue'),
+				),
+				'save_callback'		=> array
+				(
+					array('tl_content_contentblocks', 'saveOrderPageValue'),
+				),
+			));
 		}
 		else
 		{
-			foreach ($this->User->pagemounts as $id)
-			{
-				if (!in_array($id, $arrRoot))
-				{
-					continue;
-				}
-
-				$arrPids[] = $id;
-				$arrPids = array_merge($arrPids, $this->Database->getChildRecords($id, 'tl_page'));
-			}
-
-			if (!empty($arrPids))
-			{
-				$objArticle = $db->execute("SELECT a.id, a.pid, a.title, a.inColumn, p.title AS parent FROM tl_article a LEFT JOIN tl_page p ON p.id=a.pid WHERE a.pid IN(". implode(',', array_map('intval', array_unique($arrPids))) .") ORDER BY parent, a.sorting");
-			}
-		}
-
-		// Edit the result
-		if ($objArticle->numRows)
-		{
-			\System::loadLanguageFile('tl_article');
-
-			while ($objArticle->next())
-			{
-				$key = $objArticle->parent . ' (ID ' . $objArticle->pid . ')';
-				$arrArticle[$key][$objArticle->id] = $objArticle->title . ' (' . ($GLOBALS['TL_LANG']['COLS'][$objArticle->inColumn] ?: $objArticle->inColumn) . ', ID ' . $objArticle->id . ')';
-			}
-		}
-
-		$class = ($this->classClr) ? 'w50 clr' : 'w50';
-		$class .= ($this->multiArticle) ? ' autoheight' : '';
-		$class .= (!$this->multiArticle) ? ' wizard' : '';
-		
-		$wizard = (!$this->multiArticle) ? array(array('tl_content', 'editArticleAlias')) : false;
-		
-		// Add a selectField with the articles as options
-		$this->generateDCA(($this->multiArticle) ? 'multiSelectField' : 'selectField', array
-		(
-			'inputType' => 'select',
-			'label'		=> array($this->label, $this->description),
-			'options'	=> $arrArticle,
-			'wizard' 	=> $wizard,
-			'eval'		=> array
+			$this->generateDCA('singleArticle', array
 			(
-				'mandatory'				=> ($this->mandatory) ? true : false, 
-				'includeBlankOption'	=> ($this->mandatory) ? false : true,
-				'submitOnChange'		=> ($this->multiArticle) ? false : true,
-				'multiple'				=> ($this->multiArticle) ? true : false,
-				'chosen'				=> true,
-				'tl_class'				=> $class,
-			),
-		));
+				'inputType' => 'articleTree',
+				'label'		=> array($this->label, $this->description),
+				'eval'		=> array
+				(
+					'fieldType'		=>	'radio', 
+					'mandatory'		=> ($this->mandatory) ? true : false, 
+					'rootNodes'		=>	$arrNodes,
+					'tl_class'		=> 'clr'
+				),
+			));
+		}
 	}
 	
 
@@ -124,19 +93,20 @@ class PatternArticle extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
-		$strPreview .= '<select class="tl_select" style="width: 412px;">';
-		$strPreview .= '<optgroup label="&nbsp;Page1">';
-		$strPreview .= '<option value="article1">Article1</option>';
-		$strPreview .= '<option value="article1">Article2</option>';
-		$strPreview .= '</optgroup>';
-		$strPreview .= '<optgroup label="&nbsp;Page2">';
-		$strPreview .= '<option value="article1">Article3</option>';
-		$strPreview .= '<option value="article1">Article4</option>';
-		$strPreview .= '<option value="article1">Article5</option>';$strPreview .= '</optgroup>';
-		$strPreview .= '</select><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
-		
-		return $strPreview;	
+		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
+
+		if ($this->multiArticle)
+		{
+			$strPreview .= '<li><img src="system/themes/flexible/icons/articles.svg" width="18" height="18" alt=""> Articletitle1</li><li><img src="system/themes/flexible/icons/articles.svg" width="18" height="18" alt=""> Articletitle2</li><li><img src="system/themes/flexible/icons/articles.svg" width="18" height="18" alt=""> Articletitle3</li>';				
+		}
+		else
+		{
+			$strPreview .= '<li><img src="system/themes/flexible/icons/articles.svg" width="18" height="18" alt=""> Articletitle</li>';				
+		}
+
+		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
+
+		return $strPreview;
 	}
 
 
@@ -147,7 +117,7 @@ class PatternArticle extends Pattern
 	{
 		if ($this->multiArticle)
 		{
-			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiSelectField));
+			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiArticle));
 
 			// Return if there are no pages
 			if ($objArticles === null)
@@ -157,19 +127,31 @@ class PatternArticle extends Pattern
 
 			$arrArticles = array();
 
+			// Sort the array keys according to the given order
+			if ($this->Value->orderArticle != '')
+			{
+				$tmp = \StringUtil::deserialize($this->Value->orderArticle);
+
+				if (!empty($tmp) && is_array($tmp))
+				{
+					$arrArticles = array_map(function () {}, array_flip($tmp));
+				}
+			}
+
 			// Add the items to the pre-sorted array
 			while ($objArticles->next())
 			{
-				$arrArticles[] = $objArticles->row();
+				$arrArticles[$objArticles->id] = $objArticles->row();
 			}
 
 			$arrArticles = array_values(array_filter($arrArticles));
 			
 			$this->writeToTemplate($arrArticles);
-		}
+
+			}
 		else
 		{
-			if (($objArticle = \ArticleModel::findById($this->Value->selectField)) !== null)
+			if (($objArticle = \ArticleModel::findById($this->Value->singleArticle)) !== null)
 			{
 				$this->writeToTemplate($objArticle->row());
 			}
