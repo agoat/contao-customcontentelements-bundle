@@ -60,11 +60,11 @@ AjaxRequest.insertGroup = function(el, pattern, pid, max) {
 		onSuccess: function(txt, json) {
 			var div = new Element('div', {'html': txt,}).getChildren()
 	
-			if (pid) {
-				div.inject(($(el).getParent('div.widget')), 'after');
+			if (pid > 0) {
+				div.inject($(el).getParent('div.widget'), 'after');
 			}
 			else {
-				div.inject(($('sub_' + pattern)), 'top');
+				div.inject($(el).getParent('div.widget').getNext('div.subpal'), 'top');
 			}
 
 			// Execute scripts after the DOM has been updated
@@ -111,7 +111,7 @@ AjaxRequest.insertGroup = function(el, pattern, pid, max) {
 	}).post({'action':'insertGroup', 'pid':pid, 'pattern':pattern, 'REQUEST_TOKEN':Contao.request_token});
 }
 
-AjaxRequest.toggleSubpattern = function(el, id, pattern) {
+AjaxRequest.toggleSubpattern = function(el, pattern, id) {
 	el.blur();
 	var item = $('sub_' + pattern);
 
@@ -184,7 +184,7 @@ AjaxRequest.toggleSubpattern = function(el, id, pattern) {
 	}).post({'action':'toggleSubpattern', 'id':id, 'pattern':pattern, 'load':1, 'state':1, 'REQUEST_TOKEN':Contao.request_token});
 }
 
-AjaxRequest.switchSubpattern = function(el, id, pattern) {
+AjaxRequest.switchSubpattern = function(el, pattern, id) {
 	el.blur();
 
 	new Request.Contao({
