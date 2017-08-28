@@ -28,22 +28,25 @@ class PatternMultiPattern extends Pattern
 		}
 
 		// Execute Ajax actions
-		if (\Environment::get('isAjaxRequest') && \Input::post('pattern') == $this->pattern)
+		if (\Environment::get('isAjaxRequest') && \Input::post('pattern') == $this->pattern . (($this->parent > 0) ? '_' . $this->parent : ''))
 		{
 			switch (\Input::post('action'))
 			{
 				case 'insertGroup':
-					$newGroup = new \DataModel();
+					if ($this->numberOfGroups > \DataModel::findByPidAndPatternAndParent($this->pid, $this->pattern, $this->parent)->count())
+					{
+						$newGroup = new \DataModel();
 
-					$newGroup->pid = $this->pid;
-					$newGroup->parent = $this->parent;
-					$newGroup->pattern = $this->pattern;
-					$newGroup->sorting = $this->getNewPosition((strlen(\Input::post('pid'))) ? \Input::post('pid') : 0);
-					$newGroup->tstamp = time();
-					
-					$newGroup->save();
-					
-					$newGroupId = $newGroup->id;
+						$newGroup->pid = $this->pid;
+						$newGroup->parent = $this->parent;
+						$newGroup->pattern = $this->pattern;
+						$newGroup->sorting = $this->getNewPosition((strlen(\Input::post('pid'))) ? \Input::post('pid') : 0);
+						$newGroup->tstamp = time();
+						
+						$newGroup->save();
+						
+						$newGroupId = $newGroup->id;
+					}
 					break;
 					
 				case  'moveGroup':
@@ -58,14 +61,17 @@ class PatternMultiPattern extends Pattern
 					break;
 					
 				case  'deleteGroup':
-					$objGroup = \DataModel::findById(\Input::post('id'));
-					
-					if ($objGroup !== null)
+					if (1 < \DataModel::findByPidAndPatternAndParent($this->pid, $this->pattern, $this->parent)->count())
 					{
-						$objGroup->delete();
+						$objGroup = \DataModel::findById(\Input::post('id'));
+						
+						if ($objGroup !== null)
+						{
+							$objGroup->delete();
+						}
+						
+						$this->reviseDataTable();
 					}
-					
-					$this->reviseDataTable();
 					break;
 			}
 			
@@ -89,12 +95,13 @@ class PatternMultiPattern extends Pattern
 			'eval'		=>	array
 			(
 				'insert'	=>	(count($colGroupData) < $this->numberOfGroups) ? true : false, 
-				'pattern'	=>	$this->pattern,
+				'pattern'	=>	$this->pattern . (($this->parent > 0) ? '_' . $this->parent : ''),
+				'max'		=>	$this->numberOfGroups,
 				'tl_class'	=>	'clr'
 			)
 		), true, false);
 		
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[' . $this->pattern . ']';
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[' . $this->pattern . (($this->parent > 0) ? '_' . $this->parent : '') . ']';
 		
 		foreach ($colGroupData as $objGroupData)
 		{
@@ -103,7 +110,6 @@ class PatternMultiPattern extends Pattern
 				continue;
 			}
 			
-			$this->pattern = $objGroupData->pattern;
 			$this->data = $objGroupData;
 
 			// Add group widget (with add, delete and move buttons)
@@ -118,8 +124,8 @@ class PatternMultiPattern extends Pattern
 					'insert'	=>	(count($colGroupData) < $this->numberOfGroups) ? true : false, 
 					'delete'	=>	(count($colGroupData) > 1) ? true : false,
 					'move'		=>	(count($colGroupData) > 1) ? true : false,
-					'max'	=>	$this->numberOfGroups,
-					'pattern'	=>	$this->pattern,
+					'max'		=>	$this->numberOfGroups,
+					'pattern'	=>	$this->pattern . (($this->parent > 0) ? '_' . $this->parent : ''),
 					'tl_class'	=>	'group_' . $this->data->id
 				),
 			));
@@ -194,7 +200,7 @@ class PatternMultiPattern extends Pattern
 			'inputType' =>	'groupscript',
 			'eval'		=>	array
 			(
-				'pattern'	=>	$this->pattern
+				'pattern'	=>	$this->pattern . (($this->parent > 0) ? '_' . $this->parent : '')
 			)
 		), true, false);
 
@@ -208,22 +214,21 @@ class PatternMultiPattern extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="tl_multigroup_header clr">';
-		$strPreview .= '<a href="javascript:void(0);" title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['mg_new']['label'] . '</a>';
-		$strPreview .= '</div>';
+		$strPreview = '<div class="tl_group_header clr"><div class="tl_content_right  click2edit">';
+		$strPreview .= '<button type="button" class="insert-handle" title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['group']['new']['label'] . '</button>';
+		$strPreview .= '</div></div>';
 
-		$strGroupPreview = '<div class="tl_multigroup clr">';
-		$strGroupPreview .= '<div class="tl_multigroup_right click2edit">';
+		$strGroupPreview = '<div class="tl_group clr">';
+		$strGroupPreview .= '<div class="tl_content_right  click2edit">';
 
-		$strGroupPreview .= '<a href="javascript:void(0);">' . \Image::getHtml('up.svg', 'up', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_up'] . '"') . '</a>';
-		$strGroupPreview .= ' <a href="javascript:void(0);">' . \Image::getHtml('down.svg', 'down', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_down'] . '"') . '</a>';
-		$strGroupPreview .= ' <a href="javascript:void(0);">' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_delete'] . '"') . '</a>';
-		$strGroupPreview .= ' <a href="javascript:void(0);">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_new']['after'] . '"') . '</a>';
+		$strGroupPreview .= ' <button type="button" class="delete-handle">' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['delete'] . '"') . '</button>';
+		$strGroupPreview .= ' <button type="button" class="insert-handle">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['after'] . '"') . '</button>';
+		$strGroupPreview .= ' <button type="button" class="drag-handle">' . \Image::getHtml('drag.svg', 'drag', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['drag'] . '"') . '</button>';
 
 		$strGroupPreview .= '</div>';
 		$strGroupPreview .= '<h3><label>' . $this->label . '</label></h3>';
 		$strGroupPreview .= '<p class="tl_help tl_tip" title="">' . $this->description . '</p>';	
-		$strGroupPreview .= '<div class="tl_multigroup_box">';
+		$strGroupPreview .= '<div id="sub_group" class="subpal cf">';
 		
 		// add the sub pattern
 		$colMultiPattern = \PatternModel::findVisibleByPidAndTable($this->id, 'tl_subpattern');
@@ -248,9 +253,9 @@ class PatternMultiPattern extends Pattern
 			}
 		}
 
-		$strGroupPreview .=  '<div class="clr widget"></div></div></div>';
+		$strGroupPreview .=  '</div></div>';
 
-		// add the sub pattern twice
+		// Add group twice
 		$strPreview .=  $strGroupPreview;	
 		$strPreview .=  $strGroupPreview;	
 
