@@ -408,13 +408,7 @@ class tl_elements extends Backend
 		}
 	}
 
-
-		}
-
-	}
-
-
-
+    
 	/**
 	 * Return the pattern edit button
 	 *
