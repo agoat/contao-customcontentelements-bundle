@@ -9,9 +9,32 @@ This may result in a more difficult upgrade process to the 2.0 version.
 
 ___
 
-### Install
+## Installation
 
-Add to app/AppKernel.php (after 'new Contao\CoreBundle\ContaoCoreBundle()')
+
+Run the following command in your project directory:
+
+```bash
+php composer.phar require agoat/contao-contentelements "^2.0"
 ```
-new Agoat\ContentBlocksBundle\AgoatContentBlocksBundle()
+
+
+## Activation
+
+
+Adjust your `app/AppKernel.php` file:
+
+```php
+// app/AppKernel.php
+class AppKernel extends Kernel
+{
+    public function registerBundles()
+    {
+        $bundles = [
+            // somewhere after Contao\CoreBundle\ContaoCoreBundle(),
+            // ...
+            new new Agoat\ContentElementsBundle\AgoatContentElementsBundle(),
+        ];
+    }
+}
 ```
