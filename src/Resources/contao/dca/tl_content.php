@@ -473,14 +473,8 @@ class tl_content_elements extends tl_content
 			return;
 		}
 
-		while ($objData->next())
-		{
-			$db->prepare("UPDATE tl_version SET active='' WHERE pid=? AND fromTable=?")
-			   ->execute($objData->id, 'tl_data');
-					   
-			$db->prepare("INSERT INTO tl_version (pid, tstamp, version, fromTable, active, data) VALUES (?, ?, ?, ?, 1, ?)")
-			   ->execute($intPid, time(), $intVersion, 'tl_data', serialize($objData->row()));
-		} 			
+		$db->prepare("INSERT INTO tl_version (pid, tstamp, version, fromTable, data) VALUES (?, ?, ?, ?, ?)")
+		   ->execute($intPid, time(), $intVersion, 'tl_data', serialize($objData->fetchAllAssoc()));
 	}
 	
 	
@@ -498,40 +492,34 @@ class tl_content_elements extends tl_content
 		{
 			return;
 		}
+		
+		$data = \StringUtil::deserialize($objData->data);
+	
+		if (!is_array($data))
+		{
+			return;
+		}
+		
+		// Get the currently available fields
+		$arrFields = array_flip($this->Database->getFieldnames('tl_data'));
 
 		$objStmt = $db->prepare("DELETE FROM tl_data WHERE pid=?")
 					  ->execute($intPid);
-		
-		while ($objData->next())
+
+		foreach ($data as $row)
 		{
-			$data = \StringUtil::deserialize($objData->data);
-		
-			if (!is_array($data))
-			{
-				return;
-			}
-				
-			// Get the currently available fields
-			$arrFields = array_flip($this->Database->getFieldnames('tl_data'));
-			
 			// Unset fields that do not exist (see #5219)
-			$data = array_intersect_key($data, $arrFields);
+			$row = array_intersect_key($row, $arrFields);
 				
 			// Reset fields added after storing the version to their default value (see #7755)
-			foreach (array_diff_key($arrFields, $data) as $k=>$v)
+			foreach (array_diff_key($arrFields, $row) as $k=>$v)
 			{
-			//	$data[$k] = \Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA']['tl_data']['fields'][$k]['sql']);
+				$row[$k] = \Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA']['tl_data']['fields'][$k]['sql']);
 			}
 			
 			$db->prepare("INSERT INTO tl_data %s")
-			   ->set($data)
-			   ->execute($data['id']);
-			
-			$db->prepare("UPDATE tl_version SET active='' WHERE fromTable=? AND pid=?")
-			   ->execute('tl_data', $intPid);
-			
-			$db->prepare("UPDATE tl_version SET active=1 WHERE fromTable=? AND pid=? AND version=?")
-			   ->execute('tl_data', $intPid, $intVersion);
+			   ->set($row)
+			   ->execute($row['id']);
 		}
 	}
 }
