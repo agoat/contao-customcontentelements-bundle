@@ -14,7 +14,7 @@
 namespace Agoat\ContentElements;
 
 
-class PatternArticle extends Pattern
+class PatternArticleTree extends Pattern
 {
 	/**
 	 * generate the DCA construct
