@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contao Open Source CMS - Contentblocks extension
+ * Contao Open Source CMS - ContentElements extension
  *
  * Copyright (c) 2005-2017 Leo Feyer
  * Copyright (c) 2017 Arne Stappen
@@ -9,7 +9,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 
 /**
@@ -59,15 +59,15 @@ class ArticleTree extends \Widget
 	{
 		$this->import('Database');
 		parent::__construct($arrAttributes);
-
+		
 		// Prepare the order field
 		if ($this->orderField != '')
 		{
 			$this->strOrderId = $this->orderField . str_replace($this->strField, '', $this->strId);
 			$this->strOrderName = $this->orderField . str_replace($this->strField, '', $this->strName);
 
-			//Don't try to load from database for contentblocks pattern (it's a virtual field)
-			if (strpos($this->orderField,'-') === false)
+			// Don't try to load virtual pattern fields from database
+			if ($this->Database->fieldExists($this->orderField, $this->strTable))
 			{
 				// Retrieve the order value
 				$objRow = $this->Database->prepare("SELECT {$this->orderField} FROM {$this->strTable} WHERE id=?")
@@ -105,8 +105,8 @@ class ArticleTree extends \Widget
 			// Only proceed if the value has changed
 			if ($arrNew !== $this->{$this->orderField})
 			{
-				//Don't try to save to database for contentblocks pattern (it's a virtual field)
-				if (strpos($this->orderField,'-') === false)
+				// Don't try to save virtual pattern fields to database 
+				if ($this->Database->fieldExists($this->orderField, $this->strTable))
 				{
 					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
