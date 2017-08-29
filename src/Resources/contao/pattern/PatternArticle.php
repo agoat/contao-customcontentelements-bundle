@@ -16,30 +16,30 @@ namespace Agoat\ContentElements;
 
 class PatternArticle extends Pattern
 {
-
-
 	/**
 	 * generate the DCA construct
 	 */
 	public function construct()
 	{
 		$arrNodes = false;
-		
+
 		if ($this->insideRoot)
 		{
-			$objElement = \ContentModel::findById($this->cid);
-			$objArticle = \ArticleModel::findById((int) $objElement->pid);
+			$objContent = \ContentModel::findById($this->pid);
+			$objArticle = \ArticleModel::findById((int) $objContent->pid);
 			$objPage = \PageModel::findWithDetails((int) $objArticle->pid);
 
-			if (!$this->insideLang)
+			if (null !== $objPage)
 			{
-				$objRootPages = \PageModel::findByDns($objPage->domain);
-				
-				$arrNodes = $objRootPages->fetchEach('id');
-			}
-			else
-			{
-				$arrNodes = array($objPage->rootId);
+				if (!$this->insideLang)
+				{
+					$objRootPages = \PageModel::findByDns($objPage->domain);
+					$arrNodes = $objRootPages->fetchEach('id');
+				}
+				else
+				{
+					$arrNodes = array($objPage->rootId);
+				}
 			}
 		}
 		
@@ -116,7 +116,7 @@ class PatternArticle extends Pattern
 	{
 		if ($this->multiArticle)
 		{
-			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiArticle));
+			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->data->multiArticle));
 
 			// Return if there are no pages
 			if ($objArticles === null)
@@ -127,9 +127,9 @@ class PatternArticle extends Pattern
 			$arrArticles = array();
 
 			// Sort the array keys according to the given order
-			if ($this->Value->orderArticle != '')
+			if ($this->data->orderArticle != '')
 			{
-				$tmp = \StringUtil::deserialize($this->Value->orderArticle);
+				$tmp = \StringUtil::deserialize($this->data->orderArticle);
 
 				if (!empty($tmp) && is_array($tmp))
 				{
@@ -150,7 +150,7 @@ class PatternArticle extends Pattern
 			}
 		else
 		{
-			if (($objArticle = \ArticleModel::findById($this->Value->singleArticle)) !== null)
+			if (($objArticle = \ArticleModel::findById($this->data->singleArticle)) !== null)
 			{
 				$this->writeToTemplate($objArticle->row());
 			}
