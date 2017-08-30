@@ -1,9 +1,9 @@
 <?php
  
  /**
- * Contao Open Source CMS - ContentBlocks extension
+ * Contao Open Source CMS - ContentElements extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2017 Arne Stappen (aGoat)
  *
  *
  * @package   contentblocks
@@ -131,7 +131,7 @@ class PatternFileTree extends Pattern
 					'rgxp' =>' natural', 
 					'includeBlankOption' => false, 
 					'nospace' => true, 
-					'tl_class' => 'w50 clr',
+					'tl_class' => 'w50',
 				),
 				'load_callback'	=>	array
 				(
@@ -155,7 +155,6 @@ class PatternFileTree extends Pattern
 				),
 			));		
 		}
-		
 	}
 	
 
@@ -199,7 +198,6 @@ class PatternFileTree extends Pattern
 				}
 				break;				
 		}
-		
 	
 		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
@@ -594,8 +592,7 @@ class PatternFileTree extends Pattern
 			$files = array_slice($files, 0, $this->numberOfItems);
 		}
 		
-		
-		// prepare images
+		// Prepare images
 		if ($this->source == 'image')
 		{
 			$pictures = array();
@@ -625,11 +622,7 @@ class PatternFileTree extends Pattern
 		}
 
 		$this->writeToTemplate($files);
-
 	}
-
-
-	
 	
 	
 	/**
@@ -639,22 +632,20 @@ class PatternFileTree extends Pattern
 	{
 		$arrSizes = \System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
 
-		if (is_array($this->sizeList))
+		if (is_array($arrList = \StringUtil::deserialize($this->sizeList)))
 		{
-			$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(\StringUtil::deserialize($this->sizeList)));
+			$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip($arrList));
 		}
 		else
 		{
 			$arrSizes['image_sizes'] = array();
 		}
-		
+
 		if ($this->canEnterSize)
 		{
 			return $arrSizes;
 		}
+		
 		return $arrSizes['image_sizes'];
 	}
-
-
-	
 }
