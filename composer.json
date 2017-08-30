@@ -1,5 +1,5 @@
 {
-    "name": "agoat/contao-contentelements",
+    "name": "agoat/contao-elements",
     "type": "contao-bundle",
     "description": "Contao content elements extension",
     "license": "LGPL-3.0+",
