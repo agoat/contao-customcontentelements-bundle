@@ -1,4 +1,4 @@
-# Contao Content Blocks extension
+# Contao Content Elements extension
 Contao 4 bundle
 
 ___
