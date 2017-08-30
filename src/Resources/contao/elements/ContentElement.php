@@ -95,6 +95,7 @@ class ContentElement extends \Contao\ContentElement
 				'id' => $this->id,
 				'pid' => $this->pid,
 				'ptable' => $this->ptable,
+				'element' => $this->type,
 				'tstamp' => $this->tstamp,
 				'start' => $this->start,
 				'stop' => $this->stop,
