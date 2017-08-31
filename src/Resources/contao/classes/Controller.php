@@ -11,17 +11,14 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
- 
-use Contao\Input;
+namespace Agoat\ContentElements;
+
 use Contao\File;
-use Contao\StringUtil;
 use Contao\Combiner;
 
 
 class Controller extends \Contao\Controller
 {
-
 	/**
 	 * Add extra css and js to the backend template
 	 */
@@ -29,16 +26,16 @@ class Controller extends \Contao\Controller
 	{
 		if (TL_MODE == 'BE')
 		{
-			if ($objTemplate->getName() == 'be_main' && Input::get('table') == 'tl_content')
+			if ($objTemplate->getName() == 'be_main' && \Input::get('table') == 'tl_content')
 			{
-				if (Input::get('do') && Input::get('id'))
+				if (\Input::get('do') && \Input::get('id'))
 				{
-					$intLayoutId = $this->getLayoutId('tl_'.Input::get('do'), Input::get('id')); 
+					$intLayoutId = $this->getLayoutId('tl_'.\Input::get('do'), \Input::get('id')); 
 					
 					// Sometimes the id is not the parent table but the content table id
 					if (!$intLayoutId)
 					{
-						$intLayoutId = $this->getLayoutId('tl_'.Input::get('do'), \ContentModel::findById(Input::get('id'))->pid); 
+						$intLayoutId = $this->getLayoutId('tl_'.\Input::get('do'), \ContentModel::findById(\Input::get('id'))->pid); 
 					}
 				}
 
@@ -190,14 +187,14 @@ class Controller extends \Contao\Controller
 	
 	public function addLayoutJS ($objPage, $objLayout)
 	{
-		$arrExternalJS = StringUtil::deserialize($objLayout->externalJS);
+		$arrExternalJS = \StringUtil::deserialize($objLayout->externalJS);
 		
 		if (!empty($arrExternalJS) && is_array($arrExternalJS))
 		{
 			// Consider the sorting order (see #5038)
 			if ($objLayout->orderBackendJS != '')
 			{
-				$tmp = StringUtil::deserialize($objLayout->orderExternalJS);
+				$tmp = \StringUtil::deserialize($objLayout->orderExternalJS);
 				
 				if (!empty($tmp) && is_array($tmp))
 				{
@@ -245,96 +242,6 @@ class Controller extends \Contao\Controller
 					
 		return;
 	}
-
-	
-	/**
-	 * Hide tl_content_value versions
-	 */
-	public function hideContentValueVersions ($objTemplate)
-	{
-		if ($objTemplate instanceof \BackendTemplate)
-		{
-			// Change the version and pagination in the welcome screen
-			if ($objTemplate->getName() == 'be_welcome')
-			{
-				$arrVersions = array();
-
-				$objUser = \BackendUser::getInstance();
-				$objDatabase = \Database::getInstance();
-
-				// Get the total number of versions
-				$objTotal = $objDatabase->prepare("SELECT COUNT(*) AS count FROM tl_version WHERE NOT fromTable=\"tl_content_value\" AND version>1" . (!$objUser->isAdmin ? " AND userid=?" : ""))
-										->execute($objUser->id);
-
-				$intLast   = ceil($objTotal->count / 30);
-				$intPage   = (\Input::get('vp') !== null) ? \Input::get('vp') : 1;
-				$intOffset = ($intPage - 1) * 30;
-
-
-				// Create the pagination menu
-				$objPagination = new \Pagination($objTotal->count, 30, 7, 'vp', new \BackendTemplate('be_pagination'));
-				$objTemplate->pagination = $objPagination->generate();
-
-				
-				// Get the versions
-				$objVersions = $objDatabase->prepare("SELECT pid, tstamp, version, fromTable, username, userid, description, editUrl, active FROM tl_version WHERE NOT fromTable=\"tl_content_value\"" . (!$objUser->isAdmin ? " AND userid=?" : "") . " ORDER BY tstamp DESC, pid, version DESC")
-										   ->limit(30, $intOffset)
-										   ->execute($objUser->id);
-
-				while ($objVersions->next())
-				{
-					$arrRow = $objVersions->row();
-
-					// Add some parameters
-					$arrRow['from'] = max(($objVersions->version - 1), 1); // see #4828
-					$arrRow['to'] = $objVersions->version;
-					$arrRow['date'] = date(\Config::get('datimFormat'), $objVersions->tstamp);
-					$arrRow['description'] = \StringUtil::substr($arrRow['description'], 32);
-					$arrRow['shortTable'] = \StringUtil::substr($arrRow['fromTable'], 18); // see #5769
-
-					if ($arrRow['editUrl'] != '')
-					{
-						$arrRow['editUrl'] = preg_replace('/&(amp;)?rt=[^&]+/', '&amp;rt=' . REQUEST_TOKEN, ampersand($arrRow['editUrl']));
-					}
-
-					$arrVersions[] = $arrRow;
-				}
-				
-				$intCount = -1;
-				$arrVersions = array_values($arrVersions);
-				
-				// Add the "even" and "odd" classes
-				foreach ($arrVersions as $k=>$v)
-				{
-					$arrVersions[$k]['class'] = (++$intCount % 2 == 0) ? 'even' : 'odd';
-					
-					try
-					{
-						// Mark deleted versions (see #4336)
-						$objDeleted = $objDatabase->prepare("SELECT COUNT(*) AS count FROM " . $v['fromTable'] . " WHERE id=?")
-												  ->execute($v['pid']);
-						
-						$arrVersions[$k]['deleted'] = ($objDeleted->count < 1);
-					}
-					catch (\Exception $e)
-					{
-						// Probably a disabled module
-						--$intCount;
-						unset($arrVersions[$k]);
-					}
-					
-					// Skip deleted files (see #8480)
-					if ($v['fromTable'] == 'tl_files' && $arrVersions[$k]['deleted'])
-					{
-						--$intCount;
-						unset($arrVersions[$k]);
-					}
-				}
-				
-				$objTemplate->versions = $arrVersions;			
-			}
-		}
-	}
 		
 	
 	/**
@@ -344,16 +251,16 @@ class Controller extends \Contao\Controller
 	public function registerBlockElements ()
 	{
 		// Don´t register twice
-		if (isset($GLOBALS['TL_CTE']['CTB'])) 
+		if (isset($GLOBALS['TL_CTE']['CTE'])) 
 		{
 			return;
 		}
 
 		$db = \Database::getInstance();
 
-		if ($db->tableExists("tl_content_blocks"))
+		if ($db->tableExists("tl_elements"))
 		{		
-			$arrElements = $db->prepare("SELECT * FROM tl_content_blocks ORDER BY sorting ASC")
+			$arrElements = $db->prepare("SELECT * FROM tl_elements ORDER BY sorting ASC")
 							  ->execute()
 							  ->fetchAllAssoc();	
 		}
@@ -366,14 +273,14 @@ class Controller extends \Contao\Controller
 		// Add content blocks as content elements
 		foreach ($arrElements as $arrElement)
 		{
-			$GLOBALS['TL_CTE']['CTB'][$arrElement['alias']] = 'Agoat\ContentBlocks\ContentBlockElement';
+			$GLOBALS['TL_CTE']['CTE'][$arrElement['alias']] = 'Agoat\ContentElements\ContentElement';
 			$GLOBALS['TL_LANG']['CTE'][$arrElement['alias']] = array($arrElement['title'],$arrElement['description']);
 		}
 	}
 
 	
 	/**
-	 * Get the theme ID for an article
+	 * Get the layout ID for an article
 	 *
 	 * @param string  $strTable The name of the table (article or news) 
 	 * @param integer $intId    An article or a news article ID
@@ -445,14 +352,14 @@ class Controller extends \Contao\Controller
 	 */
 	private static function addBackendCSS($objLayout)
 	{
-		$arrCSS = StringUtil::deserialize($objLayout->backendCSS);
+		$arrCSS = \StringUtil::deserialize($objLayout->backendCSS);
 		
 		if (!empty($arrCSS) && is_array($arrCSS))
 		{
 			// Consider the sorting order (see #5038)
 			if ($objLayout->orderBackendCSS != '')
 			{
-				$tmp = StringUtil::deserialize($objLayout->orderBackendCSS);
+				$tmp = \StringUtil::deserialize($objLayout->orderBackendCSS);
 				
 				if (!empty($tmp) && is_array($tmp))
 				{
@@ -507,14 +414,14 @@ class Controller extends \Contao\Controller
 	 */
 	private static function addBackendJS($objLayout)
 	{
-		$arrJS = StringUtil::deserialize($objLayout->backendJS);
+		$arrJS = \StringUtil::deserialize($objLayout->backendJS);
 		
 		if (!empty($arrJS) && is_array($arrJS))
 		{
 			// Consider the sorting order (see #5038)
 			if ($objLayout->orderBackendJS != '')
 			{
-				$tmp = StringUtil::deserialize($objLayout->orderBackendJS);
+				$tmp = \StringUtil::deserialize($objLayout->orderBackendJS);
 				
 				if (!empty($tmp) && is_array($tmp))
 				{
@@ -561,7 +468,6 @@ class Controller extends \Contao\Controller
 		}
 	}
 	
-	
 	/**
 	 * register callbacks for news extension bundles with contao core
 	 */
@@ -576,8 +482,5 @@ class Controller extends \Contao\Controller
 		$GLOBALS['TL_DCA']['tl_news']['config']['ondelete_callback'][] = array('tl_news_contentblocks', 'deleteRelatedValues');
 
 	}
-	
-
-	
 }
 

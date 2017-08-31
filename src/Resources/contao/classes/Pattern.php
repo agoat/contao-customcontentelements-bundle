@@ -12,9 +12,8 @@
  */
 
  
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
  
-use Agoat\ContentBlocks\Controller;
 use \Contao\FilesModel;
 
 /**
@@ -108,40 +107,94 @@ abstract class Pattern extends Controller
 	}	
 
 	/**
-	 * construct the DCA array
+	 * Construct the DCA array
 	 *
 	 */
-	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolLoadSaveCallback=true)
+	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolVisble=true, $bolCallbacks=true)
 	{
-		$this->virtualFieldAlias = $this->virtualFieldName($strFieldName);
+		$strVirtualField = $this->virtualFieldName($strFieldName);
 		
-		// add some standard field attributes
-		$arrFieldDCA['eval']['doNotSaveEmpty'] = true;
-		
-		if ($bolLoadSaveCallback)
+		// Add to palette
+		if ($bolVisble)
 		{
+/*			Using the subpalette system of the DC_TABLE not possible because of direct database check 
+			(see https://github.com/contao/core-bundle/blob/2a85914f4ba858780ffbac38a468acb7028772c7/src/Resources/contao/drivers/DC_Table.php#L3191)
+
+			if (!empty($this->parent))
+			{
+				if (isset($GLOBALS['TL_DCA']['tl_content']['subpalettes'][$this->parent]))
+				{
+					$GLOBALS['TL_DCA']['tl_content']['subpalettes'][$this->parent] .= ',' . $strVirtualField;	
+				}
+				else
+				{
+					$GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = $this->parent;	
+					$GLOBALS['TL_DCA']['tl_content']['subpalettes'][$this->parent] = $strVirtualField;	
+				}
+			}
+			else
+			{
+				$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ',' . $strVirtualField;	
+			}
+*/			
+
+			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',' . $strVirtualField;	
+		}
+
+		// Add necessary virtual field callbacks
+		if ($bolCallbacks)
+		{
+			$arrFieldDCA['eval']['doNotSaveEmpty'] = true;
+			
 			$arrFieldDCA['load_callback'] = is_array($arrFieldDCA['load_callback']) ? $arrFieldDCA['load_callback'] : array();
 			$arrFieldDCA['save_callback'] = is_array($arrFieldDCA['save_callback']) ? $arrFieldDCA['save_callback'] : array();
 			
 			// load default value
 			if ($arrFieldDCA['default'])
 			{
-				array_unshift($arrFieldDCA['load_callback'], array('tl_content_contentblocks', 'defaultValue'));
+				array_unshift($arrFieldDCA['load_callback'], array('tl_content_elements', 'defaultValue'));
 			}
 
 			// load/save database values first/last
-			array_unshift($arrFieldDCA['load_callback'], array('tl_content_contentblocks', 'loadFieldValue'));
-			array_push($arrFieldDCA['save_callback'], array('tl_content_contentblocks', 'saveFieldAndClear'));
+			array_unshift($arrFieldDCA['load_callback'], array('tl_content_elements', 'loadFieldValue'));
+			array_push($arrFieldDCA['save_callback'], array('tl_content_elements', 'saveFieldAndClear'));
 		}
+		
+		// Virtual field data
+		$arrFieldDCA = array_merge($arrFieldDCA, array
+		(
+			'id' 		=> (isset($this->data->id)) ? $this->data->id : null,
+			'pattern' 	=> $this->pattern,
+			'parent'	=> (isset($this->parent)) ? $this->parent : 0,
+			'column' 	=> $strFieldName,
+			'data'		=> (isset($this->data->$strFieldName)) ? $this->data->$strFieldName : null
+		));
 
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ','.$this->virtualFieldAlias;		
-
-		// add field informations
-		$GLOBALS['TL_DCA']['tl_content']['fields'][$this->virtualFieldAlias] = $arrFieldDCA;
-
+		// Add field informations
+		$GLOBALS['TL_DCA']['tl_content']['fields'][$strVirtualField] = $arrFieldDCA;
 	}
 
 	
+	/**
+	 * Generate a field alias with the right syntax
+	 *
+	 * @param string $strName The field name 
+	 *
+	 * @return string The field alias
+	 */
+	protected function virtualFieldName($strFieldName)
+	{
+		$strVirtualField = $this->pattern . '-' . $strFieldName;
+		
+		if ($this->data !== null)
+		{
+			$strVirtualField .= '-' . $this->data->id;
+		}
+		
+		return $strVirtualField;
+	}
+
+
 	/**
 	 * prepare a field view for the backend
 	 *
@@ -183,32 +236,8 @@ abstract class Pattern extends Controller
 	}
 
 
-	
-	
 	/**
-	 * generate a field alias with the right syntax
-	 *
-	 * @param string $strName The field name (tl_content_value column name)
-	 *
-	 * @return string The field alias
-	 */
-	protected function virtualFieldName($strName)
-	{
-		if (!$this->rid)
-		{
-			$this->rid = 0;
-		}
-	
-		// field alias syntax: tablecolumn_patternId_recursiveId
-		return $strName.'-'.$this->id.'-'.$this->rid;
-	}
-
-	
-
-
-
-	/**
-	 * Find a content element in the TL_CTE array and return the class name
+	 * Find a content pattern in the TL_CTP array and return the class name
 	 *
 	 * @param string $strName The content element name
 	 *
@@ -216,18 +245,90 @@ abstract class Pattern extends Controller
 	 */
 	public static function findClass($strName)
 	{
-		foreach ($GLOBALS['TL_CTP'] as $pp)
+		foreach ($GLOBALS['TL_CTP'] as $v)
 		{
-			foreach ($pp as $kk=>$vv)
+			foreach ($v as $kk=>$vv)
 			{
 				if ($kk == $strName)
 				{
-					return $vv;
+					return $vv['class'];
 				}
 			}
 		}
 		
-		return '';
+		return null;
+	}
+
+	
+	/**
+	 * Find a content pattern in the TL_CTP array and return true if the pattern saves data to db
+	 *
+	 * @param string $strName The content element name
+	 *
+	 * @return boolean Pattern data status
+	 */
+	public static function hasData($strName)
+	{
+		foreach ($GLOBALS['TL_CTP'] as $v)
+		{
+			foreach ($v as $kk=>$vv)
+			{
+				if ($kk == $strName)
+				{
+					return ($vv['data']) ?:false;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	
+	/**
+	 * Find a content pattern in the TL_CTP array and return true if the pattern has frontend output
+	 *
+	 * @param string $strName The content element name
+	 *
+	 * @return boolean Pattern data status
+	 */
+	public static function hasOutput($strName)
+	{
+		foreach ($GLOBALS['TL_CTP'] as $v)
+		{
+			foreach ($v as $kk=>$vv)
+			{
+				if ($kk == $strName)
+				{
+					return ($vv['output']) ?: false;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	
+	/**
+	 * Find a content pattern in the TL_CTP array and return true if the pattern is a subpattern
+	 *
+	 * @param string $strName The content element name
+	 *
+	 * @return boolean Pattern unique status
+	 */
+	public static function isSubPattern($strName)
+	{
+		foreach ($GLOBALS['TL_CTP'] as $v)
+		{
+			foreach ($v as $kk=>$vv)
+			{
+				if ($kk == $strName)
+				{
+					return ($vv['subpattern']) ?: false;
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	
@@ -333,7 +434,7 @@ abstract class Pattern extends Controller
 		}
 
 		// Image dimensions
-		if (($imgSize = $objFile->imageSize) !== false)
+		if ($objFile->exists() && ($imgSize = $objFile->imageSize) !== false)
 		{
 			$objTemplate->arrSize = $imgSize;
 			$objTemplate->imgSize = ' width="' . $imgSize[0] . '" height="' . $imgSize[1] . '"';

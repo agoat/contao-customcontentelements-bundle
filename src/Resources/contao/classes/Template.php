@@ -11,15 +11,15 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\File;
 use Contao\TemplateLoader;
 use Contao\FrontendTemplate;
 use Contao\BackendTemplate;
 use Contao\StringUtil;
-use Agoat\ContentBlocks\Controller;
-use Agoat\ContentBlocks\Pattern;
+use Agoat\ContentElements\Controller;
+use Agoat\ContentElements\Pattern;
 
 
 class Template extends FrontendTemplate
@@ -178,11 +178,11 @@ class Template extends FrontendTemplate
 
 	
 	/**
-	 * Return the type of the previous content element
+	 * Return the alias of the previous content element
 	 *
 	 * @return string  The type of the previous content element
 	 */
-	public function prevType ()
+	public function prevElement ()
 	{
 		if (($arrTypes = $GLOBALS['templateTypes'][$this->ptable.'.'.$this->pid]) === null)
 		{
@@ -201,11 +201,11 @@ class Template extends FrontendTemplate
 
 	
 	/**
-	 * Return the type of the previous content element
+	 * Return the alias of the previous content element
 	 *
 	 * @return string  The type of the previous content element
 	 */
-	public function nextType ()
+	public function nextElement ()
 	{
 		if (($arrTypes = $GLOBALS['templateTypes'][$this->ptable.'.'.$this->pid]) === null)
 		{

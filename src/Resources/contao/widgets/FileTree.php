@@ -9,7 +9,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 
 /**
@@ -71,8 +71,8 @@ class FileTree extends \Widget
 			$this->strOrderId = $this->orderField . str_replace($this->strField, '', $this->strId);
 			$this->strOrderName = $this->orderField . str_replace($this->strField, '', $this->strName);
 			
-			//Don't try to load from database for contentblocks pattern (it's a virtual field)
-			if (strpos($this->orderField,'-') === false)
+			// Don't try to load virtual pattern fields from database
+			if ($this->Database->fieldExists($this->orderField, $this->strTable))
 			{
 				// Retrieve the order value
 				$objRow = $this->Database->prepare("SELECT {$this->orderField} FROM {$this->strTable} WHERE id=?")
@@ -110,8 +110,8 @@ class FileTree extends \Widget
 			// Only proceed if the value has changed
 			if ($arrNew !== $this->{$this->orderField})
 			{
-				//Don't try to save to database for contentblocks pattern (it's a virtual field)
-				if (strpos($this->orderField,'-') === false)
+				// Don't try to save virtual pattern fields to database 
+				if ($this->Database->fieldExists($this->orderField, $this->strTable))
 				{
 					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
@@ -223,12 +223,17 @@ class FileTree extends \Widget
 		$arrSet = array();
 		$arrValues = array();
 		$blnHasOrder = ($this->orderField != '' && is_array($this->{$this->orderField}));
-
+	
 		if (!empty($this->varValue)) // Can be an array
 		{
 			$objFiles = \FilesModel::findMultipleByUuids((array)$this->varValue);
 			$allowedDownload = \StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
 
+			if ($this->extensions)
+			{
+				$allowedDownload = \StringUtil::trimsplit(',', strtolower($this->extensions));
+			}
+		
 			if ($objFiles !== null)
 			{
 				while ($objFiles->next())

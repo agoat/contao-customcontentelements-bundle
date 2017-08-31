@@ -11,10 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
-use Agoat\ContentBlocks\Pattern;
 use Contao\Module;
+
 
 class PatternModule extends Pattern
 {
@@ -36,7 +36,7 @@ class PatternModule extends Pattern
 	public function view()
 	{
 		$objModule = \ModuleModel::findByPk($this->module);
-		return '<span>' . $objModule->name . ' (ID ' . $objModule->id . ')</span>';
+		return '<div class="widget"><span style="color:#b3b3b3 ">' . $objModule->name . ' (ID ' . $objModule->id . ')</span></div>';
 	}
 
 	/**

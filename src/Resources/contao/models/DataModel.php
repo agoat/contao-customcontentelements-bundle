@@ -13,28 +13,27 @@
 
 namespace Contao;
 
-use Contao\Model;
 
 
-class ContentValueModel extends Model
+class DataModel extends Model
 {
 
 	/**
 	 * Table name
 	 * @var string
 	 */
-	protected static $strTable = 'tl_content_value';
+	protected static $strTable = 'tl_data';
 
 
 	/**
-	 * Find all values by their content id
+	 * Find all values by their content and pattern id
 	 *
 	 * @param integer $arrPids        An array of section IDs
 	 * @param array   $arrOptions     An optional options array
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findByCid($varCid, array $arrOptions=array())
+	public static function findByPid($varPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
@@ -42,8 +41,8 @@ class ContentValueModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.cid=?"),
-				'value'		=>	array($varCid),
+				'column'	=>	array("$t.pid=?","$t.parent=0"),
+				'value'		=>	array($varPid)
 			),
 			$arrOptions
 		);
@@ -60,7 +59,7 @@ class ContentValueModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findByCidandPid($varCid, $varPid, array $arrOptions=array())
+	public static function findByPidAndPattern($varPid, $strPattern, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
@@ -68,15 +67,41 @@ class ContentValueModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.cid=?","$t.pid=?"),
-				'value'		=>	array($varCid, $varPid),
-				'order'		=>	"$t.rid ASC",
+				'column'	=>	array("$t.pid=?","$t.pattern=?","$t.parent=0"),
+				'value'		=>	array($varPid, $strPattern)
 			),
 			$arrOptions
 		);
 
 		return static::find($arrOptions);
 	}
+
+	
+	/**
+	 * Find all values by their content and pattern id
+	 *
+	 * @param integer $arrPids        An array of section IDs
+	 * @param array   $arrOptions     An optional options array
+	 *
+	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 */
+	public static function findByPidAndParent($varPid, $intParent, array $arrOptions=array())
+	{
+		$t = static::$strTable;
+		
+		$arrOptions = array_merge
+		(		
+			array
+			(
+				'column'	=>	array("$t.pid=?","$t.parent=?"),
+				'value'		=>	array($varPid, $intParent)
+			),
+			$arrOptions
+		);
+
+		return static::find($arrOptions);
+	}
+	
 
 	/**
 	 * Find all values by their content, pattern and replica id
@@ -86,7 +111,7 @@ class ContentValueModel extends Model
 	 *
 	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
 	 */
-	public static function findByCidandPidandRid($varCid, $varPid, $varRid, array $arrOptions=array())
+	public static function findByPidAndPatternAndParent($varPid, $strPattern, $intParent, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
@@ -94,10 +119,8 @@ class ContentValueModel extends Model
 		(		
 			array
 			(
-				'column'	=>	array("$t.cid=?","$t.pid=?","$t.rid=?"),
-				'value'		=>	array($varCid, $varPid, $varRid),
-				'return'	=>	'Model',
-				'limit'		=>	1
+				'column'	=>	array("$t.pid=?","$t.pattern=?","$t.parent=?"),
+				'value'		=>	array($varPid, $strPattern, $intParent)
 			),
 			$arrOptions
 		);
@@ -105,4 +128,6 @@ class ContentValueModel extends Model
 		return static::find($arrOptions);
 	}
 
+	
+	
 }

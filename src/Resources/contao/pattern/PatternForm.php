@@ -11,10 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
-use Agoat\ContentBlocks\Pattern;
 use Contao\Form;
+
 
 class PatternForm extends Pattern
 {
@@ -36,7 +36,7 @@ class PatternForm extends Pattern
 	public function view()
 	{
 		$objForm = new Form($this);
-		return '<span>' . $objForm->title . ' (ID ' . $objForm->id . ')</span>';
+		return '<div class="widget"><span style="color:#b3b3b3 ">' . $objForm->title . ' (ID ' . $objForm->id . ')</span></div>';
 	}
 
 	/**

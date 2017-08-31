@@ -11,10 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
-use Agoat\ContentBlocks\Pattern;
 use Contao\StringUtil;
+
 
 class PatternTextField extends Pattern
 {
@@ -25,13 +25,12 @@ class PatternTextField extends Pattern
 	 */
 	public function construct()
 	{
-		
-		
-		$class = ($this->classClr) ? 'w50 clr' : 'w50';
-		$class = ($this->classLong) ? 'long clr' : $class;
+				
+		$class = ($this->classLong) ? 'long' : 'w50';
+		$class .= ($this->classClr) ? ' clr' : '';
 		$class .= ($this->picker) ? ' wizard' : '';
 		
-		$wizard = ($this->picker == 'page') ? array(array('tl_content', 'pagePicker')) : false;
+		//$wizard = ($this->picker == 'page') ? array(array('tl_content', 'pagePicker')) : false;
 		
 		// input unit
 		if (($this->picker == 'unit'))
@@ -44,12 +43,12 @@ class PatternTextField extends Pattern
 		}
 
 		// the text field
-		$this->generateDCA(($this->picker != 'unit') ? ($this->multiple) ? 'multiTextField' : 'textField' : 'inputUnit', array
+		$this->generateDCA(($this->picker != 'unit') ? ($this->multiple) ? 'multiTextField' : 'singleTextField' : 'inputUnit', array
 		(
 			'inputType' =>	($this->picker == 'unit') ? 'inputUnit' : 'text',
 			'label'		=>	array($this->label, $this->description),
 			'default'	=>	$this->defaultValue,
-			'wizard'	=>	$wizard,
+		//	'wizard'	=>	$wizard,
 			'options'	=>	$options,
 			'eval'		=>	array
 			(
@@ -63,6 +62,7 @@ class PatternTextField extends Pattern
 				'datepicker' 	=> 	($this->picker == 'datetime') ? true : false,
 				'colorpicker' 	=> 	($this->picker == 'color') ? true : false,
 				'isHexColor' 	=> 	($this->picker == 'color') ? true : false,
+				'dcaPicker' 	=> 	($this->picker == 'link') ? true : false,
 			),
 		));
 		
@@ -74,7 +74,7 @@ class PatternTextField extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="inline' . ((in_array($this->picker, array('datetime', 'color', 'page'))) ? ' wizard' : '') . '" style="padding-top:10px;"><h3><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="' . (($this->classLong) ? 'long' : 'w50') . ((in_array($this->picker, array('datetime', 'color', 'link'))) ? ' wizard' : '') . ' widget" style="padding-top:10px;"><h3><label>' . $this->label . '</label></h3>';
 
 		if ($this->picker == 'unit')
 		{
@@ -115,7 +115,7 @@ class PatternTextField extends Pattern
 				$strPreview .=  ' <img src="system/themes/flexible/icons/pickcolor.svg" height="16" width="16">';
 				break;
 			
-			case 'page':
+			case 'link':
 				$strPreview .=  ' <img src="system/themes/flexible/icons/pickpage.svg" height="16" width="16">';
 				break;
 		}
@@ -132,7 +132,7 @@ class PatternTextField extends Pattern
 	 */
 	public function compile()
 	{
-		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->Value->multiTextField) : $this->Value->textField : StringUtil::deserialize($this->Value->inputUnit));	
+		$this->writeToTemplate(($this->picker != 'unit') ? ($this->multiple) ? StringUtil::deserialize($this->data->multiTextField) : $this->data->singleTextField : StringUtil::deserialize($this->data->inputUnit));	
 	}
 	
 }

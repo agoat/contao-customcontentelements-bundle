@@ -2,14 +2,14 @@
 <xliff version="1.1">
   <file datatype="php" original="system/modules/elements/languages/en/tl_theme.php" source-language="en">
     <body>
-      <trans-unit id="tl_theme.ctb.0">
-        <source>Content blocks</source>
+      <trans-unit id="tl_theme.cte.0">
+        <source>Content elements</source>
       </trans-unit>
-      <trans-unit id="tl_theme.ctb.1">
-        <source>Edit the content blocks for the theme ID %s</source>
+      <trans-unit id="tl_theme.cte.1">
+        <source>Edit the content elements for the theme ID %s</source>
       </trans-unit>
-      <trans-unit id="tl_theme.contentblocks_pattern">
-        <source>Content blocks</source>
+      <trans-unit id="tl_theme.elements">
+        <source>Content elements</source>
       </trans-unit>
     </body>
   </file>

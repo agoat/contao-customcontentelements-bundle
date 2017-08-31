@@ -144,8 +144,17 @@
 			</trans-unit>
 	  
 
-			<trans-unit id="CTE.ctb">
-				<source>Content blocks</source>
+			<trans-unit id="CTE.cte">
+				<source>Custom elements</source>
+			</trans-unit>
+			<trans-unit id="CTE.deleted">
+				<source>Deleted content element</source>
+			</trans-unit>
+			<trans-unit id="CTE.invisible">
+				<source>Invisible content element</source>
+			</trans-unit>
+			<trans-unit id="CTE.legacy">
+				<source>Legacy content element</source>
 			</trans-unit>
 
 			<trans-unit id="ERR.fieldNameExists">
@@ -158,17 +167,24 @@
 			<trans-unit id="MSC.mg_down">
 				<source>Move group one position down</source>
 			</trans-unit>
-			<trans-unit id="MSC.mg_delete">
+			<trans-unit id="MSC.group.delete">
 				<source>Delete group</source>
 			</trans-unit>
-			<trans-unit id="MSC.mg_new.label">
+			<trans-unit id="MSC.group.drag">
+				<source>Move group</source>
+			</trans-unit>
+			<trans-unit id="MSC.group.new.label">
 				<source>New group</source>
 			</trans-unit>
-			<trans-unit id="MSC.mg_new.top">
+			<trans-unit id="MSC.group.new.top">
 				<source>Add new group at the top</source>
 			</trans-unit>
-			<trans-unit id="MSC.mg_new.after">
+			<trans-unit id="MSC.group.new.after">
 				<source>Add new after this group</source>
+			</trans-unit>
+
+			<trans-unit id="MSC.elementInUse">
+				<source>Be aware on changes. The content element is already in use!!</source>
 			</trans-unit>
 
 		</body>

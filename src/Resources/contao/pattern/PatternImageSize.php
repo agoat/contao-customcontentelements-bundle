@@ -11,11 +11,10 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\System;
 use Contao\StringUtil;
-use Agoat\ContentBlocks\Pattern;
 
 
 class PatternImageSize extends Pattern
@@ -41,11 +40,11 @@ class PatternImageSize extends Pattern
 		
 		if (is_numeric($size[2]))
 		{
-			return $sizes['image_sizes'][$size[2]];
+			return '<div class="widget"><span style="color:#b3b3b3 ">' . $sizes['image_sizes'][$size[2]] . '</span></div>';
 		}
 		else
 		{
-			return $GLOBALS['TL_LANG']['MSC'][$size[2]][0] . ' (' . $size[0] . 'x' . $size[1] . ')';
+			return '<div class="widget"><span style="color:#b3b3b3 ">' . $GLOBALS['TL_LANG']['MSC'][$size[2]][0] . ' (' . $size[0] . 'x' . $size[1] . ')</span></div>';
 		}
 	}
 

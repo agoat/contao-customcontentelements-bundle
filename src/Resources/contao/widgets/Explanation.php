@@ -11,8 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-
-namespace Contao;
+namespace Agoat\ContentElements;
 
 
 /**
@@ -42,10 +41,7 @@ class Explanation extends \Widget
 	 */
 	public function generate()
 	{
-		
-		return sprintf('<div class="tl_message clr" style="margin-left:0;margin-right:0;">%s</div>',
-							$this->explanation);
-							
+		return sprintf('<div class="tl_explanation">%s</div>', $this->explanation);
 	}
 
 

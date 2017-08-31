@@ -17,13 +17,13 @@ array_insert($GLOBALS['TL_DCA']['tl_theme']['list']['operations'], 3, array
 (
 	'ctb' => array
 	(
-		'label'               => &$GLOBALS['TL_LANG']['tl_theme']['ctb'],
-		'href'                => 'table=tl_content_blocks',
-		'icon'                => 'bundles/agoatcontentblocks/contentblocks.svg',
+		'label'               => &$GLOBALS['TL_LANG']['tl_theme']['cte'],
+		'href'                => 'table=tl_elements',
+		'icon'                => 'bundles/agoatcontentelements/contentblocks.svg',
 		//'button_callback'     => array('tl_theme', 'editCss')
 	)
 ));
 
 // allow tl_content_blocks table
-$GLOBALS['TL_DCA']['tl_theme']['config']['ctable'][] = 'tl_content_blocks';
+$GLOBALS['TL_DCA']['tl_theme']['config']['ctable'][] = 'tl_elements';
 

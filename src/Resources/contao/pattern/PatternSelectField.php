@@ -11,10 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
 use Contao\StringUtil;
-use Agoat\ContentBlocks\Pattern;
 
 
 class PatternSelectField extends Pattern
@@ -54,7 +53,7 @@ class PatternSelectField extends Pattern
 		}
 
 		// Generate a select field
-		$this->generateDCA(($this->multiSelect) ? 'multiSelectField' : 'selectField', array
+		$this->generateDCA(($this->multiSelect) ? 'multiSelectField' : 'singleSelectField', array
 		(
 			'inputType' 	=>	'select',
 			'label'			=>	array($this->label, $this->description),
@@ -78,7 +77,7 @@ class PatternSelectField extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="w50 widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
 
 		if (is_array($arrOptions = \StringUtil::deserialize($this->options)))
@@ -118,19 +117,19 @@ class PatternSelectField extends Pattern
 	{
 		if ($this->multiSelect)
 		{
-			if (is_array($arrValues = \StringUtil::deserialize($this->Value->multiSelectField)))
+			if (is_array($arrData = \StringUtil::deserialize($this->data->multiSelectField)))
 			{
-				foreach ($arrValues as &$value)
+				foreach ($arrData as &$data)
 				{
-					$value = substr($value,1);
+					$data = substr($data,1);
 				}
 				
-				$this->writeToTemplate($arrValues);
+				$this->writeToTemplate($arrData);
 			}
 		}
 		else
 		{
-			$this->writeToTemplate(substr($this->Value->selectField,1));
+			$this->writeToTemplate(substr($this->data->singleSelectField,1));
 		}
 	}
 	

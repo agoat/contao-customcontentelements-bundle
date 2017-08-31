@@ -1,9 +1,9 @@
 <?php
  
  /**
- * Contao Open Source CMS - ContentBlocks extension
+ * Contao Open Source CMS - ContentElements extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2017 Arne Stappen (aGoat)
  *
  *
  * @package   contentblocks
@@ -11,9 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
-
-use Agoat\ContentBlocks\Pattern;
+namespace Agoat\ContentElements;
 
 
 class PatternFileTree extends Pattern
@@ -23,7 +21,7 @@ class PatternFileTree extends Pattern
 	 */
 	public function construct()
 	{
-		// set some options
+		// Set some options
 		switch ($this->source)
 		{
 			case 'image':
@@ -37,21 +35,21 @@ class PatternFileTree extends Pattern
 				$extensions = \Config::get('validVideoTypes');
 				$orderField = false;
 				$isGallery = false;
-				$isDownloads = false;
+				$isDownloads = true;
 				break;
 				
 			case 'audio':
 				$extensions = \Config::get('validAudioTypes');
 				$orderField = false;
 				$isGallery = false;
-				$isDownloads = false;
+				$isDownloads = true;
 				break;
 				
 			case 'custom':
 				$extensions = $this->customExtension;
 				$orderField = $this->virtualFieldName('orderSRC');
 				$isGallery = false;
-				$isDownloads = true;
+				$isDownloads = ($this->canSelectFolder) ? true : false;
 				break;
 				
 			default:
@@ -64,7 +62,8 @@ class PatternFileTree extends Pattern
 
 		if ($this->multiSource)
 		{
-			// the multiSRC field
+
+			// The multiSRC field
 			$this->generateDCA('multiSRC', array
 			(
 				'inputType' =>	'fileTree',
@@ -75,6 +74,7 @@ class PatternFileTree extends Pattern
 					'fieldType'		=>	'checkbox', 
 					'orderField'	=>	$orderField,
 					'files'			=>	true,
+					'filesOnly'		=>	!$this->canSelectFolder,
 					'extensions' 	=>	$extensions,
 					'isGallery'		=>	$isGallery,
 					'isDownloads'	=>	$isDownloads,
@@ -83,14 +83,19 @@ class PatternFileTree extends Pattern
 				),
 				'load_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_contentblocks', 'prepareOrderSRCValue'),
+					array('tl_content_elements', 'prepareOrderValue'),
 				),
 				'save_callback'		=> (!$orderField) ?: array
 				(
-					array('tl_content_contentblocks', 'saveOrderSRCValue'),
+					array('tl_content_elements', 'saveOrderValue'),
 				),
 			));
-			
+
+			// The orderSRC field
+			if ($orderField)
+			{
+				$this->generateDCA('orderSRC', array(), false, false);
+			}
 		}
 		else
 		{
@@ -101,8 +106,8 @@ class PatternFileTree extends Pattern
 				'label'		=>	array($this->label, $this->description),
 				'eval'     	=> 	array
 				(
-					'filesOnly'		=>	true, 
 					'fieldType'		=>	'radio', 
+					'files'			=>	true, 
 					'extensions' 	=>	$extensions,
 					'mandatory'		=>	($this->mandatory) ? true : false, 
 					'tl_class'		=>	'clr',
@@ -116,8 +121,8 @@ class PatternFileTree extends Pattern
 		{
 			$this->generateDCA('size', array
 			(
-				'label'				=> &$GLOBALS['TL_LANG']['tl_content']['size'],
 				'inputType'			=> 'imageSize',
+				'label'				=> &$GLOBALS['TL_LANG']['tl_content']['size'],
 				'options'			=> $this->getImageSizeList(),
 				'default'			=> $this->size,
 				'reference'			=> &$GLOBALS['TL_LANG']['MSC'],
@@ -126,11 +131,11 @@ class PatternFileTree extends Pattern
 					'rgxp' =>' natural', 
 					'includeBlankOption' => false, 
 					'nospace' => true, 
-					'tl_class' => 'w50 clr',
+					'tl_class' => 'w50',
 				),
 				'load_callback'	=>	array
 				(
-					array('tl_content_contentblocks','defaultValue')
+					array('tl_content_elements','defaultValue')
 				),
 			));	
 		}
@@ -150,7 +155,6 @@ class PatternFileTree extends Pattern
 				),
 			));		
 		}
-		
 	}
 	
 
@@ -194,7 +198,6 @@ class PatternFileTree extends Pattern
 				}
 				break;				
 		}
-		
 	
 		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
@@ -245,7 +248,7 @@ class PatternFileTree extends Pattern
 	
 		if ($this->multiSource)
 		{
-			$multiSRC = \StringUtil::deserialize($this->Value->multiSRC);
+			$multiSRC = \StringUtil::deserialize($this->data->multiSRC);
 			
 			// Return if there are no files
 			if (!is_array($multiSRC) || empty($multiSRC))
@@ -258,12 +261,12 @@ class PatternFileTree extends Pattern
 		else
 		{
 			// Return if there is no file
-			if ($this->Value->singleSRC == '')
+			if ($this->data->singleSRC == '')
 			{
 				return '';
 			}
 		
-			$objFiles = \FilesModel::findMultipleByUuids(array($this->Value->singleSRC));
+			$objFiles = \FilesModel::findMultipleByUuids(array($this->data->singleSRC));
 		}
 
 		if ($objFiles === null)
@@ -291,13 +294,13 @@ class PatternFileTree extends Pattern
 		}
 		
 		global $objPage;
+		
 		$allowedDownload = \StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
 		$allowedVideo = \StringUtil::trimsplit(',', strtolower(\Config::get('validVideoTypes')));
 		$allowedAudio = \StringUtil::trimsplit(',', strtolower(\Config::get('validAudioTypes')));
 		
 		$files = array();
 		$auxDate = array();
-		
 
 		// Get all files
 		while ($objFiles->next())
@@ -383,7 +386,7 @@ class PatternFileTree extends Pattern
 					'uuid'      => $objFiles->uuid,
 					'name'      => $objFile->basename,
 					'path' 		=> $objFiles->path,
-					'size'		=> ($this->canChangeSize) ? $this->Value->size : $this->size,
+					'size'		=> ($this->canChangeSize) ? $this->data->size : $this->size,
 					'alt'       => $arrMeta['title'],
 					'title'     => $arrMeta['title'],
 					'imageUrl'  => $arrMeta['link'],
@@ -480,32 +483,32 @@ class PatternFileTree extends Pattern
 					$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objSubfiles->path);
 
 					
-					// Add the image
+					// Add the file
 					$files[$objSubfiles->path] = array
 					(
-						'id'        => $objFiles->id,
-						'uuid'      => $objFiles->uuid,
-						'name'      => $objFile->basename,
-						'path' 		=> $objFiles->path . '/' . $objFile->basename,
-						'size'		=> ($this->canChangeSize) ? $this->Value->size : $this->size,
+						'id'        => $objSubfiles->id,
+						'uuid'      => $objSubfiles->uuid,
+						'name'      => $objSubfiles->basename,
+						'path' 		=> $objSubfiles->path,
+						'size'		=> ($this->canChangeSize) ? $this->data->size : $this->size,
 						'alt'       => $arrMeta['title'],
 						'title'     => $arrMeta['title'],
 						'imageUrl'  => $arrMeta['link'],
 						'caption'   => $arrMeta['caption'],
 						'href'      => $strHref,
-						'filesize'  => $this->getReadableSize($objFile->filesize, 1),
-						'icon'      => TL_ASSETS_URL . 'assets/contao/images/' . $objFile->icon,
-						'mime'      => $objFile->mime,
-						'extension' => $objFile->extension
+						'filesize'  => $this->getReadableSize($objSubfiles->filesize, 1),
+						'icon'      => TL_ASSETS_URL . 'assets/contao/images/' . $objSubfiles->icon,
+						'mime'      => $objSubfiles->mime,
+						'extension' => $objSubfiles->extension
 					);
 					
-					$auxDate[] = $objFile->mtime;
+					$auxDate[] = $objSubfiles->mtime;
 				}
 			}
 		}
 		
 		// Sort array
-		switch (($this->canChangeSortBy) ? $this->Value->sortBy : $this->sortBy)
+		switch (($this->canChangeSortBy) ? $this->data->sortBy : $this->sortBy)
 		{
 			default:
 			case 'name_asc':
@@ -525,10 +528,10 @@ class PatternFileTree extends Pattern
 				break;
 			
 			case 'custom':
-				if ($this->Value->orderSRC != '')
+				if ($this->data->orderSRC != '')
 				{
-					$tmp = \StringUtil::deserialize($this->Value->orderSRC);
-					
+					$tmp = \StringUtil::deserialize($this->data->orderSRC);
+				
 					if (!empty($tmp) && is_array($tmp))
 					{
 						// Remove all values
@@ -549,7 +552,7 @@ class PatternFileTree extends Pattern
 						{
 							$arrOrder = array_merge($arrOrder, array_values($files));
 						}
-						
+							
 						// Remove empty (unreplaced) entries
 						$files = array_values(array_filter($arrOrder));
 						
@@ -589,8 +592,7 @@ class PatternFileTree extends Pattern
 			$files = array_slice($files, 0, $this->numberOfItems);
 		}
 		
-		
-		// prepare images
+		// Prepare images
 		if ($this->source == 'image')
 		{
 			$pictures = array();
@@ -620,11 +622,7 @@ class PatternFileTree extends Pattern
 		}
 
 		$this->writeToTemplate($files);
-
 	}
-
-
-	
 	
 	
 	/**
@@ -633,15 +631,21 @@ class PatternFileTree extends Pattern
 	public function getImageSizeList()
 	{
 		$arrSizes = \System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
-		$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip(\StringUtil::deserialize($this->sizeList)));
-		
+
+		if (is_array($arrList = \StringUtil::deserialize($this->sizeList)))
+		{
+			$arrSizes['image_sizes'] = array_intersect_key($arrSizes['image_sizes'], array_flip($arrList));
+		}
+		else
+		{
+			$arrSizes['image_sizes'] = array();
+		}
+
 		if ($this->canEnterSize)
 		{
 			return $arrSizes;
 		}
+		
 		return $arrSizes['image_sizes'];
 	}
-
-
-	
 }

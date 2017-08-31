@@ -11,9 +11,9 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
+namespace Agoat\ContentElements;
 
-use Agoat\ContentBlocks\Pattern;
+use Contao\StringUtil;
 
 
 class PatternExplanation extends Pattern
@@ -25,18 +25,19 @@ class PatternExplanation extends Pattern
 	 */
 	public function construct()
 	{
-		
-		// an explanation field
-
+		// Set id as pattern as there is no alias
+		$this->pattern = $this->id;
+	
+		// An explanation field
 		$this->generateDCA('explanation', array
 		(
 			'inputType' =>	'explanation',
 			'eval'		=>	array
 			(
 				'explanation'	=>	\StringUtil::toHtml5($this->explanation), 
+				'tl_class'		=>	'clr'
 			)
-		), false);
-	
+		), true, false);
 	}
 
 
@@ -47,7 +48,7 @@ class PatternExplanation extends Pattern
 	 */
 	public function view()
 	{
-		return '<div style="padding-top:10px;">' . \StringUtil::toHtml5($this->explanation) . '</div>';
+		return '<div class="widget"><div class="tl_explanation">' . \StringUtil::toHtml5($this->explanation) . '</div></div>';
 	}
 
 

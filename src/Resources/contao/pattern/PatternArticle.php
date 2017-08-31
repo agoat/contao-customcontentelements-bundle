@@ -11,9 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
-
-use Agoat\ContentBlocks\Pattern;
+namespace Agoat\ContentElements;
 
 
 class PatternArticle extends Pattern
@@ -100,7 +98,7 @@ class PatternArticle extends Pattern
 		$wizard = (!$this->multiArticle) ? array(array('tl_content', 'editArticleAlias')) : false;
 		
 		// Add a selectField with the articles as options
-		$this->generateDCA(($this->multiArticle) ? 'multiSelectField' : 'selectField', array
+		$this->generateDCA(($this->multiArticle) ? 'multiSelectField' : 'singleSelectField', array
 		(
 			'inputType' => 'select',
 			'label'		=> array($this->label, $this->description),
@@ -124,7 +122,7 @@ class PatternArticle extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
 		$strPreview .= '<optgroup label="&nbsp;Page1">';
 		$strPreview .= '<option value="article1">Article1</option>';
@@ -147,7 +145,7 @@ class PatternArticle extends Pattern
 	{
 		if ($this->multiArticle)
 		{
-			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiSelectField));
+			$objArticles = \ArticleModel::findMultipleByIds(\StringUtil::deserialize($this->data->multiSelectField));
 
 			// Return if there are no pages
 			if ($objArticles === null)
@@ -169,7 +167,7 @@ class PatternArticle extends Pattern
 		}
 		else
 		{
-			if (($objArticle = \ArticleModel::findById($this->Value->selectField)) !== null)
+			if (($objArticle = \ArticleModel::findById($this->data->selectField)) !== null)
 			{
 				$this->writeToTemplate($objArticle->row());
 			}

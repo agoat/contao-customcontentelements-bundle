@@ -11,9 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
-
-use Agoat\ContentBlocks\Pattern;
+namespace Agoat\ContentElements;
 
 
 class PatternSection extends Pattern
@@ -26,8 +24,8 @@ class PatternSection extends Pattern
 	public function construct()
 	{
 
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->alias] .= ';{section-'. $this->id . '-' . $this->rid . (($this->hidden) ? ':hide' : ''). '}';
-		$GLOBALS['TL_LANG']['tl_content']['section-' . $this->id . '-' . $this->rid] = $this->label;
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ';{section-'. $this->id . (($this->hidden) ? ':hide' : ''). '}';
+		$GLOBALS['TL_LANG']['tl_content']['section-' . $this->id] = $this->label;
 
 	}
 

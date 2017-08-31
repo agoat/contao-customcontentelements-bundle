@@ -11,9 +11,7 @@
  * @license	  LGPL-3.0+
  */
 
-namespace Agoat\ContentBlocks;
-
-use Agoat\ContentBlocks\Pattern;
+namespace Agoat\ContentElements;
 
 
 class PatternPageTree extends Pattern
@@ -28,7 +26,7 @@ class PatternPageTree extends Pattern
 		
 		if ($this->multiPage)
 		{
-			// the multiPage field
+			// The multiPage field
 			$this->generateDCA('multiPage', array
 			(
 				'inputType' =>	'pageTree',
@@ -44,17 +42,20 @@ class PatternPageTree extends Pattern
 				),
 				'load_callback'		=> array
 				(
-					array('tl_content_contentblocks', 'prepareOrderPageValue'),
+					array('tl_content_elements', 'prepareOrderValue'),
 				),
 				'save_callback'		=> array
 				(
-					array('tl_content_contentblocks', 'saveOrderPageValue'),
+					array('tl_content_elements', 'saveOrderValue'),
 				),
 			));
+
+			// The orderPage field
+			$this->generateDCA('orderPage', array(), false, false);
 		}
 		else
 		{
-			// the multiPage field
+			// The singlePage field
 			$this->generateDCA('singlePage', array
 			(
 				'inputType' =>	'pageTree',
@@ -78,7 +79,7 @@ class PatternPageTree extends Pattern
 	 */
 	public function view()
 	{
-		$strPreview = '<div class="inline" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
+		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
 		$strPreview .= '<li><img src="system/themes/flexible/icons/regular.svg" width="18" height="18" alt=""> Pagetitle</li>';				
 		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
@@ -91,10 +92,9 @@ class PatternPageTree extends Pattern
 	 */
 	public function compile()
 	{
-		// prepare value(s)
 		if ($this->multiPage)
 		{
-			$objPages = \PageModel::findMultipleByIds(\StringUtil::deserialize($this->Value->multiPage));
+			$objPages = \PageModel::findMultipleByIds(\StringUtil::deserialize($this->data->multiPage));
 
 			// Return if there are no pages
 			if ($objPages === null)
@@ -105,9 +105,9 @@ class PatternPageTree extends Pattern
 			$arrPages = array();
 
 			// Sort the array keys according to the given order
-			if ($this->Value->orderPage != '')
+			if ($this->data->orderPage != '')
 			{
-				$tmp = \StringUtil::deserialize($this->Value->orderPage);
+				$tmp = \StringUtil::deserialize($this->data->orderPage);
 
 				if (!empty($tmp) && is_array($tmp))
 				{
@@ -127,7 +127,7 @@ class PatternPageTree extends Pattern
 		}
 		else
 		{
-			if (($objPage = \PageModel::findById($this->Value->singlePage)) !== null)
+			if (($objPage = \PageModel::findById($this->data->singlePage)) !== null)
 			{
                 $this->writeToTemplate($objPage->row());
             }
