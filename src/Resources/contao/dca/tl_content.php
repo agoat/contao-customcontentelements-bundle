@@ -64,16 +64,7 @@ class tl_content_elements extends tl_content
 	{	
 		$return = \tl_content::addCteType($arrRow);
 		
-		$arrCTE = array();
-
-		foreach ($GLOBALS['TL_CTE'] as $g)
-		{
-			$arrCTE = array_merge($arrCTE, array_keys($g));
-		}
-	
-		$objElement = \ElementsModel::findOneByAlias($arrRow['type']);
-			
-		if ($objElement === null && !in_array($arrRow['type'], $arrCTE))
+		if (($objElement = $objElement = \ElementsModel::findOneByAlias($arrRow['type'])) === null && !array_key_exists($arrRow['type'], $GLOBALS['TL_DCA']['tl_content']['palettes']))
 		{
 			$tag = '<span style="color: #222;">' . $GLOBALS['TL_LANG']['CTE']['deleted'] . '</span>';
 		}
@@ -84,6 +75,7 @@ class tl_content_elements extends tl_content
 		
 		return ($tag) ? substr_replace($return, $tag . '</div>', strpos($return, '</div>')) : $return;
 	}
+	
 	
 	/**
 	 * Add a custom help wirzard to the type field
@@ -154,9 +146,7 @@ class tl_content_elements extends tl_content
 		// Legacy support
 		if ($dc->value != '' && !in_array($dc->value, array_reduce($arrElements, 'array_merge', array())))
 		{
-			$objLegacy = \ElementsModel::findOneByAlias($dc->value);
-			
-			if ($objLegacy === null)
+			if (($objLegacy = \ElementsModel::findOneByAlias($dc->value)) === null && !array_key_exists($dc->value, $GLOBALS['TL_DCA']['tl_content']['palettes']))
 			{
 				$arrLegacy = array('deleted' => array ($dc->value));
 			}
@@ -205,7 +195,8 @@ class tl_content_elements extends tl_content
 				{
 					$objDefault = \ElementsModel::findFirstPublishedElementByPid($objLayout->pid);
 				}
-				else
+				
+				if ($objDefault === null)
 				{
 					$objDefault = new \stdClass();
 					$objDefault->alias = 'text';
