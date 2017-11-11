@@ -30,7 +30,7 @@ class Controller extends \Contao\Controller
 			{
 				if (\Input::get('do') && \Input::get('id'))
 				{
-					$intLayoutId = $this->getLayoutId('tl_'.\Input::get('do'), \Input::get('id')); 
+					$intLayoutId = static::getLayoutId('tl_'.\Input::get('do'), \Input::get('id')); 
 					
 					// Sometimes the id is not the parent table but the content table id
 					if (!$intLayoutId)
@@ -280,6 +280,74 @@ class Controller extends \Contao\Controller
 
 	
 	/**
+	 * Dynamically change parent table when editing subpattern
+	 */
+	public function handleSubPatternTable ($strTable)
+	{
+		if ($strTable == 'tl_pattern')
+		{
+			if (\Input::get('spid') !== null)
+			{
+				$objParent = \PatternModel::findById(\Input::get('spid'));
+			}
+			else if (\Input::get('act') == 'edit' && \Input::get('mode') == '1')
+			{
+				// For the 'save and edit' function use the parent of the parent to check for a sub pattern
+				$objParent = \PatternModel::findById(\Input::get('pid'));
+
+				if ($objParent->ptable == 'tl_subpattern')
+				{
+					$objParent = \PatternModel::findById($objParent->pid);
+				}
+				else
+				{
+					$objParent = null;
+				}
+			}
+			else
+			{
+				$objParent = null;	
+			}
+
+			if (null !== $objParent)
+			{
+				if (\Input::get('id') == \Input::get('spid') && \Input::get('act') == 'edit')
+				{
+					// When editing a sub pattern itself use the ptable of the sub pattern object
+					$GLOBALS['TL_DCA']['tl_pattern']['config']['ptable'] = $objParent->ptable;
+				}
+				else
+				{
+					$GLOBALS['TL_DCA']['tl_pattern']['config']['ptable'] = 'tl_subpattern';
+				}
+				
+				$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
+
+				// Extra config for the sub pattern types
+				if ($objParent->type == 'subpattern')
+				{
+					$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
+					
+					// Set the filter for the subpattern option
+					if ($objParent->subPatternType == 'options')
+					{
+						// Set callbacks and filter
+						$GLOBALS['TL_DCA']['tl_pattern']['config']['onload_callback'][] = array('tl_pattern', 'subPatternFilter');
+						$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['panel_callback']['subPatternFilter'] = array('tl_pattern', 'generatesubPatternFilter');
+
+						$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['panelLayout']);
+					}
+				}
+				else if ($objParent->type == 'multipattern')
+				{
+					$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
+				}
+			}
+		}
+	}
+
+	
+	/**
 	 * Get the layout ID for an article
 	 *
 	 * @param string  $strTable The name of the table (article or news) 
@@ -334,13 +402,16 @@ class Controller extends \Contao\Controller
 			{
 				foreach ($GLOBALS['TL_HOOKS']['getLayoutId'] as $callback)
 				{
-					$this->import($callback[0]);
-					$intId = $this->{$callback[0]}->{$callback[1]}($strTable, $intId);
+					//$this->import($callback[0]);
+					$layoutId = static::importStatic($callback[0])->{$callback[1]}($strTable, $intId);
+			
+					if (layoutId)
+					{
+						return $layoutId;
+					}
 				}
 			}
-			return $intId;
 		}
-	
 	}
 
 

@@ -17,14 +17,14 @@
  */
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_pattern');
 
-$GLOBALS['BE_MOD']['design']['themes']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
-$GLOBALS['BE_MOD']['content']['article']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
 
-$bundles = \System::getContainer()->getParameter('kernel.bundles');
-
-if (isset($bundles['ContaoNewsBundle']))
+/**
+ * Style sheet
+ */
+if (TL_MODE == 'BE')
 {
-	$GLOBALS['BE_MOD']['content']['news']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
+	$GLOBALS['TL_CSS'][] = 'bundles/agoatcontentelements/style.css|static';
+	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/agoatcontentelements/core.js';
 }
 
 
@@ -33,6 +33,7 @@ if (isset($bundles['ContaoNewsBundle']))
  */
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentElements\\Controller','registerBlockElements');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Controller','registerBlockElements');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Controller','handleSubPatternTable');
 
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Controller','setNewsArticleCallbacks');
 
@@ -43,6 +44,8 @@ $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements
 $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controller','addLayoutJS');
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Versions','hideDataTableVersions');
+
+$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Agoat\\ContentElements\\Ajax','executeGroupActions');
 
 
 $GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareTables');
@@ -64,60 +67,70 @@ $GLOBALS['TL_CTP'] = array
 			'class'			=> 'Agoat\ContentElements\PatternTextField',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'textarea'		=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternTextArea',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'selectfield'	=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternSelectField',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'checkbox'		=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternCheckBox',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'filetree'		=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternFileTree',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'pagetree'		=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternPageTree',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'articletree'		=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternArticleTree',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'listwizard'	=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternListWizard',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'tablewizard'	=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternTableWizard',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'code'			=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternCode',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		)
 	),
 	'layout' => array
@@ -129,7 +142,24 @@ $GLOBALS['TL_CTP'] = array
 		'explanation' => array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternExplanation',
-		)
+			'childOf'		=> array('subpattern', 'multipattern'),
+		),
+		'subpattern' => array
+		(
+			'class'			=> 'Agoat\ContentElements\PatternSubPattern',
+			'data'			=> true,
+			'output'		=> true,
+			'subpattern'	=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
+		),
+		'multipattern' => array
+		(
+			'class'			=> 'Agoat\ContentElements\PatternMultiPattern',
+			'data'			=> true,
+			'output'		=> true,
+			'subpattern'	=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
+		),
 	),
 	'element' => array
 	(
@@ -152,6 +182,7 @@ $GLOBALS['TL_CTP'] = array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternImageSize',
 			'output'		=> true,
+			'childOf'		=> array('subpattern'),
 		),
 		'form' => array
 		(
@@ -178,4 +209,8 @@ $GLOBALS['BE_FFL']['fileTree'] 		= '\Agoat\ContentElements\FileTree';
 $GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\ContentElements\PageTree';
 $GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\ContentElements\ArticleTree';
 
+$GLOBALS['BE_FFL']['group'] 		= '\Agoat\ContentElements\Group';
+$GLOBALS['BE_FFL']['groupstart'] 	= '\Agoat\ContentElements\GroupStart';
+$GLOBALS['BE_FFL']['groupstop'] 	= '\Agoat\ContentElements\GroupStop';
+$GLOBALS['BE_FFL']['groupscript'] 	= '\Agoat\ContentElements\GroupScript';
 

@@ -32,7 +32,7 @@ class Versions extends \Contao\Controller
 				$objDatabase = \Database::getInstance();
 
 				// Get the total number of versions
-				$objTotal = $objDatabase->prepare("SELECT COUNT(*) AS count FROM tl_version WHERE NOT fromTable=\"tl_data\" AND version>1" . (!$objUser->isAdmin ? " AND userid=?" : ""))
+				$objTotal = $objDatabase->prepare("SELECT COUNT(*) AS count FROM tl_version WHERE version>1 AND editUrl IS NOT NULL" . (!$objUser->isAdmin ? " AND userid=?" : ""))
 										->execute($objUser->id);
 
 				$intLast   = ceil($objTotal->count / 30);
@@ -46,7 +46,7 @@ class Versions extends \Contao\Controller
 
 				
 				// Get the versions
-				$objVersions = $objDatabase->prepare("SELECT pid, tstamp, version, fromTable, username, userid, description, editUrl, active FROM tl_version WHERE NOT fromTable=\"tl_data\"" . (!$objUser->isAdmin ? " AND userid=?" : "") . " ORDER BY tstamp DESC, pid, version DESC")
+				$objVersions = $objDatabase->prepare("SELECT pid, tstamp, version, fromTable, username, userid, description, editUrl, active FROM tl_version WHERE editUrl IS NOT NULL" . (!$objUser->isAdmin ? " AND userid=?" : "") . " ORDER BY tstamp DESC, pid, version DESC")
 										   ->limit(30, $intOffset)
 										   ->execute($objUser->id);
 

@@ -39,6 +39,11 @@ class ElementsModel extends Model
 		$t = static::$strTable;
 		$arrColumns = array("$t.pid=? AND $t.invisible=''");
 	
+		if (!isset($arrOptions['order']))
+		{
+			$arrOptions['order'] = "$t.sorting";
+		}
+	
 		return static::findBy($arrColumns, $intPid, $arrOptions);
 	}
 
@@ -74,6 +79,11 @@ class ElementsModel extends Model
 	{
 		$t = static::$strTable;
 		$arrColumns = array("$t.pid=? AND $t.invisible='' AND $t.type='element'");
+	
+		if (!isset($arrOptions['order']))
+		{
+			$arrOptions['order'] = "$t.sorting";
+		}
 	
 		return static::findOneBy($arrColumns, $intPid, $arrOptions);
 	}
