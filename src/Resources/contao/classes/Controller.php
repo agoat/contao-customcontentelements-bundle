@@ -30,7 +30,7 @@ class Controller extends \Contao\Controller
 			{
 				if (\Input::get('do') && \Input::get('id'))
 				{
-					$intLayoutId = $this->getLayoutId('tl_'.\Input::get('do'), \Input::get('id')); 
+					$intLayoutId = static::getLayoutId('tl_'.\Input::get('do'), \Input::get('id')); 
 					
 					// Sometimes the id is not the parent table but the content table id
 					if (!$intLayoutId)
@@ -334,13 +334,16 @@ class Controller extends \Contao\Controller
 			{
 				foreach ($GLOBALS['TL_HOOKS']['getLayoutId'] as $callback)
 				{
-					$this->import($callback[0]);
-					$intId = $this->{$callback[0]}->{$callback[1]}($strTable, $intId);
+					//$this->import($callback[0]);
+					$layoutId = static::importStatic($callback[0])->{$callback[1]}($strTable, $intId);
+			
+					if (layoutId)
+					{
+						return $layoutId;
+					}
 				}
 			}
-			return $intId;
 		}
-	
 	}
 
 
