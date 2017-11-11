@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+	<file datatype="php" original="system/modules/elements/languages/en/tl_subpattern.php" source-language="en">
+		<body>
+ 			<trans-unit id="tl_subpattern.type.0">
+				<source>Pattern type</source>
+			</trans-unit>
+			<trans-unit id="tl_subpattern.alias.0">
+				<source>Alias</source>
+			</trans-unit>
+			<trans-unit id="tl_subpattern.subPatternType.0">
+				<source>Sub pattern type</source>
+			</trans-unit>
+			<trans-unit id="tl_subpattern.numberOfGroups.0">
+				<source>Total number of groups</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>
