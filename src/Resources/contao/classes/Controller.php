@@ -30,12 +30,24 @@ class Controller extends \Contao\Controller
 			{
 				if (\Input::get('do') && \Input::get('id'))
 				{
-					$intLayoutId = static::getLayoutId('tl_'.\Input::get('do'), \Input::get('id')); 
+					$module = \Input::get('do'); 
 					
-					// Sometimes the id is not the parent table but the content table id
-					if (!$intLayoutId)
+					foreach ($GLOBALS['BE_MOD'] as $group)
 					{
-						$intLayoutId = $this->getLayoutId('tl_'.\Input::get('do'), \ContentModel::findById(\Input::get('id'))->pid); 
+						if (isset($group[$module]))
+						{
+							$moduleTables = $group[$module]['tables'];
+						}
+					}			
+
+					$table = $moduleTables[(array_search('tl_content', $moduleTables)) - 1];
+					
+					$intLayoutId = $this->getLayoutId($table, \Input::get('id')); 
+
+					// Sometimes the id is not the parent table but the content table id
+					if (null === $intLayoutId)
+					{
+						$intLayoutId = $this->getLayoutId($table, \ContentModel::findById(\Input::get('id'))->pid); 
 					}
 				}
 
