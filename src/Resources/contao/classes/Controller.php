@@ -53,7 +53,7 @@ class Controller extends \Contao\Controller
 
 				$objLayout = \LayoutModel::findById($intLayoutId);
 
-				if ($objLayout === null)
+				if (null === $objLayout)
 				{
 					return;
 				}
