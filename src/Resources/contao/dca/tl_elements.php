@@ -250,18 +250,19 @@ class tl_elements extends Backend
 		switch ($arrRow['type'])
 		{
 			case 'group':
-				return '<div class="cte_type ctb_group">' . $arrRow['title'] . '</div>';
+				return '<div class="ctb_group">' . $arrRow['title'] . '</div>';
 
 			case 'element':
 				$key = $arrRow['invisible'] ? 'unpublished' : 'published';
 				$strDefault = ($arrRow['defaultType']) ? '<span style="color:#b3b3b3;padding-left:8px">(Standard element)</span>' : '';
+				
 				if ($arrRow['singleSRC'])
 				{
 					$objImg = \FilesModel::findByUuid($arrRow['singleSRC']);
 					$strBackground = ' url(' . $objImg->path . ')';
 				}
 	
-				return '<div class="cte_type ctb_element ' . $key . '" style="position: relative; margin: 0; padding: 0 0 0 80px; line-height: 41px; pointer-events: none;"><div class="cte_img" style="position: absolute; left: 6px; top: 0px; width: 60px; height: 40px; border: 1px solid #ccc;  background: #eee' . $strBackground .  ';background-size: 60px 40px;"></div>' . $arrRow['title'] . $strDefault . '</div>';
+				return '<div class="ctb_element ' . $key . '"><div class="cte_img" style="background: #eee' . $strBackground . '"></div>' . $arrRow['title'] . $strDefault . '</div>';
 		}
 	}
 	

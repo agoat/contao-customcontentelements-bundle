@@ -1,10 +1,12 @@
 /* Extra css for content elements*/
-.ctb_group, .ctb_element.published, .ctb_element.unpublished {color: #000; margin: 0; background: none;}
-.ctb_group {padding: 5px; font-weight: 500;}
-.ctb_element.unpublished {opacity: .33;}
-.tl_explanation {margin: 15px 0;}
-.tl_multigroup {background: rgba(200,200,200,.15); margin: 0 -1% 10px; padding: 10px 1% 10px; border-radius: 6px;}
-.tl_multigroup > h3 {padding-top:2px}
-.tl_multigroup_header {margin: 18px 0 8px; float: right; text-align: right;}
-.tl_multigroup_right {padding: 1px 0 8px; float: right; text-align: right;}
-.tl_multigroup_box {padding-top: 18px;}
+.tl_content .ctb_group,.tl_content  .ctb_element.published,.tl_content  .ctb_element.unpublished {color: #000; margin: 0; background: none;}
+.tl_content .ctb_group {padding: 5px; font-weight: 700;}
+.tl_content .ctb_element {position: relative; padding: 0 0 0 80px; line-height: 41px; pointer-events: none;}
+.tl_content .ctb_element > .cte_img {position: absolute; left: 6px; top: 0px; width: 60px; height: 40px; border: 1px solid #ccc; background-size: 60px 40px;}
+.tl_content .ctb_element.unpublished {opacity: .33;}
+.tl_form .tl_explanation {margin: 15px 0;}
+.tl_form .tl_group {background: rgba(160,160,165,.12); margin: 10px -7px; padding: 7px; border-radius: 6px;}
+.tl_form .tl_group > h3 {padding-top:2px}
+.tl_form .tl_group_header {margin: 18px 0 8px;}
+.tl_form .tl_group_right {padding: 1px 0 8px; float: right; text-align: right;}
+.tl_form .tl_group button[disabled], .tl_group_header button[disabled] {opacity: .4}
