@@ -18,8 +18,6 @@ use Contao\StringUtil;
 
 class PatternSubPattern extends Pattern
 {
-
-	
 	/**
 	 * generate the DCA construct
 	 */
@@ -30,6 +28,43 @@ class PatternSubPattern extends Pattern
 			$this->parent = 0;
 		}
 
+		// Execute Ajax action
+		if (\Environment::get('isAjaxRequest') && \Input::post('pattern') == $this->pattern)
+		{
+			switch (\Input::post('action'))
+			{
+				case 'toggleSubpattern':
+					dump('toggling');
+					$objGroup = \DataModel::findById(\Input::post('id'));
+					
+					if ($objGroup !== null)
+					{
+						$objGroup->checkBox = \Input::post('state');
+						
+						$objGroup->save();
+					dump($objGroup);
+						
+						$this->data = $objGroup;
+					}
+					break;
+				
+				case 'switchSubpattern':
+					dump('switching');
+					$objGroup = \DataModel::findById(\Input::post('id'));
+					
+					if ($objGroup !== null)
+					{
+						$objGroup->singleSelectField = \Input::post('option');
+						
+						$objGroup->save();
+					dump($objGroup);
+						
+						$this->data = $objGroup;
+					}
+					break;
+			}
+		}
+		
 		if ($this->subPatternType == 'options')
 		{
 			$strGroup = 'default';
@@ -69,14 +104,14 @@ class PatternSubPattern extends Pattern
 				'options'		=>	$arrOptions,
 				'eval'			=>	array
 				(
-					'tl_class'			=>	'w50 clr',
-					'submitOnChange'	=>	true
+					'tl_class'		=>	'w50 clr',
+					'onchange'		=>	'AjaxRequest.switchSubpattern(this, ' . $this->data->id . ', \'' . $this->pattern . '\')'
 				)
 			));
 			
 			$option = $this->data->singleSelectField;
 		
-			if (null === $option)
+			if (!$option)
 			{
 				$option = $default;
 			}
@@ -92,8 +127,8 @@ class PatternSubPattern extends Pattern
 				'label'			=>	array($this->label, $this->description),
 				'eval'			=>	array
 				(
-					'tl_class'			=>	'w50 clr m12',
-					'submitOnChange'	=>	true
+					'tl_class'		=>	'w50 clr m12',
+					'onclick'		=>	'AjaxRequest.toggleSubpattern(this, ' . $this->data->id . ', \'' . $this->pattern . '\')'
 				)
 			));
 

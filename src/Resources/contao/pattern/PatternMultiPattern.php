@@ -27,43 +27,49 @@ class PatternMultiPattern extends Pattern
 			$this->parent = 0;
 		}
 
-		$strCommand = 'cmd-' . $this->pattern;
-		
-		// Let the DC_Table first save the post values 
-		if (\Environment::get('request_method') == 'GET')
+		// Execute Ajax actions
+		if (\Environment::get('isAjaxRequest') && \Input::post('pattern') == $this->pattern)
 		{
-			// Execute group command(s)
-			switch (\Input::get($strCommand))
+			switch (\Input::post('action'))
 			{
-				case  'insert':
+				case 'insertGroup':
 					$newGroup = new \DataModel();
 
 					$newGroup->pid = $this->pid;
 					$newGroup->parent = $this->parent;
 					$newGroup->pattern = $this->pattern;
-					$newGroup->sorting = $this->getNewPosition((strlen(\Input::get('gid'))) ? \Input::get('gid') : 0);
+					$newGroup->sorting = $this->getNewPosition((strlen(\Input::post('pid'))) ? \Input::post('pid') : 0);
 					$newGroup->tstamp = time();
 					
 					$newGroup->save();
 					
-					$this->redirect(preg_replace('/&(amp;)?gid=[^&]*/i', '', preg_replace('/&(amp;)?' . preg_quote($strCommand, '/') . '=[^&]*/i', '', \Environment::get('request'))));
+					$newGroupId = $newGroup->id;
 					break;
 					
-				case  'delete':
-					if (strlen(\Input::get('gid')))
+				case  'moveGroup':
+					$objGroup = \DataModel::findById(\Input::post('id'));
+					
+					if ($objGroup !== null)
 					{
-						$objGroup = \DataModel::findById(\Input::get('gid'));
+						$objGroup->sorting = $this->getNewPosition((strlen(\Input::post('pid'))) ? \Input::post('pid') : 0);
 						
-						if ($objGroup !== null)
-						{
-							$objGroup->delete();
-						}
-						
-						$this->reviseDataTable();
-						$this->redirect(preg_replace('/&(amp;)?gid=[^&]*/i', '', preg_replace('/&(amp;)?' . preg_quote($strCommand, '/') . '=[^&]*/i', '', \Environment::get('request'))));
+						$objGroup->save();
 					}
 					break;
+					
+				case  'deleteGroup':
+					$objGroup = \DataModel::findById(\Input::post('id'));
+					
+					if ($objGroup !== null)
+					{
+						$objGroup->delete();
+					}
+					
+					$this->reviseDataTable();
+					break;
 			}
+			
+			$bolAjax = true;
 		}
 		
 		$colGroupData = \DataModel::findByPidAndPatternAndParent($this->pid, $this->pattern, $this->parent, array('order'=>'sorting ASC'));
@@ -76,8 +82,6 @@ class PatternMultiPattern extends Pattern
 			$colGroupData->save();
 		}
 
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[' . $this->pattern . ']';
-		
 		// Add insert group button
 		$this->generateDCA('group', array
 		(
@@ -85,13 +89,20 @@ class PatternMultiPattern extends Pattern
 			'eval'		=>	array
 			(
 				'insert'	=>	(count($colGroupData) < $this->numberOfGroups) ? true : false, 
-				'command'	=> 	$strCommand,
+				'pattern'	=>	$this->pattern,
 				'tl_class'	=>	'clr'
 			)
-		));
+		), true, false);
+		
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[' . $this->pattern . ']';
 		
 		foreach ($colGroupData as $objGroupData)
 		{
+			if (\Environment::get('isAjaxRequest') && $bolAjax && $newGroupId != $objGroupData->id)
+			{
+				continue;
+			}
+			
 			$this->pattern = $objGroupData->pattern;
 			$this->data = $objGroupData;
 
@@ -106,7 +117,10 @@ class PatternMultiPattern extends Pattern
 					'gid'		=>	$this->data->id,
 					'insert'	=>	(count($colGroupData) < $this->numberOfGroups) ? true : false, 
 					'delete'	=>	(count($colGroupData) > 1) ? true : false,
-					'command'	=> 	$strCommand,
+					'move'		=>	(count($colGroupData) > 1) ? true : false,
+					'max'	=>	$this->numberOfGroups,
+					'pattern'	=>	$this->pattern,
+					'tl_class'	=>	'group_' . $this->data->id
 				),
 			));
 				
@@ -162,17 +176,28 @@ class PatternMultiPattern extends Pattern
 			}
 		
 			// Close group widget
-			$this->generateDCA('eof', array
+			$this->generateDCA('eog', array
 			(
 				'inputType' =>	'groupstop',
 				'eval'		=>	array
 				(
-					'tl_class'		=>	'clr'	
+					'tl_class'	=>	'clr'	
 				)
 			), true, false);
 		}
-		
+
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[EOF]';
+
+		// Add group script widget
+		$this->generateDCA('script', array
+		(
+			'inputType' =>	'groupscript',
+			'eval'		=>	array
+			(
+				'pattern'	=>	$this->pattern
+			)
+		), true, false);
+
 	}
 
 

@@ -1005,7 +1005,6 @@ class tl_pattern extends Backend
 		{
 			$objParent = \PatternModel::findById($dc->activeRecord->pid);
 		}
-		dump($objParent->type);		
 			
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{

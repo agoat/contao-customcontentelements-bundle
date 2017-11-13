@@ -17,6 +17,9 @@
  */
 array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_pattern');
 
+$GLOBALS['BE_MOD']['design']['themes']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
+$GLOBALS['BE_MOD']['content']['article']['stylesheet'][] = 'bundles/agoatcontentelements/style.css';
+$GLOBALS['BE_MOD']['content']['article']['javascript'][] = 'bundles/agoatcontentelements/core.js';
 
 /**
  * Style sheet
@@ -44,6 +47,8 @@ $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements
 $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controller','addLayoutJS');
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Versions','hideDataTableVersions');
+
+$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Agoat\\ContentElements\\Ajax','executeGroupActions');
 
 
 $GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareTables');
@@ -209,4 +214,5 @@ $GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\ContentElements\PageTree';
 $GLOBALS['BE_FFL']['group'] 		= '\Agoat\ContentElements\Group';
 $GLOBALS['BE_FFL']['groupstart'] 	= '\Agoat\ContentElements\GroupStart';
 $GLOBALS['BE_FFL']['groupstop'] 	= '\Agoat\ContentElements\GroupStop';
+$GLOBALS['BE_FFL']['groupscript'] 	= '\Agoat\ContentElements\GroupScript';
 
