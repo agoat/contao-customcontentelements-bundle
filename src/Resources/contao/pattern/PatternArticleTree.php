@@ -25,20 +25,21 @@ class PatternArticleTree extends Pattern
 
 		if ($this->insideRoot)
 		{
-			$objContent = \ContentModel::findById($this->pid);
-			$objArticle = \ArticleModel::findById((int) $objContent->pid);
-			$objPage = \PageModel::findWithDetails((int) $objArticle->pid);
+			$objContent = \ContentModel::findById($this->data->pid);
 
-			if (null !== $objPage)
+			$rootId = Controller::getRootPageId($objContent->ptable, $objContent->pid);
+
+			if (null !== $rootId)
 			{
-				if (!$this->insideLang)
+				$objPage = \PageModel::findWithDetails($rootId);
+
+				if ($this->insideLang || empty($objPage->domain))
 				{
-					$objRootPages = \PageModel::findByDns($objPage->domain);
-					$arrNodes = $objRootPages->fetchEach('id');
+					$arrNodes = array($rootId);
 				}
 				else
 				{
-					$arrNodes = array($objPage->rootId);
+					$arrNodes = (array) \PageModel::findByDns($objPage->domain)->fetchEach('id');
 				}
 			}
 		}

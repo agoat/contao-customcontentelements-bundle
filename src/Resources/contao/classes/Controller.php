@@ -292,6 +292,76 @@ class Controller extends \Contao\Controller
 
 	
 	/**
+	 * Get the rootpage ID for an article
+	 *
+	 * @param string  $strTable The name of the table (article or news) 
+	 * @param integer $intId    An article or a news article ID
+	 *
+	 * @return integer The theme ID
+	 */
+	public static function getRootPageId ($strTable, $intId)
+	{
+		if ($strTable == 'tl_article')
+		{
+			$objArticle = \ArticleModel::findById($intId);
+
+			if ($objArticle === null)
+			{
+				return null;
+			}
+			
+			$objPage = \PageModel::findWithDetails($objArticle->pid);
+
+			if ($objPage === null)
+			{
+				return null;
+			}
+
+			return $objPage->rootId;
+		}
+		
+		elseif($strTable == 'tl_news')
+		{
+			$objNews = \NewsModel::findById($intId);
+
+			if ($objNews === null)
+			{
+				return null;
+			}
+			
+			$objPage = \PageModel::findWithDetails($objNews->getRelated('pid')->jumpTo);
+
+			if ($objPage === null)
+			{
+				return null;
+			}
+			
+			return $objPage->rootId;
+		}
+		
+		else
+		{
+			// HOOK: custom method to discover the layout id
+			if (isset($GLOBALS['TL_HOOKS']['getRootPageId']) && is_array($GLOBALS['TL_HOOKS']['getRootPageId']))
+			{
+				foreach ($GLOBALS['TL_HOOKS']['getRootPageId'] as $callback)
+				{
+					//$this->import($callback[0]);
+					$rootId = static::importStatic($callback[0])->{$callback[1]}($strTable, $intId);
+			
+					if (rootId)
+					{
+						return $rootId;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+
+
+	/**
 	 * Get the layout ID for an article
 	 *
 	 * @param string  $strTable The name of the table (article or news) 
@@ -307,38 +377,38 @@ class Controller extends \Contao\Controller
 
 			if ($objArticle === null)
 			{
-				return false;
+				return null;
 			}
 			
 			$objPage = \PageModel::findWithDetails($objArticle->pid);
 
 			if ($objPage === null)
 			{
-				return false;
+				return null;
 			}
 
 			return $objPage->layout;
-			
 		}
+		
 		elseif($strTable == 'tl_news')
 		{
 			$objNews = \NewsModel::findById($intId);
 
 			if ($objNews === null)
 			{
-				return false;
+				return null;
 			}
 			
 			$objPage = \PageModel::findWithDetails($objNews->getRelated('pid')->jumpTo);
 
 			if ($objPage === null)
 			{
-				return false;
+				return null;
 			}
 			
 			return $objPage->layout;
-			
 		}
+		
 		else
 		{
 			// HOOK: custom method to discover the layout id
@@ -356,6 +426,8 @@ class Controller extends \Contao\Controller
 				}
 			}
 		}
+		
+		return null;
 	}
 
 
