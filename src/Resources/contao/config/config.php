@@ -44,6 +44,8 @@ $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controll
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Versions','hideDataTableVersions');
 
+$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Agoat\\ContentElements\\Ajax','executeGroupActions');
+
 
 $GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareTables');
 $GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentElements\\Theme','importTables');
@@ -202,4 +204,5 @@ $GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\ContentElements\ArticleTree';
 $GLOBALS['BE_FFL']['group'] 		= '\Agoat\ContentElements\Group';
 $GLOBALS['BE_FFL']['groupstart'] 	= '\Agoat\ContentElements\GroupStart';
 $GLOBALS['BE_FFL']['groupstop'] 	= '\Agoat\ContentElements\GroupStop';
+$GLOBALS['BE_FFL']['groupscript'] 	= '\Agoat\ContentElements\GroupScript';
 

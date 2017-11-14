@@ -22,7 +22,7 @@ namespace Agoat\ContentElements;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class Group extends \Widget
+class GroupScript extends \Widget
 {
 	/**
 	 * Template
@@ -30,7 +30,7 @@ class Group extends \Widget
 	 */
 	protected $strTemplate = 'be_widget_rdo';
 
-	
+
 	/**
 	 * Generate the widget and return it as string
 	 *
@@ -38,13 +38,6 @@ class Group extends \Widget
 	 */
 	public function generate()
 	{
-		$return = '<div class="tl_group_header"><div class="tl_content_right click2edit">';
-		
-		// Add new group button
-		$return .= '<button onclick="AjaxRequest.insertGroup(this,\'' . $this->pattern . '\')" type="button" class="insert-handle" title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['top'] . '"' . (($this->insert) ? '' : 'disabled') . '>' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['group']['new']['label'] . '</button>';
-		
-		$return .= '</div></div>';
-
-		return $return;
+		return '<script>Backend.makeGroupsSortable("' . $this->pattern . '");</script>';
 	}
 }
