@@ -32,7 +32,7 @@ class AppKernel extends Kernel
         $bundles = [
             // somewhere after Contao\CoreBundle\ContaoCoreBundle(),
             // ...
-            new new Agoat\ContentElementsBundle\AgoatContentElementsBundle(),
+            new Agoat\ContentElementsBundle\AgoatContentElementsBundle(),
         ];
     }
 }
