@@ -74,7 +74,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['edit'],
 				'href'                => 'table=tl_pattern',
 				'icon'                => 'edit.svg',
-				'button_callback'     => array('tl_elements', 'elementButtons')
+				'button_callback'     => array('tl_elements', 'editButton')
 			),
 			'editheader' => array
 			(
@@ -87,7 +87,6 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_elements']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.svg',
-				'button_callback'     => array('tl_elements', 'elementButtons')
 			),
 			'delete' => array
 			(
@@ -422,17 +421,16 @@ class tl_elements extends Backend
 	 *
 	 * @return string
 	 */
-	public function elementButtons($row, $href, $label, $title, $icon, $attributes)
+	public function editButton($row, $href, $label, $title, $icon, $attributes)
 	{
 		switch ($row['type'])
 		{
 			case 'group':
-				return '';
+				return \Image::getHtml(str_replace('.', '_.', $icon), $label) . ' ';
 			
 			case 'element':
 				return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 		}
-		
 	}	
 
 	
@@ -450,11 +448,6 @@ class tl_elements extends Backend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		if ($row['type'] == 'group')
-		{
-			return '';
-		}
-
 		if (strlen(\Input::get('tid')))
 		{
 			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1), (@func_get_arg(12) ?: null));
