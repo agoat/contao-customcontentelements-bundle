@@ -1,7 +1,7 @@
 /* Extra css for content elements*/
 .tl_content .ctb_group,.tl_content  .ctb_element.published,.tl_content  .ctb_element.unpublished {color: #000; margin: 0; background: none;}
-.tl_content .ctb_group {padding: 5px; font-weight: 700;}
-.tl_content .ctb_element {position: relative; padding: 0 0 0 80px; line-height: 41px; pointer-events: none;}
+.tl_content .ctb_group {padding: 5px; font-size: .875rem; font-weight: 700;}
+.tl_content .ctb_element {position: relative; padding: 0 0 0 80px; font-size: .875rem; line-height: 41px; pointer-events: none;}
 .tl_content .ctb_element > .cte_img {position: absolute; left: 6px; top: 0px; width: 60px; height: 40px; border: 1px solid #ccc; background-size: 60px 40px;}
 .tl_content .ctb_element.unpublished {opacity: .33;}
 .tl_form .tl_explanation {margin: 15px 0;}

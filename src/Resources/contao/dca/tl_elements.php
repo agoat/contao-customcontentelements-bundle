@@ -250,7 +250,7 @@ class tl_elements extends Backend
 		switch ($arrRow['type'])
 		{
 			case 'group':
-				return '<div class="ctb_group">' . $arrRow['title'] . '</div>';
+				return '<div class="cte_type ctb_group">' . $arrRow['title'] . '</div>';
 
 			case 'element':
 				$key = $arrRow['invisible'] ? 'unpublished' : 'published';
@@ -262,7 +262,7 @@ class tl_elements extends Backend
 					$strBackground = ' url(' . $objImg->path . ')';
 				}
 	
-				return '<div class="ctb_element ' . $key . '"><div class="cte_img" style="background: #eee' . $strBackground . '"></div>' . $arrRow['title'] . $strDefault . '</div>';
+				return '<div class="cte_type ctb_element ' . $key . '"><div class="cte_img" style="background: #eee' . $strBackground . '"></div>' . $arrRow['title'] . $strDefault . '</div>';
 		}
 	}
 	
