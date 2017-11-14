@@ -95,12 +95,6 @@ $GLOBALS['TL_CTP'] = array
 			'data'			=> true,
 			'output'		=> true,
 		),
-		'articletree'		=> array
-		(
-			'class'			=> 'Agoat\ContentElements\PatternArticleTree',
-			'data'			=> true,
-			'output'		=> true,
-		),
 		'listwizard'	=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternListWizard',
