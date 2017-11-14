@@ -3,7 +3,7 @@
  /**
  * Contao Open Source CMS - ContentBlocks extension
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
+ * Copyright (c) 2017 Arne Stappen (aGoat)
  *
  *
  * @package   contentblocks
@@ -16,17 +16,36 @@ namespace Agoat\ContentElements;
 
 class PatternPageTree extends Pattern
 {
-
-
 	/**
 	 * generate the DCA construct
 	 */
 	public function construct()
 	{
+		$arrNodes = false;
+		
+		if ($this->insideRoot)
+		{
+			$objContent = \ContentModel::findById($this->data->pid);
+
+			$rootId = Controller::getRootPageId($objContent->ptable, $objContent->pid);
+
+			if (null !== $rootId)
+			{
+				$objPage = \PageModel::findWithDetails($rootId);
+
+				if ($this->insideLang || empty($objPage->domain))
+				{
+					$arrNodes = array($rootId);
+				}
+				else
+				{
+					$arrNodes = (array) \PageModel::findByDns($objPage->domain)->fetchEach('id');
+				}
+			}
+		}
 		
 		if ($this->multiPage)
 		{
-			// The multiPage field
 			$this->generateDCA('multiPage', array
 			(
 				'inputType' =>	'pageTree',
@@ -36,9 +55,9 @@ class PatternPageTree extends Pattern
 					'multiple'		=>	true,				
 					'fieldType'		=>	'checkbox', 
 					'orderField'	=>	$this->virtualFieldName('orderPage'),
-					'files'			=>	true,
 					'mandatory'		=>	($this->mandatory) ? true : false, 
-					'tl_class'		=>	'clr',
+					'rootNodes'		=>	$arrNodes,
+					'tl_class'		=>	'clr'
 				),
 				'load_callback'		=> array
 				(
@@ -55,7 +74,6 @@ class PatternPageTree extends Pattern
 		}
 		else
 		{
-			// The singlePage field
 			$this->generateDCA('singlePage', array
 			(
 				'inputType' =>	'pageTree',
@@ -63,9 +81,9 @@ class PatternPageTree extends Pattern
 				'eval'     	=> 	array
 				(
 					'fieldType'		=>	'radio', 
-					'extensions' 	=>	$extensions,
 					'mandatory'		=>	($this->mandatory) ? true : false, 
-					'tl_class'		=>	'clr',
+					'rootNodes'		=>	$arrNodes,
+					'tl_class'		=>	'clr'
 				),
 			));
 			
@@ -80,7 +98,16 @@ class PatternPageTree extends Pattern
 	public function view()
 	{
 		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
-		$strPreview .= '<li><img src="system/themes/flexible/icons/regular.svg" width="18" height="18" alt=""> Pagetitle</li>';				
+
+		if ($this->multiPage)
+		{
+			$strPreview .= '<li><img src="system/themes/flexible/icons/regular.svg" width="18" height="18" alt=""> Articletitle1</li><li><img src="system/themes/flexible/icons/regular.svg" width="18" height="18" alt=""> Articletitle2</li><li><img src="system/themes/flexible/icons/regular.svg" width="18" height="18" alt=""> Articletitle3</li>';				
+		}
+		else
+		{
+			$strPreview .= '<li><img src="system/themes/flexible/icons/regular.svg" width="18" height="18" alt=""> Articletitle</li>';				
+		}
+
 		$strPreview .= '</ul><p><a href="javascript:void(0);" class="tl_submit">Change selection</a></p></div><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
 		return $strPreview;

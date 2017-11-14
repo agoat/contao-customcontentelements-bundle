@@ -95,12 +95,6 @@ $GLOBALS['TL_CTP'] = array
 			'data'			=> true,
 			'output'		=> true,
 		),
-		'article'		=> array
-		(
-			'class'			=> 'Agoat\ContentElements\PatternArticle',
-			'data'			=> true,
-			'output'		=> true,
-		),
 		'listwizard'	=> array
 		(
 			'class'			=> 'Agoat\ContentElements\PatternListWizard',
@@ -176,5 +170,6 @@ $GLOBALS['BE_FFL']['explanation'] 	= '\Agoat\ContentElements\Explanation';
 $GLOBALS['BE_FFL']['visualselect'] 	= '\Agoat\ContentElements\VisualSelectMenu';
 $GLOBALS['BE_FFL']['fileTree'] 		= '\Agoat\ContentElements\FileTree';
 $GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\ContentElements\PageTree';
+$GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\ContentElements\ArticleTree';
 
 

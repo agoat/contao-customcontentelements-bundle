@@ -114,7 +114,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type','source','multiSource','picker'),
+		'__selector__'                => array('type', 'source', 'multiSource', 'insideRoot', 'picker'),
 		'default'                     => '{type_legend},type',
 		// input
 		'textfield'					  => '{type_legend},type;{textfield_legend},minLength,maxLength,rgxp,defaultValue,multiple,picker;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr,classLong;{invisible_legend},invisible',
@@ -124,8 +124,8 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		'checkbox'					  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'listwizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
 		'tablewizard'				  => '{type_legend},type;{label_legend},label,description;{pattern_legend},alias,mandatory;{invisible_legend},invisible',
-		'article'					  => '{type_legend},type;{article_legend},insideRoot,multiArticle;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
-		'pagetree'					  => '{type_legend},type;{page_legend},multiPage;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
+		'articletree'				  => '{type_legend},type;{article_legend},multiArticle,insideRoot;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
+		'pagetree'					  => '{type_legend},type;{page_legend},multiPage,insideRoot;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'filetree'					  => '{type_legend},type;{source_legend},source;{multiSource_legend},multiSource;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr;{invisible_legend},invisible',
 		'imagesize'					  => '{type_legend},type;{source_legend},size;{pattern_legend},alias;{invisible_legend},invisible',
 		// layout
@@ -144,7 +144,8 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 	(
 		'source_image'				  => 'size,canChangeSize,sizeList,canEnterSize',
 		'source_custom'				  => 'customExtension',
-		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore,canSelectFolder',
+		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore',
+		'insideRoot'				  => 'insideLang',
 		'picker_unit'				  => 'units',
 	),
 	// Fields
@@ -451,7 +452,15 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['insideRoot'],
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12 clr'),
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'insideLang' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['insideLang'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50 m12'),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'sortBy' => array
@@ -639,7 +648,6 @@ class tl_pattern extends Backend
 	}
 
 
-	
 	/**
 	 * Add the type of content pattern
 	 *
