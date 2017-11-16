@@ -26,6 +26,24 @@ class Template extends FrontendTemplate
 {
 	
 	/**
+	 * Add a wrapper in the backend
+	 *
+	 * @return string The template markup
+	 */
+	public function parse()
+	{
+		$strBuffer = parent::parse();
+
+		if (TL_MODE == 'BE')
+		{
+			$strBuffer = '<div class="tl_ce ' . $this->strTemplate . '">' . $strBuffer . '</div>';
+		}
+		
+		return $strBuffer;
+	}
+
+
+	/**
 	 * Add Image to template
 	 *
 	 * @param object $image The element or module as array
