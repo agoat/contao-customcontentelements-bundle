@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,12 +15,15 @@ namespace Agoat\ContentElements;
 use Contao\StringUtil;
 
 
+/**
+ * Content element pattern "tablewizard"
+ */
 class PatternTableWizard extends Pattern
 {
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		$this->generateDCA('tableItems', array
 		(
@@ -42,17 +44,19 @@ class PatternTableWizard extends Pattern
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label> <a href="javascript:void(0);" title="" > <img src="system/themes/flexible/icons/tablewizard.svg" alt="CSV import" style="vertical-align:text-bottom" height="16" width="16"></a> <img src="system/themes/flexible/icons/demagnify.svg" alt="" title="" style="vertical-align:text-bottom;cursor:pointer" height="16" width="16"><img src="system/themes/flexible/icons/magnify.svg" alt="" title="" style="vertical-align:text-bottom; cursor:pointer" height="16" width="16"></h3>';
 		
 		$strPreview .= '<table class="tl_tablewizard"><thead><tr><td style="text-align:center; white-space:nowrap"><a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/copy.svg" alt="Duplicate the column" class="tl_tablewizard_img" height="16" width="16"></a> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/movel.svg" alt="Move the column one position left" class="tl_tablewizard_img" height="16" width="16"></a> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/mover.svg" alt="Move the column one position right" class="tl_tablewizard_img" height="16" width="16"></a> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/delete.svg" alt="Delete the column" class="tl_tablewizard_img" height="16" width="16"></a></td><td style="text-align:center; white-space:nowrap"><a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/copy.svg" alt="Duplicate the column" class="tl_tablewizard_img" height="16" width="16"></a> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/movel.svg" alt="Move the column one position left" class="tl_tablewizard_img" height="16" width="16"></a> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/mover.svg" alt="Move the column one position right" class="tl_tablewizard_img" height="16" width="16"></a> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/delete.svg" alt="Delete the column" class="tl_tablewizard_img" height="16" width="16"></a></td><td></td></tr></thead><tbody class="sortable" data-tabindex="2">';
 
-		$strRowPreview .= '<tr><td class="tcontainer"><textarea name="tableItems[0][0]" class="tl_textarea noresize" tabindex="2" rows="12" cols="80" style="width:142px;height:66px"></textarea></td><td class="tcontainer"><textarea name="tableItems[0][1]" class="tl_textarea noresize" tabindex="3" rows="12" cols="80" style="width:142px;height:66px"></textarea></td><td style="white-space:nowrap"><a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/copy.svg" alt="Duplicate the row" class="tl_tablewizard_img" height="16" width="16"></a> <img src="system/themes/flexible/icons/drag.svg" alt="" class="drag-handle" title="" height="16" width="16"> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/delete.svg" alt="Delete the row" class="tl_tablewizard_img" height="16" width="16"></a> </td></tr>';
+		$strRowPreview = '<tr><td class="tcontainer"><textarea name="tableItems[0][0]" class="tl_textarea noresize" tabindex="2" rows="12" cols="80" style="width:142px;height:66px"></textarea></td><td class="tcontainer"><textarea name="tableItems[0][1]" class="tl_textarea noresize" tabindex="3" rows="12" cols="80" style="width:142px;height:66px"></textarea></td><td style="white-space:nowrap"><a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/copy.svg" alt="Duplicate the row" class="tl_tablewizard_img" height="16" width="16"></a> <img src="system/themes/flexible/icons/drag.svg" alt="" class="drag-handle" title="" height="16" width="16"> <a href="javascript:void(0);" title=""><img src="system/themes/flexible/icons/delete.svg" alt="Delete the row" class="tl_tablewizard_img" height="16" width="16"></a> </td></tr>';
 			
-		// Add two rows
+		// Show two example rows
 		$strPreview .= $strRowPreview;	
 		$strPreview .= $strRowPreview;	
 		
@@ -63,11 +67,10 @@ class PatternTableWizard extends Pattern
 
 
 	/**
-	 * prepare data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
 		$this->writeToTemplate(StringUtil::deserialize($this->data->tableItems));
 	}
-	
 }

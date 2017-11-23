@@ -1,20 +1,21 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Contao;
 
 
-
+/**
+ * Reads and writes element pattern
+ */
 class PatternModel extends Model
 {
 
@@ -26,19 +27,17 @@ class PatternModel extends Model
 
 
 	/**
-	 * Find all pattern by their Pids (section Ids)
+	 * Find all pattern by their pid (elements id)
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $intPid     The content element id
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\PatternModel|null A collection of models or null if there are no pattern
 	 */
 	 public static function findByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
-		
 
-		// Set ptable
 		$arrColumns = array("$t.pid=? AND ($t.ptable='tl_elements' OR $t.ptable='')");
 		
 		if (!isset($arrOptions['order']))
@@ -51,17 +50,17 @@ class PatternModel extends Model
 
 
 	/**
-	 * Find all pattern by their Pids (section Ids)
+	 * Find all pattern by their pid (elements id) and parent table
 	 *
-	 * @param integer $arrPids        An array of section IDs
+	 * @param integer $intPid         The content element id
+	 * @param string  $strParentTable The parent table name
 	 * @param array   $arrOptions     An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\PatternModel|null A collection of models or null if there are no pattern
 	 */
 	public static function findByPidAndTable($intPid, $strParentTable, array $arrOptions=array())
 	{
 		$t = static::$strTable;
-		
 		
 		// Also handle empty ptable fields
 		if ($strParentTable == 'tl_elements')
@@ -83,19 +82,17 @@ class PatternModel extends Model
 
 
 	/**
-	 * Find all pattern by their Pids (section Ids)
+	 * Find visible pattern by their pid (elements id)
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $intPid     The content element id
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\PatternModel|null A collection of models or null if there are no pattern
 	 */
 	 public static function findVisibleByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 		
-
-		// Set ptable
 		$arrColumns = array("$t.pid=? AND ($t.ptable='tl_elements' OR $t.ptable='') AND $t.invisible=''");
 		
 		if (!isset($arrOptions['order']))
@@ -108,17 +105,17 @@ class PatternModel extends Model
 
 	 
 	/**
-	 * Find all pattern by their Pids (section Ids)
+	 * Find visible pattern by their pid (elements id) and parent table
 	 *
-	 * @param integer $arrPids        An array of section IDs
+	 * @param integer $intPid         The content element id
+	 * @param string  $strParentTable The parent table name
 	 * @param array   $arrOptions     An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\PatternModel|null A collection of models or null if there are no pattern
 	 */
 	 public static function findVisibleByPidAndTable($intPid, $strParentTable, array $arrOptions=array())
 	{
 		$t = static::$strTable;
-		
 		
 		// Also handle empty ptable fields
 		if ($strParentTable == 'tl_elements')
@@ -139,17 +136,18 @@ class PatternModel extends Model
 	}
 
 	/**
-	 * Find all pattern by their Pids (section Ids)
+	 * Find visible pattern by their pid (elements id), parent table and subpattern option
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $intPid              The content element id
+	 * @param string  $strParentTable      The parent table name
+	 * @param string  $strSubPatternOption The subpattern option
+	 * @param array   $arrOptions          An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\PatternModel|null A collection of models or null if there are no pattern
 	 */
 	 public static function findVisibleByPidAndTableAndOption($intPid, $strParentTable, $strSubPatternOption, array $arrOptions=array())
 	{
 		$t = static::$strTable;
-		
 		
 		// Also handle empty ptable fields
 		if ($strParentTable == 'tl_elements')
@@ -171,12 +169,13 @@ class PatternModel extends Model
 
 
 	/**
-	 * Count all pattern by their Pid and Type
+	 * Count all pattern by their pid (elements id) and type
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $intPid     The content element id
+	 * @param string  $strType    The pattern type
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return integer The number of matching rows
 	 */
 	 public static function countByPidAndType($intPid, $strType, array $arrOptions=array())
 	{

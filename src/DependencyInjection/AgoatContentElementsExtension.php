@@ -1,11 +1,13 @@
 <?php
 
 /*
- * This file is part of the ContentBlocks Extension.
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (alias aGoat)
- *
- * @license LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElementsBundle\DependencyInjection;
@@ -13,10 +15,9 @@ namespace Agoat\ContentElementsBundle\DependencyInjection;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+
 /**
- * Adds the bundle services to the container.
- *
- * @author Arne Stappen <https://github.com/agoat>
+ * Adds the bundle services and paramters to the container.
  */
 class AgoatContentElementsExtension extends Extension
 {

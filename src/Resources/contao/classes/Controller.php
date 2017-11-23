@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2017 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -17,10 +16,15 @@ use Contao\File;
 use Contao\Combiner;
 
 
+/**
+ * Controller methods for the content elements
+ */
 class Controller extends \Contao\Controller
 {
 	/**
-	 * Add extra css and js to the backend template
+	 * Adds extra css and js from the frontend layout to the backend template
+	 *
+	 * @param Template $objTemplate The BackendTemplate object
 	 */
 	public function addPageLayoutToBE ($objTemplate)
 	{
@@ -61,7 +65,7 @@ class Controller extends \Contao\Controller
 				$GLOBALS['TL_USER_CSS'] = array(); // The TL_USER_CSS can be reset because it's not used in the backend
 				
 				$this->addBackendCSS($objLayout);
-				$this->addContentBlockCSS();
+				$this->addContentElementsCSS();
 
 				$objCombiner = new Combiner();
 
@@ -97,7 +101,7 @@ class Controller extends \Contao\Controller
 				$GLOBALS['TL_JAVASCRIPT'] = array(); // The TL_JAVASCRIPT can be reset because it's not used in the backend
 				
 				$this->addBackendJS($objLayout);
-				$this->addContentBlockJS();
+				$this->addContentElementsJS();
 
 				$objCombiner = new Combiner();
 				
@@ -141,7 +145,15 @@ class Controller extends \Contao\Controller
 	}
 
 	
-	public function addContentBlockCSS ($strBuffer='', $objTemplate=null)
+	/**
+	 * Adds CSS created in content elements templates to the TL_USER_CSS global
+	 *
+	 * @param string   $strBuffer
+	 * @param Template $objTemplate
+	 *
+	 * @return string
+	 */
+	public function addContentElementsCSS ($strBuffer='', $objTemplate=null)
 	{
 		foreach (array('CSS', 'SCSS' , 'LESS') as $strType)
 		{
@@ -170,7 +182,16 @@ class Controller extends \Contao\Controller
 		return $strBuffer;
 	}
 
-	public function addContentBlockJS ($strBuffer='', $objTemplate=null)
+
+	/**
+	 * Adds Javascript created in content elements templates to the TL_JAVASCRIPT global
+	 *
+	 * @param string   $strBuffer
+	 * @param Template $objTemplate
+	 *
+	 * @return string
+	 */
+	public function addContentElementsJS ($strBuffer='', $objTemplate=null)
 	{
 		if ($GLOBALS['TL_CTB_JS'] == '')
 		{
@@ -197,6 +218,15 @@ class Controller extends \Contao\Controller
 	}
 
 	
+	/**
+	 * Adds Javascript from the layout to the TL_JAVASCRIPT global
+	 *
+	 * @param PageModel $objPage
+	 * @param Template  $objLayout
+	 *
+	 * @depreciated 
+	 * @intern Can be removed when Contao 4.5 is released as it includes this in the core
+	 */
 	public function addLayoutJS ($objPage, $objLayout)
 	{
 		$arrExternalJS = \StringUtil::deserialize($objLayout->externalJS);
@@ -257,8 +287,7 @@ class Controller extends \Contao\Controller
 		
 	
 	/**
-	 * Register content block elements to the DCA
-	 *
+	 * Adds the content elements from the database to the config array
 	 */
 	public function registerBlockElements ()
 	{
@@ -292,7 +321,7 @@ class Controller extends \Contao\Controller
 
 	
 	/**
-	 * Get the rootpage ID for an article
+	 * Resolve the rootpage ID from table and id
 	 *
 	 * @param string  $strTable The name of the table (article or news) 
 	 * @param integer $intId    An article or a news article ID
@@ -362,7 +391,7 @@ class Controller extends \Contao\Controller
 
 
 	/**
-	 * Get the layout ID for an article
+	 * Resolve the layout ID from table and id
 	 *
 	 * @param string  $strTable The name of the table (article or news) 
 	 * @param integer $intId    An article or a news article ID
@@ -432,10 +461,9 @@ class Controller extends \Contao\Controller
 
 
 	/**
-	 * Add the backend CSS of the layout to the $GLOBALS['TL_USER_CSS']
+	 * Adds the backend CSS of the layout to the backend template
 	 *
-	 * @param object  $objLayout The layout object
-	 *
+	 * @param LayoutModel $objLayout The layout object
 	 */
 	private static function addBackendCSS($objLayout)
 	{
@@ -493,11 +521,11 @@ class Controller extends \Contao\Controller
 		}
 	}
 	
+	
 	/**
-	 * Add the backend JS of the layout to the $GLOBALS['TL_JAVASCRIPT']
+	 * Adds the backend Javascript of the layout to the backend template
 	 *
-	 * @param object  $objLayout The layout object
-	 *
+	 * @param LayoutModel $objLayout The layout object
 	 */
 	private static function addBackendJS($objLayout)
 	{
@@ -554,20 +582,4 @@ class Controller extends \Contao\Controller
 			unset($objFiles);
 		}
 	}
-	
-	/**
-	 * register callbacks for news extension bundles with contao core
-	 */
-	public function setNewsArticleCallbacks ($strTable)
-	{
-		if ($strTable != 'tl_news' || TL_MODE == 'FE')
-		{
-			return;
-		}
-		
-		$GLOBALS['TL_DCA']['tl_news']['config']['oncopy_callback'][] = array('tl_news_contentblocks', 'copyRelatedValues');
-		$GLOBALS['TL_DCA']['tl_news']['config']['ondelete_callback'][] = array('tl_news_contentblocks', 'deleteRelatedValues');
-
-	}
 }
-

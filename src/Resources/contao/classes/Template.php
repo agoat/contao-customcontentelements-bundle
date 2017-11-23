@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -22,9 +21,11 @@ use Agoat\ContentElements\Controller;
 use Agoat\ContentElements\Pattern;
 
 
+/**
+ * Template class with extra methods for content elements
+ */
 class Template extends FrontendTemplate
 {
-	
 	/**
 	 * Add a wrapper in the backend
 	 *
@@ -44,14 +45,14 @@ class Template extends FrontendTemplate
 
 
 	/**
-	 * Add Image to template
+	 * Add an image to template
 	 *
-	 * @param object $image The element or module as array
-	 * @param object|Model $size The image size as 
-	 * @param integer $width An optional width of the image
-	 * @param integer $height An optional height of the image
+	 * @param array      $image  The image parameter array from the FileTree pattern
+	 * @param string|int $size   The image size from the ImageSize widget as serialized array or imagesize id 
+	 * @param integer    $width  An optional width of the image
+	 * @param integer    $height An optional height of the image
 	 *
-	 * @return object  new image
+	 * @return array The new (resized) image parameter array
 	 */
 	public function addImage ($image, $size, $width=0, $height=0)
 	{
@@ -59,7 +60,6 @@ class Template extends FrontendTemplate
 		{
 			return;
 		}
-		
 		
 		if (@unserialize($size) === false)
 		{
@@ -80,17 +80,16 @@ class Template extends FrontendTemplate
 		$picture['path'] = $image['path'];
 		$picture['extension'] = $image['extension'];
 
-		// Return new image object
 		return $picture;
 	}
 
 	
 	/**
-	 * Add CSS to template
+	 * Add CSS to the page
 	 *
-	 * @param string   The css, scss or less content
-	 * @param string   The type of the content
-	 * @param boolean  If false, add the content in a extra file (only when type is css)
+	 * @param string  $strCSS    The css, scss or less content
+	 * @param string  $strType   The type of the content
+	 * @param boolean $bolStatic Set false to add the content in an extra file (only when type is css)
 	 */
 	public function addCSS ($strCSS, $strType='scss', $bolStatic=true)
 	{
@@ -119,21 +118,21 @@ class Template extends FrontendTemplate
 				$objFile->close();
 			}
 			
-			// add file path to TL_USER_CSS
+			// Add the file path to TL_USER_CSS
 			$GLOBALS[TL_USER_CSS][] = $strPath;
 		
 			return;
 		}
-		// add to combined CSS string
+		// Add to the combined CSS string
 		$GLOBALS['TL_CTB_' . $strType] .= $strCSS;
 	}
 
 	
 	/**
-	 * Add JS to template
+	 * Add Javascript to the page
 	 *
-	 * @param string   The javascript content
-	 * @param boolean  If false, add the content in a extra file
+	 * @param string  $strJS     The javascript content
+	 * @param boolean $bolStatic Set false to add the content in an extra file
 	 */
 	public function addJS ($strJS, $bolStatic=true)
 	{
@@ -155,12 +154,12 @@ class Template extends FrontendTemplate
 				$objFile->close();
 			}
 			
-			// add file path to TL_USER_CSS
+			// Add the file path to TL_USER_CSS
 			$GLOBALS[TL_JAVASCRIPT][] = $strPath;
 		
 			return;
 		}
-		// add to combined CSS string
+		// Add to the combined CSS string
 		$GLOBALS['TL_CTB_JS'] .= $strJS;
 	}
 
@@ -196,7 +195,7 @@ class Template extends FrontendTemplate
 
 	
 	/**
-	 * Return the alias of the previous content element
+	 * Get the alias of the previous content element
 	 *
 	 * @return string  The type of the previous content element
 	 */
@@ -219,7 +218,7 @@ class Template extends FrontendTemplate
 
 	
 	/**
-	 * Return the alias of the previous content element
+	 * Get the alias of the previous content element
 	 *
 	 * @return string  The type of the previous content element
 	 */
@@ -249,15 +248,13 @@ class Template extends FrontendTemplate
 	 */
 	public function insert($name, array $data=null)
 	{
-		
-		// register the template file (to find the custom templates)
+		// Register the template file (to find the custom templates)
 		if (!array_key_exists($name, TemplateLoader::getFiles()))
 		{
 			$objTheme = \LayoutModel::findById(Controller::getLayoutId($this->ptable, $this->pid))->getRelated('pid');
 			
 			TemplateLoader::addFile($name, $objTheme->templates);
 		}
-
 		
 		/** @var \Template $tpl */
 		if ($this instanceof \Template)
@@ -276,6 +273,7 @@ class Template extends FrontendTemplate
 		{
 			$tpl->setData($data);
 		}
+		
 		echo $tpl->parse();
 	}
 }

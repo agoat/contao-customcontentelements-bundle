@@ -1,16 +1,21 @@
 {
     "name": "agoat/contao-contentelements",
+    "description": "Contao 4 custom content elements",
+    "keywords": ["contao", "contao4", "contao-bundle", "plugin", "content", "elements", "custom-elements", "content-elements"],
     "type": "contao-bundle",
-    "description": "Contao content elements extension",
     "license": "LGPL-3.0+",
     "authors": [
         {
-            "name": "Arne Stappen",
-            "homepage": "https://github.com/agoat"
+            "name": "Arne Stappen (alias aGoat)",
+            "homepage": "https://agoat.xyz"
         }
     ],
+    "support": {
+        "issues": "https://github.com/agoat/contao-contentelements-bundle/issues",
+        "source": "https://github.com/agoat/contao-contentelements-bundle"
+    },
     "require": {
-        "php": ">=5.6",
+        "php": "^5.6|^7.0",
         "symfony/framework-bundle": "^3.3",
         "contao/core-bundle": "^4.4.2"
     },

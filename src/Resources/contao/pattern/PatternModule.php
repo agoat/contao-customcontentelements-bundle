@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,31 +15,35 @@ namespace Agoat\ContentElements;
 use Contao\Module;
 
 
+/**
+ * Content element pattern "module"
+ */
 class PatternModule extends Pattern
 {
-
-
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
-		// nothing to select
-		return;
+		return; // Nothing to set
 	}
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$objModule = \ModuleModel::findByPk($this->module);
+		
 		return '<div class="widget"><span style="color:#b3b3b3 ">' . $objModule->name . ' (ID ' . $objModule->id . ')</span></div>';
 	}
 
+
 	/**
-	 * Generate data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
@@ -64,9 +67,5 @@ class PatternModule extends Pattern
 		$objModule = new $strClass($objModule);
 		
 		$this->writeToTemplate($objModule->generate());
-		
 	}
-
-
-	
 }

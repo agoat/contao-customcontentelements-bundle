@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,14 +15,15 @@ namespace Agoat\ContentElements;
 use Contao\StringUtil;
 
 
+/**
+ * Content element pattern "explanation"
+ */
 class PatternExplanation extends Pattern
 {
-
-	
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		// Set id as pattern as there is no alias
 		$this->pattern = $this->id;
@@ -34,7 +34,7 @@ class PatternExplanation extends Pattern
 			'inputType' =>	'explanation',
 			'eval'		=>	array
 			(
-				'explanation'	=>	\StringUtil::toHtml5($this->explanation), 
+				'explanation'	=>	StringUtil::toHtml5($this->explanation), 
 				'tl_class'		=>	'clr'
 			)
 		), true, false);
@@ -42,23 +42,21 @@ class PatternExplanation extends Pattern
 
 
 	/**
-	 * prepare a field view for the backend
+	 * Generate the pattern preview
 	 *
-	 * @param array $arrAttributes An optional attributes array
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
-		return '<div class="widget"><div class="tl_explanation">' . \StringUtil::toHtml5($this->explanation) . '</div></div>';
+		return '<div class="widget"><div class="tl_explanation">' . StringUtil::toHtml5($this->explanation) . '</div></div>';
 	}
 
 
 	/**
-	 * prepare the values for the frontend template
-	 *
-	 * @param array $arrAttributes An optional attributes array
-	 */	
+	 * Prepare the data for the template
+	 */
 	public function compile()
 	{
-		return;
+		return; // Nothing to show in the frontend
 	}
 }

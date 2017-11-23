@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,12 +15,15 @@ namespace Agoat\ContentElements;
 use Contao\StringUtil;
 
 
+/**
+ * Content element pattern "code"
+ */
 class PatternCode extends Pattern
 {
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		// The highlight select field
 		if ($this->canChangeHighlight)
@@ -61,9 +63,11 @@ class PatternCode extends Pattern
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$selector = 'ctrl_textarea' . $this->id;
 
@@ -91,11 +95,10 @@ class PatternCode extends Pattern
 
 
 	/**
-	 * prepare data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
 		$this->writeToTemplate(array('code' => ($this->htmlspecialchars) ? StringUtil::specialchars($this->data->text) : $this->data->text, 'highlight' => ($this->canChangeHighlight) ? $this->data->highlight : $this->highlight));
 	}
-	
 }

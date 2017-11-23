@@ -1,47 +1,42 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
  
 namespace Agoat\ContentElements;
  
 use \Contao\FilesModel;
 
+
 /**
  * Pattern class
- *
- * @property integer $id
- * @property integer $pid
-
-
- *
- * @author Arne Stappen
  */
 abstract class Pattern extends Controller
 {
-
 	/**
-	 * Model
-	 * @var \ContentElement
+	 * @var \PatternModel
 	 */
 	protected $objPattern;
 	
 	/**
-	 * Processed folders
+	 * Data
 	 * @var array
 	 */
 	protected $arrData = array();
 
+	/**
+	 * Mapper
+	 * @var array
+	 */
 	protected $arrMapper = false;
+
 	
 	/**
 	 * Initialize the object
@@ -53,6 +48,7 @@ abstract class Pattern extends Controller
 		$this->arrData = $objPattern->row();
 	} 
 
+	
 	/**
 	 * Set an object property
 	 *
@@ -106,9 +102,14 @@ abstract class Pattern extends Controller
 		return $this->arrData;
 	}	
 
+	
 	/**
-	 * Construct the DCA array
+	 * Generate the DCA for a virtual input field
 	 *
+	 * @param string  $strFieldName The input field name
+	 * @param array   $arrFieldDCA  The input field DCA array
+	 * @param boolean $bolVisble    Make the input field visible
+	 * @param boolean $bolCallbacks Set callbacks for the input field
 	 */
 	public function generateDCA($strFieldName, $arrFieldDCA=array(), $bolVisble=true, $bolCallbacks=true)
 	{
@@ -196,22 +197,35 @@ abstract class Pattern extends Controller
 
 
 	/**
-	 * prepare a field view for the backend
-	 *
+	 * Creates the DCA configuration
 	 */
-	abstract public function view();
+	abstract public function create();
 
 	
 	/**
-	 * push the values to the template object
+	 * Generate the pattern preview
 	 *
+	 * @return string HTML code
 	 */
-	public function writeToTemplate($Value)
+	abstract public function preview();
+
+	
+	/**
+	 * Prepare the data for the template
+	 */
+	abstract public function compile();
+
+	
+	/**
+	 * Write a value to the template
+	 *
+	 * @param mixed $value The value to be written to the template
+	 */
+	public function writeToTemplate($value)
 	{
 
 		if (is_array($this->arrMapper))
 		{
-		
 			$arrValue[$this->arrMapper[0]] = $this->Template->{$this->arrMapper[0]};
 			
 			$map =& $arrValue;
@@ -226,20 +240,20 @@ abstract class Pattern extends Controller
 				$map =& $map[$key];
 			}
 			
-			$map[$this->alias] = $Value;
+			$map[$this->alias] = $value;
 
 			$this->Template->{$this->arrMapper[0]} = $arrValue[$this->arrMapper[0]];
 			return;
 		}	
 	
-		$this->Template->{$this->alias} = $Value;
+		$this->Template->{$this->alias} = $value;
 	}
 
 
 	/**
 	 * Find a content pattern in the TL_CTP array and return the class name
 	 *
-	 * @param string $strName The content element name
+	 * @param string $strName The pattern name
 	 *
 	 * @return string The class name
 	 */
@@ -261,11 +275,11 @@ abstract class Pattern extends Controller
 
 	
 	/**
-	 * Find a content pattern in the TL_CTP array and return true if the pattern saves data to db
+	 * Check if a pattern saves data to the database
 	 *
-	 * @param string $strName The content element name
+	 * @param string $strName The pattern name
 	 *
-	 * @return boolean Pattern data status
+	 * @return boolean Returns true if the pattern saves data to the db
 	 */
 	public static function hasData($strName)
 	{
@@ -285,11 +299,11 @@ abstract class Pattern extends Controller
 
 	
 	/**
-	 * Find a content pattern in the TL_CTP array and return true if the pattern has frontend output
+	 * Check if a pattern have frontend output
 	 *
-	 * @param string $strName The content element name
+	 * @param string $strName The pattern name
 	 *
-	 * @return boolean Pattern data status
+	 * @return boolean Returns true if the pattern have frontend output
 	 */
 	public static function hasOutput($strName)
 	{
@@ -309,11 +323,11 @@ abstract class Pattern extends Controller
 
 	
 	/**
-	 * Find a content pattern in the TL_CTP array and return true if the pattern is a subpattern
+	 * Check if a pattern can be a child to another pattern (subpattern)
 	 *
-	 * @param string $strName The content element name
+	 * @param string $strName The pattern name
 	 *
-	 * @return boolean Pattern unique status
+	 * @return boolean Returns true if the pattern can be a child
 	 */
 	public static function isSubPattern($strName)
 	{

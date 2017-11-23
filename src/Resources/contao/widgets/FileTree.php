@@ -1,35 +1,23 @@
 <?php
 
-/**
- * Contao Open Source CMS - Contentblocks extension
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2005-2017 Leo Feyer
- * Copyright (c) 2017 Arne Stappen
- *
- * @license LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
 /**
- * Provide methods to handle input field "file tree".
- *
- * @property string  $orderField
- * @property boolean $multiple
- * @property boolean $isGallery
- * @property boolean $isDownloads
- * @property boolean $files
- * @property boolean $filesOnly
- * @property string  $path
- * @property string  $extensions
- * @property string  $fieldType
- *
- * @author Leo Feyer <https://github.com/leofeyer>
+ * Provide methods to handle input field "fileTree".
  */
 class FileTree extends \Widget
 {
-
 	/**
 	 * Submit user input
 	 * @var boolean

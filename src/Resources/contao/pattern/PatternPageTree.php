@@ -1,25 +1,27 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2017 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
+/**
+ * Content element pattern "pagetree"
+ */
 class PatternPageTree extends Pattern
 {
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		$arrNodes = false;
 		
@@ -72,6 +74,7 @@ class PatternPageTree extends Pattern
 			// The orderPage field
 			$this->generateDCA('orderPage', array(), false, false);
 		}
+		
 		else
 		{
 			$this->generateDCA('singlePage', array
@@ -86,16 +89,16 @@ class PatternPageTree extends Pattern
 					'tl_class'		=>	'clr'
 				),
 			));
-			
 		}
-		
 	}
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
 
@@ -115,7 +118,7 @@ class PatternPageTree extends Pattern
 
 
 	/**
-	 * prepare data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{

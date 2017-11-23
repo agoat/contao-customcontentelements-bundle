@@ -1,53 +1,50 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
+/**
+ * Content element pattern "explanation"
+ */
 class PatternSection extends Pattern
 {
-
-	
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ';{section-'. $this->id . (($this->hidden) ? ':hide' : ''). '}';
 		$GLOBALS['TL_LANG']['tl_content']['section-' . $this->id] = $this->label;
-
 	}
 
 
 	/**
-	 * prepare a field view for the backend
+	 * Generate the pattern preview
 	 *
-	 * @param array $arrAttributes An optional attributes array
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		return '<div style="padding-top:10px;"><fieldset id="pal_section_' . $this->id . '" class="tl_box" style="padding-top: 0;"><legend>' . $this->label . '</legend></fieldset></div>';
 	}
 
 
 	/**
-	 * prepare the values for the frontend template
-	 *
-	 * @param array $arrAttributes An optional attributes array
-	 */	
+	 * Prepare the data for the template
+	 */
 	public function compile()
 	{
-		return;
+		return; // Nothing to show in the frontend
 	}
 }

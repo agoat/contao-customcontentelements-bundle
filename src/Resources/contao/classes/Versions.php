@@ -1,23 +1,28 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2017 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
  
 
+/**
+ * Content data version handling
+ */
 class Versions extends \Contao\Controller
 {
 	/**
-	 * Hide tl_content_value versions
+	 * Hide versions without an editUrl
+	 *
+	 * @depreciated
+	 * @intern Can be removed with the release of Contao 4.5.0 and versions without editUrls will not be shown by default
 	 */
 	public function hideDataTableVersions ($objTemplate)
 	{
@@ -105,4 +110,3 @@ class Versions extends \Contao\Controller
 		}
 	}
 }
-

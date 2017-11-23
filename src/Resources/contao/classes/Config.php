@@ -1,23 +1,20 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
 
 namespace Agoat\ContentElements;
 
 
 class Config
 {
-
 	/**
 	 * Push symfony configuration into the contao config array
 	 */
@@ -34,7 +31,23 @@ class Config
 		{
 			$GLOBALS['TL_CONFIG']['validAudioTypes'] = implode(',', $container->getParameter('contao.audio.valid_extensions'));
 		}
+	}
+	
+	
+	/**
+	 * Register callbacks for the news extension bundles
+	 */
+	public function setNewsArticleCallbacks ($strTable)
+	{
+		if ($strTable != 'tl_news' || TL_MODE == 'FE')
+		{
+			return;
+		}
+		
+		$GLOBALS['TL_DCA']['tl_news']['config']['oncopy_callback'][] = array('tl_news_contentblocks', 'copyRelatedValues');
+		$GLOBALS['TL_DCA']['tl_news']['config']['ondelete_callback'][] = array('tl_news_contentblocks', 'deleteRelatedValues');
 
 	}
+
 }
 

@@ -1,39 +1,38 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
-
+/**
+ * Content element pattern "visibility"
+ */
 class PatternVisibility extends Pattern
 {
-
-
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
-		// element fields, so don´t use parent construct method
+		// Element fields, so don´t use parent construct method
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',invisible';
 		$GLOBALS['TL_DCA']['tl_content']['fields']['invisible']['eval']['tl_class'] = 'clr'; // push to new row (clear)
 	
-		// the start field
+		// The start field
 		if ($this->canChangeStart)
 		{
 			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',start';
 		}
-		// the stop field
+		// The stop field
 		if ($this->canChangeStop)
 		{
 			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',stop';
@@ -42,9 +41,11 @@ class PatternVisibility extends Pattern
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="widget m12"><div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $GLOBALS['TL_LANG']['tl_pattern']['invisible'][0] . '</label><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_pattern']['invisible'][1] . '</p></div></div>';	
 		
@@ -68,11 +69,10 @@ class PatternVisibility extends Pattern
 	}
 
 	/**
-	 * Generate data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
-		return;		
+		return; // Nothing to show in the frontend
 	}
-	
 }

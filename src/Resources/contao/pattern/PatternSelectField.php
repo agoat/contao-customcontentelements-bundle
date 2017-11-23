@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2017 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,14 +15,15 @@ namespace Agoat\ContentElements;
 use Contao\StringUtil;
 
 
+/**
+ * Content element pattern "selectfield"
+ */
 class PatternSelectField extends Pattern
 {
-
-
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		$class = ($this->classClr) ? 'w50 clr' : 'w50';
 		$class .= ($this->multiSelect) ? ' autoheight' : '';
@@ -46,7 +46,7 @@ class PatternSelectField extends Pattern
 			$arrOptions[$strGroup]['v'.$arrOption['value']] = $arrOption['label'];
 		}
 		
-		// no groups 
+		// No groups 
 		if (count($arrOptions) < 2)
 		{
 			$arrOptions = array_values($arrOptions)[0];
@@ -68,14 +68,15 @@ class PatternSelectField extends Pattern
 				'tl_class'				=> $class,
 			),
 		));
-		
 	}
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="w50 widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<select class="tl_select" style="width: 412px;">';
@@ -111,7 +112,7 @@ class PatternSelectField extends Pattern
 
 
 	/**
-	 * prepare data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
@@ -121,7 +122,7 @@ class PatternSelectField extends Pattern
 			{
 				foreach ($arrData as &$data)
 				{
-					$data = substr($data,1);
+					$data = substr($data,1); // Remove the alphabetic character
 				}
 				
 				$this->writeToTemplate($arrData);
@@ -129,9 +130,7 @@ class PatternSelectField extends Pattern
 		}
 		else
 		{
-			$this->writeToTemplate(substr($this->data->singleSelectField,1));
+			$this->writeToTemplate(substr($this->data->singleSelectField,1)); // Remove the alphabetic character
 		}
 	}
-	
-
 }

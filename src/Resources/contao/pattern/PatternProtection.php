@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,48 +15,51 @@ namespace Agoat\ContentElements;
 use Contao\Database;
 
 
+/**
+ * Content element pattern "protection"
+ */
 class PatternProtection extends Pattern
 {
-
-
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
-		// element fields, so don´t use parent construct method
+		// Element fields, so don´t use parent construct method
 		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',protected';
 		$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['tl_class'] = 'clr'; // push to new row (clear)
 
-		// the groups field
+		// The groups field
 		if (!$this->canChangeGroups)
 		{
 			if(($key = array_search('protected', $GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'])) !== false) {
 				unset($GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][$key]);
 			}
+			
 			unset($GLOBALS['TL_DCA']['tl_content']['subpalettes']['protected']);
 			
 			$GLOBALS['TL_DCA']['tl_content']['fields']['protected']['eval']['submitOnChange'] = false;
 			
-			// overwrite the elements groups with groups from the pattern
+			// Overwrite the elements groups with groups from the pattern
 			$db = Database::getInstance();
 			$db->prepare("UPDATE tl_content SET groups=? WHERE id=?")
 			   ->execute($this->groups, $this->cid);
 		}
 		
-		// the guests field
+		// The guests field
 		if ($this->canChangeGuests)
 		{
 			$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',guests';
 		}
-		
 	}
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="widget"><div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="1" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][0] . '</label><p class="tl_help tl_tip" title="">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][1] . '</p></div></div>';
 		
@@ -71,11 +73,10 @@ class PatternProtection extends Pattern
 
 
 	/**
-	 * Generate data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
-		return;		
+		return; // Nothing to show in the frontend
 	}
-	
 }

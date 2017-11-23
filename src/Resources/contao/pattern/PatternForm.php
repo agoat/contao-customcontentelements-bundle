@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,41 +15,42 @@ namespace Agoat\ContentElements;
 use Contao\Form;
 
 
+/**
+ * Content element pattern "form"
+ */
 class PatternForm extends Pattern
 {
-
-
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
-		// nothing to select
-		return;
+		return; // Nothing to set
 	}
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$objForm = new Form($this);
+		
 		return '<div class="widget"><span style="color:#b3b3b3 ">' . $objForm->title . ' (ID ' . $objForm->id . ')</span></div>';
 	}
 
+
 	/**
-	 * Generate data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
-		// call the form class
+		// Call the form class
 		$objForm = new Form($this);
 		$objForm->formTemplate = $this->formTemplate;
 		
 		$this->writeToTemplate($objForm->generate());		
 	}
-
-
-	
 }

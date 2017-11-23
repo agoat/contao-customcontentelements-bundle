@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,12 +15,15 @@ namespace Agoat\ContentElements;
 use Contao\StringUtil;
 
 
+/**
+ * Content element pattern "listwizard"
+ */
 class PatternListWizard extends Pattern
 {
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		$this->generateDCA('listItems', array
 		(
@@ -43,15 +45,17 @@ class PatternListWizard extends Pattern
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label> <a href="javascript:void(0);" title="" > <img src="system/themes/flexible/icons/tablewizard.svg" alt="CSV import" style="vertical-align:text-bottom" height="14" width="16"></a></h3>';
 		
-		$strRowPreview .= '<ul class="tl_listwizard" data-tabindex="1"><li><input type="text" class="tl_text" tabindex="1" value=""> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/copy.svg" width="14" height="16" alt="Duplicate the element" class="tl_listwizard_img"></a> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/drag.svg" width="14" height="16" alt="" class="drag-handle" title="Move the item via drag and drop"></a> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/delete.svg" width="14" height="16" alt="Delete the element" class="tl_listwizard_img"></a></li></ul>';
+		$strRowPreview = '<ul class="tl_listwizard" data-tabindex="1"><li><input type="text" class="tl_text" tabindex="1" value=""> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/copy.svg" width="14" height="16" alt="Duplicate the element" class="tl_listwizard_img"></a> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/drag.svg" width="14" height="16" alt="" class="drag-handle" title="Move the item via drag and drop"></a> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/delete.svg" width="14" height="16" alt="Delete the element" class="tl_listwizard_img"></a></li></ul>';
 			
-		// Add three exmaple lines
+		// Show three example lines
 		$strPreview .= $strRowPreview;
 		$strPreview .= $strRowPreview;
 		$strPreview .= $strRowPreview;
@@ -63,11 +67,10 @@ class PatternListWizard extends Pattern
 
 
 	/**
-	 * prepare data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
 		$this->writeToTemplate(StringUtil::deserialize($this->data->listItems));
 	}
-	
 }

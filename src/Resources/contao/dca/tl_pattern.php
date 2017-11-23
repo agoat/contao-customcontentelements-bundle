@@ -1,16 +1,14 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
 
  
 /**
@@ -623,19 +621,16 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 );
 
 
-
 /**
  * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
 class tl_pattern extends Backend
 {
-
-
+	/**
+	 * Database table name
+	 * @var string
+	 */
 	protected $table = 'tl_pattern';
-	
-	
 	
 	
 	/**
@@ -660,7 +655,7 @@ class tl_pattern extends Backend
 		$key = $arrRow['invisible'] ? 'unpublished' : 'published';
 		$type = $GLOBALS['TL_LANG']['CTP'][$arrRow['type']][0] ?: '&nbsp;';
 
-		// prepare option string (alias / replicable)
+		// Prepare option string (alias / replicable)
 		switch ($arrRow['type'])
 		{
 			case 'section':
@@ -674,7 +669,7 @@ class tl_pattern extends Backend
 				break;
 		}
 		
-		// get pattern model and call view method
+		// Get pattern model and call view method
 		$objPattern = new \PatternModel();
 		$objPattern->setRow($arrRow);
 		
@@ -687,9 +682,8 @@ class tl_pattern extends Backend
 		else
 		{
 			$objPatternClass = new $strClass($objPattern);	
-			$strPatternView = $objPatternClass->view();
+			$strPatternView = $objPatternClass->preview();
 		}
-
 		
 		return '<div class="cte_type ' . $key . '">' . $type . $options . '</div><div style="padding: 5px 0 10px;">' . $strPatternView . '</div>';
 	}
@@ -697,11 +691,12 @@ class tl_pattern extends Backend
 
 	
 	/**
-	 * Add the type of content pattern
+	 * Adjust maxlength and multiple settings according to the rgxp settings
 	 *
-	 * @param array $arrRow
+	 * @param mixed         $value
+	 * @param DataContainer $dc
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public function setPickerOptions($value, $dc)
 	{
@@ -712,13 +707,13 @@ class tl_pattern extends Backend
 			case 'datetime':
 				if (!in_array($dc->activeRecord->rgxp, array('date', 'time', 'datim')))
 				{
-					// change rgxp in database
+					// Change rgxp in database
 					$db->prepare("UPDATE " . $this->table . " SET rgxp=? WHERE id=?")
 					   ->execute('date', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
-					// reset multiple in database
+					// Reset multiple in database
 					$db->prepare("UPDATE " . $this->table . " SET multiple=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
@@ -727,7 +722,7 @@ class tl_pattern extends Backend
 			case 'color':
 				if (!in_array($dc->activeRecord->rgxp, array('alnum', 'extnd')))
 				{
-					// change rgxp in database
+					// Change rgxp in database
 					$db->prepare("UPDATE " . $this->table . " SET rgxp=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
@@ -736,13 +731,13 @@ class tl_pattern extends Backend
 			case 'link':
 				if ($dc->activeRecord->rgxp != 'url')
 				{
-					// change rgxp in database
+					// Change rgxp in database
 					$db->prepare("UPDATE " . $this->table . " SET rgxp=? WHERE id=?")
 					   ->execute('url', $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
-					// reset multiple in database
+					// Reset multiple in database
 					$db->prepare("UPDATE " . $this->table . " SET multiple=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
@@ -751,13 +746,13 @@ class tl_pattern extends Backend
 			case 'unit':
 				if ($dc->activeRecord->maxLength > 200)
 				{
-					// change maxLength in database
+					// Change maxLength in database
 					$db->prepare("UPDATE " . $this->table . " SET maxLength=? WHERE id=?")
 					   ->execute(200, $dc->activeRecord->id);
 				}
 				if ($dc->activeRecord->multiple)
 				{
-					// change multiple in database
+					// Change multiple in database
 					$db->prepare("UPDATE " . $this->table . " SET multiple=? WHERE id=?")
 					   ->execute('', $dc->activeRecord->id);
 				}
@@ -769,11 +764,12 @@ class tl_pattern extends Backend
 	}
 
 	/**
-	 * Set the maxLength for 4 input fields
+	 * Reduce the maxLength for 4 input fields
 	 *
-	 * @param array $arrRow
+	 * @param mixed         $value
+	 * @param DataContainer $dc
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public function setMultipleOption($value, $dc)
 	{
@@ -791,11 +787,12 @@ class tl_pattern extends Backend
 
 
 	/**
-	 * Add the type of content pattern
+	 * Adjust multiSource and sortBy according to the source type
 	 *
-	 * @param array $arrRow
+	 * @param mixed         $value
+	 * @param DataContainer $dc
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public function setSourceOptions($value, $dc)
 	{
@@ -805,19 +802,19 @@ class tl_pattern extends Backend
 		{
 			if (!$dc->activeRecord->multiSource)
 			{
-				// change multiSource in database
+				// Change multiSource in database
 				$db->prepare("UPDATE " . $this->table . " SET multiSource=? WHERE id=?")
 				   ->execute(1, $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->sortBy != 'html5media')
 			{
-				// change sortBy in database
+				// Change sortBy in database
 				$db->prepare("UPDATE " . $this->table . " SET sortBy=? WHERE id=?")
 				   ->execute('html5media', $dc->activeRecord->id);
 			}
 			if ($dc->activeRecord->canChangeSortBy)
 			{
-				// change canChangeSortBy in database
+				// Change canChangeSortBy in database
 				$db->prepare("UPDATE " . $this->table . " SET canChangeSortBy=? WHERE id=?")
 				   ->execute(0, $dc->activeRecord->id);
 			}
@@ -828,8 +825,10 @@ class tl_pattern extends Backend
 
 	
 	/**
-	 * Return all content pattern as array
+	 * Return content pattern as array
 	 *
+	 * @param DataContainer $dc
+	 *	 
 	 * @return array
 	 */
 	public function getPattern($dc)
@@ -858,13 +857,15 @@ class tl_pattern extends Backend
 	
 
 	/**
-	 * Return a list of predefined images sizes
+	 * Return a (reduced) list of predefined images sizes
 	 *
-	 * @return array
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
 	 */
 	public function defaultSizes($value, $dc)
 	{
-		
 		if ($value == '')
 		{			
 			return \System::getContainer()->get('contao.image.image_sizes')->getAllOptions()['image_sizes'];
@@ -880,12 +881,11 @@ class tl_pattern extends Backend
 		}
 
 		return $value;
-		
 	}
 	
 
 	/**
-	 * Return all content element templates as array
+	 * Return tinyMCE templates as array
 	 *
 	 * @return array
 	 */
@@ -895,26 +895,32 @@ class tl_pattern extends Backend
 	}
 	
 
+	/**
+	 * Save group settings from the pattern to the content element
+	 *
+	 * @param DataContainer $dc
+	 */
 	public function saveGroups ($dc)
 	{
 		$db = Database::getInstance();
 					
-		// change predefined groups
+		// Change predefined groups
 		if ($dc->activeRecord->type == 'protection' && !$dc->activeRecord->canChangeGroups)
 		{
-			// serialize array if not
+			// Serialize array if not
 			$groups = is_array($dc->activeRecord->groups) ? serialize($dc->activeRecord->groups) : $dc->activeRecord->groups;
 			
-			// save alias to database
+			// Save alias to database
 			$db->prepare("UPDATE tl_content SET groups=? WHERE type=(SELECT alias FROM tl_elements WHERE id=?)")
 			   ->execute($groups, $dc->activeRecord->pid);
-		
 		}
 	}
 
 
 	/**
 	 * Show a hint if the content block is already in use
+	 *
+	 * @param DataContainer $dc
 	 */
 	public function showAlreadyUsedHint($dc)
 	{
@@ -1069,7 +1075,7 @@ class tl_pattern extends Backend
 	
 	
 	/**
-	 * Get all forms and return them as array
+	 * Get forms and return them as array
 	 *
 	 * @return array
 	 */
@@ -1086,6 +1092,7 @@ class tl_pattern extends Backend
 		return $arrForms;
 	}
 	
+	
 	/**
 	 * Return the edit form wizard
 	 *
@@ -1100,7 +1107,7 @@ class tl_pattern extends Backend
 
 
 	/**
-	 * Return all content element templates as array
+	 * Return form templates as array
 	 *
 	 * @return array
 	 */
@@ -1109,10 +1116,9 @@ class tl_pattern extends Backend
 		return $this->getTemplateGroup('frm_');
 	}
 
-
 	
 	/**
-	 * Get all modules and return them as array
+	 * Get modules and return them as array
 	 *
 	 * @return array
 	 */
@@ -1129,6 +1135,7 @@ class tl_pattern extends Backend
 		return $arrModules;
 	}
 	
+	
 	/**
 	 * Return the edit module wizard
 	 *
@@ -1143,7 +1150,7 @@ class tl_pattern extends Backend
 
 	
 	/**
-	 * Return all content element templates as array
+	 * Return comment templates as array
 	 *
 	 * @return array
 	 */
@@ -1151,7 +1158,4 @@ class tl_pattern extends Backend
 	{
 		return $this->getTemplateGroup('com_');
 	}
-
-
-
 }

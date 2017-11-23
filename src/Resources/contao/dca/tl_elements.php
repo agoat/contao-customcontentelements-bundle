@@ -1,16 +1,14 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
 
  
 /**
@@ -221,12 +219,9 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 
 /**
  * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @author Arne Stappen (aGoat) <https://github.com/agoat>
  */
 class tl_elements extends Backend
 {
-
 	/**
 	 * Import the back end user object
 	 */
@@ -266,37 +261,58 @@ class tl_elements extends Backend
 	}
 	
 
-	public function setDefaultType ($varValue, DataContainer $dc)
+	/**
+	 * Reset all other default type settings
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
+	 */
+	public function setDefaultType ($value, DataContainer $dc)
 	{
 		$db = Database::getInstance();
 		
-		if ($varValue)
+		if ($value)
 		{
-			// there can be only one default element
+			// There can only be one default element
 			$db->prepare("UPDATE tl_elements SET defaultType='' WHERE NOT id=? AND pid=?")
 			   ->execute($dc->activeRecord->id, $dc->activeRecord->pid);
 		}
 		
-		return $varValue;
+		return $value;
 	}
 
 	
-	public function checkTitle ($varValue, DataContainer $dc)
+	/**
+	 * Check if the title is not already in use
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
+	 */
+	public function checkTitle ($value, DataContainer $dc)
 	{
 		$db = Database::getInstance();
 
 		$objTitle = $db->prepare("SELECT id FROM tl_elements WHERE NOT id=? AND pid=? AND title=?")
-					   ->execute($dc->activeRecord->id, $dc->activeRecord->pid, $varValue);
+					   ->execute($dc->activeRecord->id, $dc->activeRecord->pid, $value);
 
 		if ($objTitle->numRows > 0)
 		{
-			throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+			throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $value));
 		}
 		
-		return $varValue;
+		return $value;
 	}
 	
 	
+	/**
+	 * Auto-generate an element alias and adjust existing content in case the element is renamed
+	 *
+	 * @param DataContainer $dc
+	 */
 	public function generateAlias (DataContainer $dc)
 	{
 		$db = Database::getInstance();
@@ -321,7 +337,9 @@ class tl_elements extends Backend
 
 	
 	/**
-	 * Return all content block templates as array
+	 * Return content element templates as array
+	 *
+	 * @param DataContainer $dc
 	 *
 	 * @return array
 	 */
@@ -385,6 +403,8 @@ class tl_elements extends Backend
 
 	/**
 	 * Show a hint if the content block is already in use
+	 *
+	 * @param DataContainer $dc
 	 */
 	public function showAlreadyUsedHint(DataContainer $dc)
 	{

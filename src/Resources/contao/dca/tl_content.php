@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 
@@ -28,7 +27,6 @@ $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = a
 // Remove some filter options
 $GLOBALS['TL_DCA']['tl_content']['fields']['guests']['filter'] = false;
 
-
 // Changes on the 'type' field
 if (!\Config::get('disableVisualSelect'))
 {
@@ -42,14 +40,16 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['type']['default'] = false;
 
 
 
-	
+/**
+ * Provide methods that are used by the data configuration array.
+ */	
 class tl_content_elements extends tl_content
 {
 	/**
-	 * @var array modified content data
+	 * Modified content data
+	 * @var array
 	 */
 	protected $arrModifiedData = array();
-
 	
 	
 	/**
@@ -57,8 +57,8 @@ class tl_content_elements extends tl_content
 	 * mark content element if content block is invisible
 	 *
 	 * @param array $arrRow
-	 * @return string
 	 *
+	 * @return string
 	 */
 	public function addCteType($arrRow)
 	{	
@@ -79,6 +79,10 @@ class tl_content_elements extends tl_content
 	
 	/**
 	 * Add a custom help wirzard to the type field
+	 *
+	 * @param DataContainer $dc
+	 *
+	 * @return string
 	 */
 	public function addTypeHelpWizard ($dc)
 	{
@@ -87,11 +91,11 @@ class tl_content_elements extends tl_content
 	
 	
 	/**
-	 * Generate content element list for type selection
+	 * Generate a content element list array
 	 *
-	 * @param object $dc The DataContainer object
+	 * @param DataContainer $dc
 	 *
-	 * @return array The content elements
+	 * @return array
 	 */
 	public function getElements ($dc)
 	{
@@ -168,7 +172,12 @@ class tl_content_elements extends tl_content
 
 	
 	/**
-	 * set default value for new records
+	 * Set default value for new records
+	 *
+	 * @param mixed         @value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
 	 */
 	public function setDefaultType($value, $dc)
 	{
@@ -216,7 +225,9 @@ class tl_content_elements extends tl_content
 
 	
 	/**
-	 * Build palette and field DCA
+	 * Build the palette and field DCA for the virtual input fields
+	 *
+	 * @param DataContainer $dc
 	 */
 	public function buildPaletteAndFields ($dc)
 	{
@@ -268,7 +279,7 @@ class tl_content_elements extends tl_content
 	
 		foreach($colPattern as $objPattern)
 		{
-			// construct dca for pattern
+			// Construct dca for pattern
 			$strClass = \Agoat\ContentElements\Pattern::findClass($objPattern->type);
 			$bolData = \Agoat\ContentElements\Pattern::hasData($objPattern->type);
 				
@@ -291,16 +302,21 @@ class tl_content_elements extends tl_content
 				$objPatternClass->pid = $objContent->id;
 				$objPatternClass->pattern = $objPattern->alias;
 				$objPatternClass->element = $objElement->alias;			
-				$objPatternClass->data = $arrData[$objPattern->alias];			
+				$objPatternClass->data = $arrData[$objPattern->alias]; // Save data to the DCA		
 
-				$objPatternClass->construct();
+				$objPatternClass->create();
 			}
 		}
 	}	
 
 	
 	/**
-	 * load field value from tl_content_value table
+	 * Load the virtual field value from the DCA
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed|null
 	 */
 	public function loadFieldValue ($value, $dc)
 	{
@@ -319,7 +335,9 @@ class tl_content_elements extends tl_content
 
 	
 	/**
-	 * save field Data to tl_content_value table
+	 * Save the virtual field values into the tl_data table
+	 *
+	 * @param DataContainer $dc
 	 */
 	public function saveData (&$dc)
 	{
@@ -365,7 +383,12 @@ class tl_content_elements extends tl_content
 
 
 	/**
-	 * save field value to tl_content_value table
+	 * Save the virtual field value to the modified data array and return null to prevent saving to the database
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return null
 	 */
 	public function saveFieldAndClear ($value, $dc)
 	{
@@ -376,7 +399,12 @@ class tl_content_elements extends tl_content
 
 	
 	/**
-	 * prepare the virtual order field
+	 * Prepare the virtual order field
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
 	 */
 	public function prepareOrderValue ($value, $dc)
 	{
@@ -388,8 +416,14 @@ class tl_content_elements extends tl_content
 		return $value;
 	}
 
+	
 	/**
-	 * save the virtual order field
+	 * Save the virtual order field
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
 	 */
 	public function saveOrderValue ($value, $dc)
 	{
@@ -420,7 +454,12 @@ class tl_content_elements extends tl_content
 	
 	
 	/**
-	 * Dynamically set the ace syntax
+	 * Dynamically set the ace highlight syntax
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
 	 */
 	public function setAceCodeHighlighting($value, $dc)
 	{
@@ -437,7 +476,12 @@ class tl_content_elements extends tl_content
 	
 
 	/**
-	 * set default value for new records
+	 * Set default value for virtual fields in new records
+	 *
+	 * @param mixed         $value
+	 * @param DataContainer $dc
+	 *
+	 * @return mixed
 	 */
 	public function defaultValue($value, $dc)
 	{
@@ -450,9 +494,13 @@ class tl_content_elements extends tl_content
 	}
 
 	/**
-	 * Save data versions
+	 * Save tl_data versions
+	 *
+	 * @param string        $strTable
+	 * @param integer       $intPid
+	 * @param integer       $intVersion
 	 */
-	public function createDataVersion ($strTable, $intPid, $intVersion, $objRecord)
+	public function createDataVersion ($strTable, $intPid, $intVersion)
 	{
 		$db = Database::getInstance();
 		
@@ -470,9 +518,13 @@ class tl_content_elements extends tl_content
 	
 	
 	/**
-	 * Restore data versions
+	 * Restore tl_data versions
+	 *
+	 * @param string        $strTable
+	 * @param integer       $intPid
+	 * @param integer       $intVersion
 	 */
-	public function restoreDataVersion ($strTable, $intPid, $intVersion, $content)
+	public function restoreDataVersion ($strTable, $intPid, $intVersion)
 	{
 		$db = Database::getInstance();
 		

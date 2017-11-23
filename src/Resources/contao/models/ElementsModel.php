@@ -1,19 +1,21 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Contao;
 
 
+/**
+ * Reads and writes content elements
+ */
 class ElementsModel extends Model
 {
 
@@ -26,17 +28,17 @@ class ElementsModel extends Model
 
 
 	/**
-	 * Find published content blocks by theme id
+	 * Find published content elements by their pid (theme id)
 	 *
-	 * @param mixed   $varId      The numeric ID or alias name
-	 * @param integer $intPid     The page ID
+	 * @param integer $intPid     The layout id
 	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return static The model or null if there is no article
+	 * @return \Model\Collection|\ElementsModel|null A collection of models or null if there are no content elements
 	 */
 	public function findPublishedByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
+
 		$arrColumns = array("$t.pid=? AND $t.invisible=''");
 	
 		if (!isset($arrOptions['order']))
@@ -49,35 +51,35 @@ class ElementsModel extends Model
 
 
 	/**
-	 * Find published content blocks by theme id
+	 * Find published content elements by their alias
 	 *
-	 * @param mixed   $varId      The numeric ID or alias name
-	 * @param integer $intPid     The page ID
-	 * @param array   $arrOptions An optional options array
+	 * @param string $strAlias   The alias of the content element
+	 * @param array  $arrOptions An optional options array
 	 *
-	 * @return static The model or null if there is no article
+	 * @return \Model|\ElementsModel|null A model or null if there is no content element
 	 */
 	public function findPublishedByAlias($strAlias, array $arrOptions=array())
 	{
 		$t = static::$strTable;
+
 		$arrColumns = array("$t.alias=? AND $t.invisible=''");
 	
-		return static::findBy($arrColumns, $strAlias, $arrOptions);
+		return static::findOneBy($arrColumns, $strAlias, $arrOptions);
 	}
 
 
 	/**
-	 * Find published content blocks by theme id
+	 * Find first published content element by pid (theme id)
 	 *
-	 * @param mixed   $varId      The numeric ID or alias name
-	 * @param integer $intPid     The page ID
+	 * @param integer $intPid     The layout id
 	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return static The model or null if there is no article
+	 * @return \Model|\ElementsModel|null A model or null if there is no content element
 	 */
 	public function findFirstPublishedElementByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
+
 		$arrColumns = array("$t.pid=? AND $t.invisible='' AND $t.type='element'");
 	
 		if (!isset($arrOptions['order']))
@@ -90,35 +92,19 @@ class ElementsModel extends Model
 
 
 	/**
-	 * Find published content blocks by theme id
+	 * Find the default published content element by pid (theme id)
 	 *
-	 * @param mixed   $varId      The numeric ID or alias name
-	 * @param integer $intPid     The page ID
+	 * @param integer $intPid     The layout id
 	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return static The model or null if there is no article
+	 * @return \Model|\ElementsModel|null A model or null if there is no content element
 	 */
 	public function findDefaultPublishedElementByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
+
 		$arrColumns = array("$t.defaultType=1 AND $t.pid=? AND $t.invisible='' AND $t.type='element'");
 	
 		return static::findOneBy($arrColumns, $intPid, $arrOptions);
-	}
-
-	
-	/**
-	 * Find all published pattern for the particular content block
-	 *
-	 * @param mixed   $varId      The numeric ID or alias name
-	 * @param integer $intPid     The page ID
-	 * @param array   $arrOptions An optional options array
-	 *
-	 * @return static The model or null if there is no article
-	 */
-	public function getRelatedPattern(array $arrOptions=array())
-	{
-		// Get pattern from pattern model
-		return \ContentPatternModel::findPublishedByPidAndTable($this->id);
 	}
 }

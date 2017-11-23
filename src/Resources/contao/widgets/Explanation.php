@@ -1,37 +1,28 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
 /**
- * Provide methods to show an explanation 
- *
- * @property array   $options
- * @property boolean $multiple
- *
- * @author Leo Feyer <https://github.com/leofeyer>
+ * Provide methods to handle the input field "explanation"
  */
 class Explanation extends \Widget
 {
-
-
 	/**
 	 * Template
 	 * @var string
 	 */
 	protected $strTemplate = 'be_widget_rdo';
-
 
 
 	/**
@@ -43,6 +34,4 @@ class Explanation extends \Widget
 	{
 		return sprintf('<div class="tl_explanation">%s</div>', $this->explanation);
 	}
-
-
 }

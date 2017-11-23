@@ -1,16 +1,14 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
 
 namespace Agoat\ContentElements;
 
@@ -21,20 +19,22 @@ use Agoat\ContentElements\Template;
 use Agoat\ContentElements\Pattern;
 
 
+/**
+ * Content element class
+ */
 class ContentElement extends \Contao\ContentElement
 {
-
 	/**
 	 * Template
 	 * @var string
 	 */
-	protected $strTemplate = 'cb_standard';
+	protected $strTemplate = 'ce_standard';
 	
-	
+	/**
+	 * Content element
+	 * @var \ElementsModel
+	 */
 	protected $objElement;
-
-	protected $objBlock;
-	
 
 	
 	/**
@@ -60,7 +60,7 @@ class ContentElement extends \Contao\ContentElement
 	
 
 	/**
-	 * Prepare the pattern data for the template
+	 * Generate the pattern data and parse the elements template
 	 *
 	 * @return string
 	 */
@@ -112,11 +112,11 @@ class ContentElement extends \Contao\ContentElement
 
 	
 	/**
-	 * Generate content element
+	 * Compile the pattern
 	 */
 	protected function compile()
 	{		
-		// get the pattern model collection
+		// Get the pattern model collection
 		$colPattern = \PatternModel::findVisibleByPid($this->objElement->id);
 
 		if ($colPattern === null)
@@ -127,7 +127,7 @@ class ContentElement extends \Contao\ContentElement
 		// Get correct content element id (included content element) see #37
 		$intPid = ($this->origId) ? $this->origId : $this->id;
 		
-		// get data for content elements
+		// Get the data
 		$colData = \DataModel::findByPid($intPid);
 
 		if ($colData !== null)
@@ -138,7 +138,7 @@ class ContentElement extends \Contao\ContentElement
 			}							
 		}
 
-		// prepare values for every pattern
+		// Prepare values for every pattern
 		foreach($colPattern as $objPattern)
 		{
 			if (!Pattern::hasOutput($objPattern->type))

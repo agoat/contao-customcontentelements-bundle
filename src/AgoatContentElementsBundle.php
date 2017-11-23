@@ -1,21 +1,22 @@
 <?php
 
 /*
- * Contao ContentBlocks Extension
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen
- *
- * @license LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
  
 namespace Agoat\ContentElementsBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+
 /**
- * Configures the Agoat contentblocks bundle.
- *
- * @author Arne Stappen (alias aGoat) <https://github.com/agoat>
+ * Configures the content elements bundle.
  */
 class AgoatContentElementsBundle extends Bundle
 {

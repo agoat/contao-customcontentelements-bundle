@@ -1,20 +1,18 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
 
  
 /**
- * Table tl_content_element
+ * Table tl_data
  */
 $GLOBALS['TL_DCA']['tl_data'] = array
 (
@@ -150,7 +148,5 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 			'sql'	=> "varchar(64) NOT NULL default ''"
 		)
 	)
-);
-
-
+)
 

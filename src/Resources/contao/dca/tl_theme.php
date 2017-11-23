@@ -1,18 +1,17 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
-
-// content block edit button
+ 
+// Add content element edit button
 array_insert($GLOBALS['TL_DCA']['tl_theme']['list']['operations'], 3, array
 (
 	'ctb' => array
@@ -24,6 +23,6 @@ array_insert($GLOBALS['TL_DCA']['tl_theme']['list']['operations'], 3, array
 	)
 ));
 
-// allow tl_content_blocks table
-$GLOBALS['TL_DCA']['tl_theme']['config']['ctable'][] = 'tl_elements';
 
+// Add tl_elements table
+$GLOBALS['TL_DCA']['tl_theme']['config']['ctable'][] = 'tl_elements';

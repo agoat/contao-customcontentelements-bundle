@@ -1,20 +1,21 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Contao;
 
 
-
+/**
+ * Reads and writes content data
+ */
 class DataModel extends Model
 {
 
@@ -26,12 +27,12 @@ class DataModel extends Model
 
 
 	/**
-	 * Find all values by their content and pattern id
+	 * Find all values by their pid (content id)
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $varPid     The content id
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\DataModel|null A collection of models or null if there are no data
 	 */
 	public static function findByPid($varPid, array $arrOptions=array())
 	{
@@ -52,12 +53,13 @@ class DataModel extends Model
 
 	
 	/**
-	 * Find all values by their content and pattern id
+	 * Find all values by their pid (content id) and pattern type
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $arrPids    The content id
+	 * @param string  $strPattern The pattern type
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\DataModel|null A collection of models or null if there are no data
 	 */
 	public static function findByPidAndPattern($varPid, $strPattern, array $arrOptions=array())
 	{
@@ -78,12 +80,13 @@ class DataModel extends Model
 
 	
 	/**
-	 * Find all values by their content and pattern id
+	 * Find all values by their pid (content id) and parent pattern id
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $arrPids    The content id
+	 * @param integer $intParent  The parent pattern id
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\DataModel|null A collection of models or null if there are no data
 	 */
 	public static function findByPidAndParent($varPid, $intParent, array $arrOptions=array())
 	{
@@ -104,12 +107,14 @@ class DataModel extends Model
 	
 
 	/**
-	 * Find all values by their content, pattern and replica id
+	 * Find all values by their pid (content id), pattern type and parent pattern id
 	 *
-	 * @param integer $arrPids        An array of section IDs
-	 * @param array   $arrOptions     An optional options array
+	 * @param integer $arrPids    The content id
+	 * @param string  $strPattern The pattern type
+	 * @param integer $intParent  The parent pattern id
+	 * @param array   $arrOptions An optional options array
 	 *
-	 * @return \Model\Collection|\ContentPatternModel|null A collection of models or null if there are no content elements
+	 * @return \Model\Collection|\DataModel|null A collection of models or null if there are no data
 	 */
 	public static function findByPidAndPatternAndParent($varPid, $strPattern, $intParent, array $arrOptions=array())
 	{
@@ -127,7 +132,4 @@ class DataModel extends Model
 
 		return static::find($arrOptions);
 	}
-
-	
-	
 }

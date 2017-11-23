@@ -1,16 +1,14 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
- *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
- */
 
+/*
+ * Custom content elements extension for Contao Open Source CMS.
+ *
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
+ */
 
 namespace Agoat\ContentElements;
 
@@ -18,16 +16,17 @@ use Contao\TemplateLoader;
 use Symfony\Component\Filesystem\Filesystem;
 
 
+/**
+ * Content element pattern "textarea"
+ */
 class PatternTextArea extends Pattern
 {
-
-
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
-		// register all tinyMCE template files
+		// Register all tinyMCE template files
 		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
 			$objFilesystem = new Filesystem();
@@ -57,21 +56,22 @@ class PatternTextArea extends Pattern
 				'preserveTags'	=>	true,
 			)
 		));
-		
 	}
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$selector = 'ctrl_textarea' . $this->id;
 
 		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
-		// register all tinyMCE template files
+		// Register all tinyMCE template files
 		if (!array_key_exists($this->rteTemplate, TemplateLoader::getFiles()))
 		{
 			$objFilesystem = new Filesystem();
@@ -104,13 +104,10 @@ class PatternTextArea extends Pattern
 
 
 	/**
-	 * prepare data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
-		// prepare value(s)
-		
 		$this->writeToTemplate($this->data->text);
 	}
-	
 }

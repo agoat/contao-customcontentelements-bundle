@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,19 +15,10 @@ namespace Agoat\ContentElements;
 
 
 /**
- * Provide methods to handle select menus.
- *
- * @property boolean $mandatory
- * @property integer $size
- * @property boolean $multiple
- * @property array   $options
- * @property boolean $chosen
- *
- * @author Leo Feyer <https://github.com/leofeyer>
+ * Provide methods to handle the input field "visualselect"
  */
 class VisualSelectMenu extends \Widget
 {
-
 	/**
 	 * Submit user input
 	 * @var boolean
@@ -116,7 +106,7 @@ class VisualSelectMenu extends \Widget
 		$strClass = 'tl_select';
 		$strStyle = '<style>.group-result {padding-top: 5px !important; line-height: 20px !important;}';
 		$count = 1;
-//dump($this->arrOptions);
+
 		if ($this->multiple)
 		{
 			$this->strName .= '[]';

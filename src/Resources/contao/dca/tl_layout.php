@@ -1,19 +1,17 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 
 // Palettes
-
 $GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('external', 'external,backendCSS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
 $GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('analytics', 'analytics,externalJS,backendJS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
 
@@ -31,8 +29,6 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['orderBackendCSS'] = array
 (
 	'sql'                     => "blob NULL"
 );
-
-
 $GLOBALS['TL_DCA']['tl_layout']['fields']['externalJS'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_layout']['externalJS'],
@@ -45,7 +41,6 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['orderExternalJS'] = array
 (
 	'sql'                     => "blob NULL"
 );
-
 $GLOBALS['TL_DCA']['tl_layout']['fields']['backendJS'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_layout']['backendJS'],

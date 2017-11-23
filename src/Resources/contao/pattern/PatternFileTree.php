@@ -1,25 +1,27 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentElements extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2017 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
+/**
+ * Content element pattern "filetree"
+ */
 class PatternFileTree extends Pattern
 {
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		// Set some options
 		switch ($this->source)
@@ -116,7 +118,7 @@ class PatternFileTree extends Pattern
 			
 		}
 		
-		// the size field
+		// The size field
 		if ($this->source == 'image' && $this->canChangeSize)
 		{
 			$this->generateDCA('size', array
@@ -140,7 +142,7 @@ class PatternFileTree extends Pattern
 			));	
 		}
 
-		// the sortBy field
+		// The sortBy field
 		if ($this->multiSource && $this->canChangeSortBy)
 		{
 			$this->generateDCA('sortBy', array
@@ -159,9 +161,11 @@ class PatternFileTree extends Pattern
 	
 
 	/**
-	 * Generate backend output
+	 * Generate the pattern preview
+	 *
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="clr widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
 
@@ -231,7 +235,6 @@ class PatternFileTree extends Pattern
 					$strPreview .= '</optgroup>';
 				}
 			}
-	
 		
 			$strPreview .= '</select> <input class="tl_text_4 tl_imageSize_0" value="" type="text"> <input class="tl_text_4 tl_imageSize_1" value="" type="text"></div><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_content_pattern']['size'][1] . '</p></div>';
 		}
@@ -241,7 +244,7 @@ class PatternFileTree extends Pattern
 
 
 	/**
-	 * Generate data for the frontend template 
+	 * Prepare the data for the template
 	 */
 	public function compile()
 	{
@@ -626,9 +629,9 @@ class PatternFileTree extends Pattern
 	
 	
 	/**
-	 * get a list of image sizes
+	 * Get a list of image sizes
 	 */
-	public function getImageSizeList()
+	protected function getImageSizeList()
 	{
 		$arrSizes = \System::getContainer()->get('contao.image.image_sizes')->getAllOptions();
 

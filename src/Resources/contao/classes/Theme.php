@@ -1,11 +1,13 @@
 <?php
 
-/**
- * Contao Open Source CMS
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2005-2016 Leo Feyer
- *
- * @license LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -15,17 +17,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
 /**
- * Provide methods to export/import content blocks and pattern
- *
- * @author Arne Stappen (aGoat) <https://github.com/agoat>
+ * Provide methods to export/import content elements and pattern
  */
 class Theme extends \Contao\Theme
 {
-
 	/**
 	 * Import content blocks tables with template import
-	 *
-	 * compareThemeFiles Hook
 	 */
 	public function compareTables ($xml, $objArchive)
 	{
@@ -89,11 +86,8 @@ class Theme extends \Contao\Theme
 	}
 
 	
-	
 	/**
 	 * Import content blocks tables with template import
-	 *
-	 * extractThemeFiles Hook
 	 */
 	public function importTables ($xml, $objArchive, $intThemeId, $arrMapper)
 	{
@@ -321,8 +315,6 @@ class Theme extends \Contao\Theme
 	
 	/**
 	 * Export content blocks tables with template export
-	 *
-	 * exportTheme Hook
 	 */
 	public function exportTables ($xml, $objArchive, $objThemeId)
 	{
