@@ -45,7 +45,9 @@ class PatternCheckBox extends Pattern
 	 */
 	public function preview()
 	{
-		return '<div class="w50 widget m12"><div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div></div>';	
+		$class = ($this->classClr) ? 'w50 clr m12' : 'w50 m12';
+		
+		return '<div class="widget ' . $class . '"><div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div></div>';	
 	}
 
 
