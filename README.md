@@ -11,23 +11,23 @@ Almost any input mask for content elements can be created, from very simple text
 
 **Custom content elements** consist of a **templat**e and any number of **patterns** that provide the various input fields. The patterns can be configured in such a way that they give the content data to the template, where it can be output into any corresponding HTML structure.
 
-This makes it possible to implement both simple widgets (such as 'hero images') and extensive information boards (such as 'team pages' with names, e-mails, numbers and addresses of the employees). And all the content can be edited in a simple and elegant way.
+This makes it possible to implement both simple widgets (such as 'hero images') and extensive information boards (like 'team pages' with names, e-mails, numbers and addresses of the employees). And all the content can be accessed in a simple and elegant way.
 
 ## Notice
-There was a complete database redesign from Version 1.x to 2.x. A direct upgrade is not possible and all custom content elements must be re-created.
+There was a complete database redesign from Version `1.x` to `2.x`. A direct upgrade is not possible and all custom content elements must be re-created.
 
 ## Install
 ### Contao manager
 Search for the package and install it
 ```bash
-agoat/contao-autoprefixer
+agoat/contao-customcontentelements
 ```
 
 ### Managed edition
 Add the package
 ```bash
 # Using the composer
-composer require agoat/contao-contentelements
+composer require agoat/contao-customcontentelements
 ```
 Registration and configuration is done by the manager-plugin automatically.
 
@@ -35,7 +35,7 @@ Registration and configuration is done by the manager-plugin automatically.
 Add the package
 ```bash
 # Using the composer
-composer require agoat/contao-contentelements
+composer require agoat/contao-customcontentelements
 ```
 Register the bundle in the AppKernel
 ```php
@@ -48,7 +48,7 @@ class AppKernel
         $bundles = [
             // ...
             // after Contao\CoreBundle\ContaoCoreBundle
-            new Agoat\ContentElementsBundle\AgoatContentElementsBundle (),
+            new Agoat\CustomContentElementsBundle\AgoatCustomContentElementsBundle (),
         ];
     }
 }
