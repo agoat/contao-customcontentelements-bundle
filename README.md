@@ -1,8 +1,8 @@
 # Custom content elements extension for Contao 4
 
-[![Version](https://img.shields.io/packagist/v/agoat/contao-contentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-contentelements)
-[![License](https://img.shields.io/packagist/l/agoat/contao-contentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-contentelements)
-[![Downloads](https://img.shields.io/packagist/dt/agoat/contao-contentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-contentelements)
+[![Version](https://img.shields.io/packagist/v/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
+[![License](https://img.shields.io/packagist/l/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
+[![Downloads](https://img.shields.io/packagist/dt/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
 
 ## About
 Create your own **content elements** with the required input fields.
