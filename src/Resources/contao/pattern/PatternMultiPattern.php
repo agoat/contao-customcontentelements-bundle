@@ -150,7 +150,7 @@ class PatternMultiPattern extends Pattern
 			{
 				foreach($colMultiPattern as $objMultiPattern)
 				{
-					// Construct dca for pattern
+					// Create DCA for sub pattern
 					$strClass = Pattern::findClass($objMultiPattern->type);
 					$bolData = Pattern::hasData($objMultiPattern->type);
 						
@@ -177,7 +177,7 @@ class PatternMultiPattern extends Pattern
 						$objMultiPatternClass->element = $this->element;
 						$objMultiPatternClass->data = $arrData[$objMultiPattern->alias];							
 								
-						$objMultiPatternClass->construct();
+						$objMultiPatternClass->create();
 					}				
 				}
 			}
@@ -249,7 +249,7 @@ class PatternMultiPattern extends Pattern
 				{
 					$objSubPatternClass = new $strClass($objMultiPattern);
 	
-					$strGroupPreview .= $objSubPatternClass->view();
+					$strGroupPreview .= $objSubPatternClass->preview();
 				}
 			}
 		}
