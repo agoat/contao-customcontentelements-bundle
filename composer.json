@@ -41,6 +41,6 @@
         ]
     },
     "extra": {
-        "contao-manager-plugin": "Agoat\\ContentElementsBundle\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Agoat\\CustomContentElementsBundle\\ContaoManager\\Plugin"
     }
 }

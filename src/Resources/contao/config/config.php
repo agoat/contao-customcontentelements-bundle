@@ -22,33 +22,33 @@ array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_
  */
 if (TL_MODE == 'BE')
 {
-	$GLOBALS['TL_CSS'][] = 'bundles/agoatcontentelements/style.css|static';
-	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/agoatcontentelements/core.js';
+	$GLOBALS['TL_CSS'][] = 'bundles/agoatcustomcontentelements/style.css|static';
+	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/agoatcustomcontentelements/core.js';
 }
 
 
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\ContentElements\\Controller','registerBlockElements');
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Controller','registerBlockElements');
+$GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
 
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\ContentElements\\Config','setNewsArticleCallbacks');
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Config','setNewsArticleCallbacks');
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Controller','addPageLayoutToBE');
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addPageLayoutToBE');
 
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements\\Controller','addContentElementsCSS');
-$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\ContentElements\\Controller','addContentElementsJS');
-$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\ContentElements\\Controller','addLayoutJS');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addContentElementsCSS');
+$GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addContentElementsJS');
+$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addLayoutJS');
 
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\ContentElements\\Versions','hideDataTableVersions');
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Versions','hideDataTableVersions');
 
 
-$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\ContentElements\\Theme','compareTables');
-$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\ContentElements\\Theme','importTables');
-$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\ContentElements\\Theme','exportTables');
+$GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Theme','compareTables');
+$GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Theme','importTables');
+$GLOBALS['TL_HOOKS']['exportTheme'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Theme','exportTables');
 
-$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Agoat\\ContentElements\\Config','loadParameters');
+$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Config','loadParameters');
  
 
 /**
@@ -60,55 +60,55 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'textfield'		=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternTextField',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternTextField',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'textarea'		=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternTextArea',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternTextArea',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'selectfield'	=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternSelectField',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternSelectField',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'checkbox'		=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternCheckBox',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternCheckBox',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'filetree'		=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternFileTree',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternFileTree',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'pagetree'		=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternPageTree',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternPageTree',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'listwizard'	=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternListWizard',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternListWizard',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'tablewizard'	=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternTableWizard',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternTableWizard',
 			'data'			=> true,
 			'output'		=> true,
 		),
 		'code'			=> array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternCode',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternCode',
 			'data'			=> true,
 			'output'		=> true,
 		)
@@ -117,24 +117,24 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'section' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternSection',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternSection',
 		),
 		'explanation' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternExplanation',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternExplanation',
 		)
 	),
 	'element' => array
 	(
 		'visibility' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternVisibility',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternVisibility',
 			'unique'		=> true,
 			'output'		=> true,
 		),
 		'protection' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternProtection',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternProtection',
 			'unique'		=> true,
 			'output'		=> true,
 		),
@@ -143,18 +143,18 @@ $GLOBALS['TL_CTP'] = array
 	(
 		'imagesize' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternImageSize',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternImageSize',
 			'output'		=> true,
 		),
 		'form' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternForm',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternForm',
 			'unique'		=> true,
 			'output'		=> true,
 		),
 		'module' => array
 		(
-			'class'			=> 'Agoat\ContentElements\PatternModule',
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternModule',
 			'unique'		=> true,
 			'output'			=> true,
 		)
@@ -165,10 +165,10 @@ $GLOBALS['TL_CTP'] = array
 /**
  * Back end form fields (widgets)
  */
-$GLOBALS['BE_FFL']['explanation'] 	= '\Agoat\ContentElements\Explanation';
-$GLOBALS['BE_FFL']['visualselect'] 	= '\Agoat\ContentElements\VisualSelectMenu';
-$GLOBALS['BE_FFL']['fileTree'] 		= '\Agoat\ContentElements\FileTree';
-$GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\ContentElements\PageTree';
-$GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\ContentElements\ArticleTree';
+$GLOBALS['BE_FFL']['explanation'] 	= '\Agoat\CustomContentElementsBundle\Contao\Explanation';
+$GLOBALS['BE_FFL']['visualselect'] 	= '\Agoat\CustomContentElementsBundle\Contao\VisualSelectMenu';
+$GLOBALS['BE_FFL']['fileTree'] 		= '\Agoat\CustomContentElementsBundle\Contao\FileTree';
+$GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\CustomContentElementsBundle\Contao\PageTree';
+$GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\CustomContentElementsBundle\Contao\ArticleTree';
 
 

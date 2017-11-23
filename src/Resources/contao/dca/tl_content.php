@@ -45,6 +45,9 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['type']['default'] = false;
  */	
 class tl_content_elements extends tl_content
 {
+
+	use Agoat\CustomContentElementsBundle\Contao\Pattern;
+	
 	/**
 	 * Modified content data
 	 * @var array
@@ -280,8 +283,8 @@ class tl_content_elements extends tl_content
 		foreach($colPattern as $objPattern)
 		{
 			// Construct dca for pattern
-			$strClass = \Agoat\ContentElements\Pattern::findClass($objPattern->type);
-			$bolData = \Agoat\ContentElements\Pattern::hasData($objPattern->type);
+			$strClass = Pattern::findClass($objPattern->type);
+			$bolData = Pattern::hasData($objPattern->type);
 				
 			if (!class_exists($strClass))
 			{

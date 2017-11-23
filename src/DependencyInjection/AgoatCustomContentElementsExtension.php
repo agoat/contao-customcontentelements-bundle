@@ -4,13 +4,13 @@
  * Custom content elements extension for Contao Open Source CMS.
  *
  * @copyright  Arne Stappen (alias aGoat) 2017
- * @package    contao-contentelements
+ * @package    contao-customcontentelements
  * @author     Arne Stappen <mehh@agoat.xyz>
  * @link       https://agoat.xyz
  * @license    LGPL-3.0
  */
 
-namespace Agoat\ContentElementsBundle\DependencyInjection;
+namespace Agoat\CustomContentElementsBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Adds the bundle services and paramters to the container.
  */
-class AgoatContentElementsExtension extends Extension
+class AgoatCustomContentElementsExtension extends Extension
 {
     /**
      * {@inheritdoc}

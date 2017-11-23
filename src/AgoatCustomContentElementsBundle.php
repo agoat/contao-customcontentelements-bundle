@@ -10,7 +10,7 @@
  * @license    LGPL-3.0
  */
  
-namespace Agoat\ContentElementsBundle;
+namespace Agoat\CustomContentElementsBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -18,6 +18,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * Configures the content elements bundle.
  */
-class AgoatContentElementsBundle extends Bundle
+class AgoatCustomContentElementsBundle extends Bundle
 {
 }

@@ -547,7 +547,7 @@ class tl_elements extends Backend
 			$this->redirect('contao/main.php?act=error');
 		}
 		
-		$objVersions = new Versions('tl_elements', $intId);
+		$objVersions = new \Versions('tl_elements', $intId);
 		$objVersions->initialize();
 		
 		// Trigger the save_callback

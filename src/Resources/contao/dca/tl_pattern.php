@@ -626,6 +626,9 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
  */
 class tl_pattern extends Backend
 {
+
+	use Agoat\CustomContentElementsBundle\Contao\Pattern;
+	
 	/**
 	 * Database table name
 	 * @var string
@@ -673,7 +676,7 @@ class tl_pattern extends Backend
 		$objPattern = new \PatternModel();
 		$objPattern->setRow($arrRow);
 		
-		$strClass = \Agoat\ContentElements\Pattern::findClass($objPattern->type);
+		$strClass = Pattern::findClass($objPattern->type);
 				
 		if (!class_exists($strClass))
 		{

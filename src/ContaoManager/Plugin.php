@@ -4,15 +4,15 @@
  * Custom content elements extension for Contao Open Source CMS.
  *
  * @copyright  Arne Stappen (alias aGoat) 2017
- * @package    contao-contentelements
+ * @package    contao-customcontentelements
  * @author     Arne Stappen <mehh@agoat.xyz>
  * @link       https://agoat.xyz
  * @license    LGPL-3.0
  */
  
-namespace Agoat\ContentElementsBundle\ContaoManager;
+namespace Agoat\CustomContentElementsBundle\ContaoManager;
 
-use Agoat\ContentElementsBundle\AgoatContentElementsBundle;
+use Agoat\CustomContentElementsBundle\AgoatCustomContentElementsBundle;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
@@ -30,9 +30,9 @@ class Plugin implements BundlePluginInterface
 	public function getBundles(ParserInterface $parser)
 	{
 		return [
-			BundleConfig::create(AgoatContentElementsBundle::class)
+			BundleConfig::create(AgoatCustomContentElementsBundle::class)
 				->setLoadAfter([ContaoCoreBundle::class])
-				->setReplace(['piwikanalytics']),
+				->setReplace(['customcontentelements']),
 		];
 	}
 }

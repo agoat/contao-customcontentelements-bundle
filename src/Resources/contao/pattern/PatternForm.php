@@ -4,13 +4,13 @@
  * Custom content elements extension for Contao Open Source CMS.
  *
  * @copyright  Arne Stappen (alias aGoat) 2017
- * @package    contao-contentelements
+ * @package    contao-customcontentelements
  * @author     Arne Stappen <mehh@agoat.xyz>
  * @link       https://agoat.xyz
  * @license    LGPL-3.0
  */
 
-namespace Agoat\ContentElements;
+namespace Agoat\CustomContentElementsBundle\Contao;
 
 use Contao\Form;
 

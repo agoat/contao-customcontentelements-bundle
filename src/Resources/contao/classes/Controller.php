@@ -4,14 +4,15 @@
  * Custom content elements extension for Contao Open Source CMS.
  *
  * @copyright  Arne Stappen (alias aGoat) 2017
- * @package    contao-contentelements
+ * @package    contao-customcontentelements
  * @author     Arne Stappen <mehh@agoat.xyz>
  * @link       https://agoat.xyz
  * @license    LGPL-3.0
  */
 
-namespace Agoat\ContentElements;
+namespace Agoat\CustomContentElementsBundle\Contao;
 
+use \Contao\Controller as ContaoController;
 use Contao\File;
 use Contao\Combiner;
 
@@ -19,7 +20,7 @@ use Contao\Combiner;
 /**
  * Controller methods for the content elements
  */
-class Controller extends \Contao\Controller
+class Controller extends ContaoController
 {
 	/**
 	 * Adds extra css and js from the frontend layout to the backend template
