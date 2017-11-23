@@ -32,7 +32,7 @@ if (TL_MODE == 'BE')
  */
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
-
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','handleSubPatternTable');
 
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Config','setNewsArticleCallbacks');
 
