@@ -36,7 +36,6 @@ class PatternSubPattern extends Pattern
 			switch (\Input::post('action'))
 			{
 				case 'toggleSubpattern':
-					dump('toggling');
 					$objGroup = \DataModel::findById(\Input::post('id'));
 					
 					if ($objGroup !== null)
@@ -44,14 +43,12 @@ class PatternSubPattern extends Pattern
 						$objGroup->checkBox = \Input::post('state');
 						
 						$objGroup->save();
-					dump($objGroup);
 						
 						$this->data = $objGroup;
 					}
 					break;
 				
 				case 'switchSubpattern':
-					dump('switching');
 					$objGroup = \DataModel::findById(\Input::post('id'));
 					
 					if ($objGroup !== null)
@@ -59,7 +56,6 @@ class PatternSubPattern extends Pattern
 						$objGroup->singleSelectField = \Input::post('option');
 						
 						$objGroup->save();
-					dump($objGroup);
 						
 						$this->data = $objGroup;
 					}
