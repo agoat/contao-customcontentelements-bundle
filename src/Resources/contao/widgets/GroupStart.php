@@ -38,27 +38,17 @@ class GroupStart extends \Widget
 	 */
 	public function generate()
 	{
-		$return = '<div class="tl_multigroup" data-rid="' . $this->rid . '">';
-		$return .= '<div class="tl_multigroup_right click2edit">';
+		$return = '<div class="tl_group">';
+		$return .= '<div class="tl_content_right click2edit">';
 
-		if ($this->up)
-		{
-			$return .= '<a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=up&amp;cid='.$this->rid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('up.svg', 'up', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_up'] . '"') . '</a>';
+		// Add delete button
+		$return .= ' <button onclick="AjaxRequest.deleteGroup(this,\'' . $this->pattern . '\',' . $this->gid . ')" type="button" class="delete-handle"' . (($this->delete) ? '' : ' disabled') . '>' . \Image::getHtml('delete.svg', 'delete', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['delete'] . '"') . '</button>';
 
-		}
-		if ($this->down)
-		{
-			$return .= ' <a onclick="var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="'.$this->addToUrl('&amp;'.$this->strCommand.'=down&amp;cid='.$this->rid.'&amp;id='.$this->currentRecord.'&amp;rt='.\RequestToken::get()).'">' . \Image::getHtml('down.svg', 'down', 'title="' . $GLOBALS['TL_LANG']['MSC']['mg_down'] . '"') . '</a>';
+		// Add insert button
+		$return .= ' <button onclick="AjaxRequest.insertGroup(this,\'' . $this->pattern . '\',' . $this->gid . ',' . $this->max . ')" type="button" class="insert-handle"' . (($this->insert) ? '' : 'disabled') . '>' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['after'] . '"') . '</button>';
 
-		}
-		if ($this->delete)
-		{
-			$return .= ' <a onclick="Backend.getScrollOffset();var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="' . $this->addToUrl('&amp;' . $this->command . '=delete&amp;gid=' . $this->gid . '&amp;rt=' . \RequestToken::get()) . '">' . \Image::getHtml('delete.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['delete'] . '"') . '</a>';
-		}
-		if ($this->insert)
-		{
-			$return .= ' <a onclick="Backend.getScrollOffset();var form=document.getElementById(\'tl_content\');form.action=this.href;form.submit();return false;" href="' . $this->addToUrl('&amp;' . $this->command . '=insert&amp;gid=' . $this->gid . '&amp;rt=' . \RequestToken::get()) . '">' . \Image::getHtml('new.svg', 'new', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['after'] . '"') . '</a>';
-		}
+		// Add move button
+		$return .= ' <button type="button" class="drag-handle">' . \Image::getHtml('drag.svg', 'drag', 'title="' . $GLOBALS['TL_LANG']['MSC']['group']['drag'] . '"') . '</button>';
 		
 		$return .= '</div>';
 		$return .= '<h3><label>' . $this->title . '</label></h3>';
