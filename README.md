@@ -1,39 +1,56 @@
-# Contao Content Elements extension
-Contao 4 bundle
+# Custom content elements extension for Contao 4
 
-___
+[![Version](https://img.shields.io/packagist/v/agoat/contao-contentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-contentelements)
+[![License](https://img.shields.io/packagist/l/agoat/contao-contentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-contentelements)
+[![Downloads](https://img.shields.io/packagist/dt/agoat/contao-contentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-contentelements)
 
-## ATTENTION
-There is a complete database redesign in Version 2+. A direct upgrade from 1.x to 2.x is not possible.
+## About
+Create your own **content elements** with the required input fields.
 
-___
+Almost any input mask for content elements can be created, from very simple text entries to complex input structures with a choice of images, pages and various options.
 
-## Installation
+**Custom content elements** consist of a **templat**e and any number of **patterns** that provide the various input fields. The patterns can be configured in such a way that they give the content data to the template, where it can be output into any corresponding HTML structure.
 
+This makes it possible to implement both simple widgets (such as 'hero images') and extensive information boards (such as 'team pages' with names, e-mails, numbers and addresses of the employees). And all the content can be edited in a simple and elegant way.
 
-Run the following command in your project directory:
+## Notice
+There was a complete database redesign from Version 1.x to 2.x. A direct upgrade is not possible and all custom content elements must be re-created.
 
+## Install
+### Contao manager
+Search for the package and install it
 ```bash
-php composer.phar require agoat/contao-contentelements "^2.0"
+agoat/contao-autoprefixer
 ```
 
+### Managed edition
+Add the package
+```bash
+# Using the composer
+composer require agoat/contao-contentelements
+```
+Registration and configuration is done by the manager-plugin automatically.
 
-## Activation
-
-
-Adjust your `app/AppKernel.php` file:
-
+### Standard edition
+Add the package
+```bash
+# Using the composer
+composer require agoat/contao-contentelements
+```
+Register the bundle in the AppKernel
 ```php
-// app/AppKernel.php
-class AppKernel extends Kernel
+# app/AppKernel.php
+class AppKernel
 {
+    // ...
     public function registerBundles()
     {
         $bundles = [
-            // somewhere after Contao\CoreBundle\ContaoCoreBundle(),
             // ...
-            new Agoat\ContentElementsBundle\AgoatContentElementsBundle(),
+            // after Contao\CoreBundle\ContaoCoreBundle
+            new Agoat\ContentElementsBundle\AgoatContentElementsBundle (),
         ];
     }
 }
 ```
+
