@@ -1,26 +1,27 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
 
 
+/**
+ * Content element pattern "multipattern"
+ */
 class PatternMultiPattern extends Pattern
 {
-	
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		if (!isset($this->parent))
 		{
@@ -208,11 +209,11 @@ class PatternMultiPattern extends Pattern
 
 
 	/**
-	 * prepare a field view for the backend
+	 * Generate the pattern preview
 	 *
-	 * @param array $arrAttributes An optional attributes array
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		$strPreview = '<div class="tl_group_header clr"><div class="tl_content_right  click2edit">';
 		$strPreview .= '<button type="button" class="insert-handle" title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['group']['new']['label'] . '</button>';
@@ -230,14 +231,14 @@ class PatternMultiPattern extends Pattern
 		$strGroupPreview .= '<p class="tl_help tl_tip" title="">' . $this->description . '</p>';	
 		$strGroupPreview .= '<div id="sub_group" class="subpal cf">';
 		
-		// add the sub pattern
+		// Add the sub pattern
 		$colMultiPattern = \PatternModel::findVisibleByPidAndTable($this->id, 'tl_subpattern');
 		
 		if ($colMultiPattern !== null)
 		{
 			foreach($colMultiPattern as $objMultiPattern)
 			{
-				// construct dca for pattern
+				// Construct dca for pattern
 				$strClass = Pattern::findClass($objMultiPattern->type);
 					
 				if (!class_exists($strClass))
@@ -264,10 +265,8 @@ class PatternMultiPattern extends Pattern
 
 
 	/**
-	 * prepare the values for the frontend template
-	 *
-	 * @param array $arrAttributes An optional attributes array
-	 */	
+	 * Prepare the data for the template
+	 */
 	public function compile()
 	{
 		// Add new alias to the value mapper
@@ -333,6 +332,13 @@ class PatternMultiPattern extends Pattern
 	}
 	
 
+	/**
+	 * Calculate the new position of a moved or inserted sub pattern
+	 *
+	 * @param intereger $gid
+	 *
+	 * @return integer
+	 */
 	protected function getNewPosition($gid=0)
 	{
 		$db = \Database::getInstance();
@@ -376,12 +382,16 @@ class PatternMultiPattern extends Pattern
 							}
 						}
 					}
+					
 					else $newSorting = (($curSorting + $nxtSorting) / 2);
 				}
+				
 				else $newSorting = ($curSorting + 128);
 			}
+			
 			else $newSorting = 128;
 		}
+		
 		// Insert on first postion
 		else
 		{
@@ -409,8 +419,10 @@ class PatternMultiPattern extends Pattern
 					
 					$newSorting = 128;
 				}
+				
 				else $newSorting = ($curSorting / 2);
 			}
+			
 			else $newSorting = 128;
 		}
 		
@@ -418,6 +430,9 @@ class PatternMultiPattern extends Pattern
 	}
 
 	
+	/**
+	 * Delete all incomplete and unrelated records
+	 */
 	protected function reviseDataTable()
 	{
 		$db = \Database::getInstance();

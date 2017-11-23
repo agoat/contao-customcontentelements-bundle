@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2017 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -17,11 +16,16 @@ use Contao\CoreBundle\Exception\ResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
 
+/**
+ * Ajax class
+ */
 class Ajax extends \Backend
 {
-
 	/**
 	 * Handle multi- and subpattern AJAX requests
+	 *
+	 * @param string        $strAction
+	 * @param DataContainer $dc
 	 */
 	public function executeGroupActions ($strAction, $dc)
 	{
@@ -42,6 +46,7 @@ class Ajax extends \Backend
 		}
 	}
 
+	
 	/**
 	 * Convert a string to a response object
 	 *
@@ -53,5 +58,4 @@ class Ajax extends \Backend
 	{
 		return new Response(\Controller::replaceOldBePaths($str));
 	}
-	
 }
