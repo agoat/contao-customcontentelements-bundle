@@ -3,11 +3,10 @@
 [![Version](https://img.shields.io/packagist/v/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
 [![License](https://img.shields.io/packagist/l/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
 [![Downloads](https://img.shields.io/packagist/dt/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements) 
-
 <sub>(The download counter has been reset due to name change)<sub>
 
 ## About
-Create your own **content elements** with the required input fields.
+Create your own **content elements** with individual input fields.
 
 Almost any input mask for content elements can be created, from very simple text entries to complex input structures with a choice of images, pages and various options.
 
