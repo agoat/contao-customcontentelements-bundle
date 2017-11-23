@@ -323,6 +323,8 @@ class Controller extends ContaoController
 
 	/*
 	 * Dynamically change parent table when editing subpattern
+	 *
+	 * @param string $strTable
 	 */
 	public function handleSubPatternTable ($strTable)
 	{

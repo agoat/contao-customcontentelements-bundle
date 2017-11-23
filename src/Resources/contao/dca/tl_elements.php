@@ -439,6 +439,9 @@ class tl_elements extends Backend
 
 	/**
 	 * Copy subpattern when copying content element
+	 *
+	 * @param integer       $insertID
+	 * @param DataContainer $dc
 	 */
 	public function copySubPattern ($insertID, $dc)
 	{
@@ -524,6 +527,9 @@ class tl_elements extends Backend
 
 	/**
 	 * Delete subpattern when deleting content element
+	 *
+	 * @param DataContainer $dc
+	 * @param integer       $intUndoId
 	 */
 	public function deleteSubPattern ($dc, $intUndoId)
 	{

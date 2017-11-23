@@ -1,14 +1,13 @@
 <?php
- 
- /**
- * Contao Open Source CMS - ContentBlocks extension
+
+/*
+ * Custom content elements extension for Contao Open Source CMS.
  *
- * Copyright (c) 2016 Arne Stappen (aGoat)
- *
- *
- * @package   contentblocks
- * @author    Arne Stappen <http://agoat.de>
- * @license	  LGPL-3.0+
+ * @copyright  Arne Stappen (alias aGoat) 2017
+ * @package    contao-contentelements
+ * @author     Arne Stappen <mehh@agoat.xyz>
+ * @link       https://agoat.xyz
+ * @license    LGPL-3.0
  */
 
 namespace Agoat\ContentElements;
@@ -16,12 +15,15 @@ namespace Agoat\ContentElements;
 use Contao\StringUtil;
 
 
+/**
+ * Content element pattern "subpattern"
+ */
 class PatternSubPattern extends Pattern
 {
 	/**
-	 * generate the DCA construct
+	 * Creates the DCA configuration
 	 */
-	public function construct()
+	public function create()
 	{
 		if (!isset($this->parent))
 		{
@@ -196,11 +198,11 @@ class PatternSubPattern extends Pattern
 
 		
 	/**
-	 * prepare a field view for the backend
+	 * Generate the pattern preview
 	 *
-	 * @param array $arrAttributes An optional attributes array
+	 * @return string HTML code
 	 */
-	public function view()
+	public function preview()
 	{
 		if ($this->subPatternType == 'options')
 		{
@@ -237,7 +239,7 @@ class PatternSubPattern extends Pattern
 
 			$strPreview .= '</select><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';
 
-			// add the sub pattern
+			// Add the sub pattern
 			foreach (StringUtil::deserialize($this->options) as $arrOption)
 			{
 				if (!$arrOption['group'])
@@ -253,7 +255,7 @@ class PatternSubPattern extends Pattern
 
 					foreach($colSubPattern as $objSubPattern)
 					{
-						// construct dca for pattern
+						// Construct dca for pattern
 						$strClass = Pattern::findClass($objSubPattern->type);
 							
 						if (!class_exists($strClass))
@@ -279,7 +281,7 @@ class PatternSubPattern extends Pattern
 			$strPreview .=  '<div class="tl_checkbox_single_container"><input class="tl_checkbox" type="checkbox" onclick="$(\'sub_' . $this->id . '\').toggle();"> <label onclick="$(\'sub_' . $this->id . '\').toggle();">' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
 			$strPreview .=  '<div id="sub_' . $this->id . '" class="sub_pattern" style="display: none;">';	
 
-			// add the sub pattern
+			// Add the sub pattern
 			$colSubPattern = \PatternModel::findVisibleByPidAndTable($this->id, 'tl_subpattern');
 			
 			if ($colSubPattern !== null)
@@ -310,10 +312,8 @@ class PatternSubPattern extends Pattern
 
 	
 	/**
-	 * prepare the values for the frontend template
-	 *
-	 * @param array $arrAttributes An optional attributes array
-	 */	
+	 * Prepare the data for the template
+	 */
 	public function compile()
 	{
 		if ($this->subPatternType == 'options')
@@ -353,7 +353,7 @@ class PatternSubPattern extends Pattern
 			}							
 		}
 		
-		// prepare values for every pattern
+		// Prepare values for every pattern
 		foreach($colSubPattern as $objSubPattern)
 		{
 			if (!Pattern::hasOutput($objSubPattern->type))
@@ -378,7 +378,5 @@ class PatternSubPattern extends Pattern
 				$objSubPatternClass->compile();
 			}
 		}
-		
-		
 	}
 }
