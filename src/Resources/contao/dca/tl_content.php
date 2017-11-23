@@ -112,7 +112,7 @@ class tl_content_elements extends tl_content
 		}
 
 		// Try to find content block elements for the theme
-		$objLayout = \LayoutModel::findById(\Agoat\ContentElements\Controller::getLayoutId($ptable, $pid));	
+		$objLayout = \LayoutModel::findById(\Agoat\CustomContentElementsBundle\Contao\Controller::getLayoutId($ptable, $pid));	
 		$colElements = \ElementsModel::findPublishedByPid($objLayout->pid);
 
 		$arrElements = array();
@@ -194,7 +194,7 @@ class tl_content_elements extends tl_content
 			}
 			
 			// Try to find content block elements for the theme
-			$objLayout = \LayoutModel::findById(\Agoat\ContentElements\Controller::getLayoutId($ptable, $pid));	
+			$objLayout = \LayoutModel::findById(\Agoat\CustomContentElementsBundle\Contao\Controller::getLayoutId($ptable, $pid));	
 			$objDefault = \ElementsModel::findDefaultPublishedElementByPid($objLayout->pid);
 			
 			// if no default content element is found 

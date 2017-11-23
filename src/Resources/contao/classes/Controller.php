@@ -15,6 +15,7 @@ namespace Agoat\CustomContentElementsBundle\Contao;
 use \Contao\Controller as ContaoController;
 use Contao\File;
 use Contao\Combiner;
+use Agoat\CustomContentElementsBundle\Contao\ContentElement;
 
 
 /**
@@ -315,7 +316,7 @@ class Controller extends ContaoController
 		// Add content blocks as content elements
 		foreach ($arrElements as $arrElement)
 		{
-			$GLOBALS['TL_CTE']['CTE'][$arrElement['alias']] = 'Agoat\ContentElements\ContentElement';
+			$GLOBALS['TL_CTE']['CTE'][$arrElement['alias']] = 'Agoat\CustomContentElementsBundle\Contao\ContentElement';
 			$GLOBALS['TL_LANG']['CTE'][$arrElement['alias']] = array($arrElement['title'],$arrElement['description']);
 		}
 	}

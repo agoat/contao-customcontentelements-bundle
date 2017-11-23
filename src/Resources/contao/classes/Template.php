@@ -17,8 +17,8 @@ use Contao\TemplateLoader;
 use Contao\FrontendTemplate;
 use Contao\BackendTemplate;
 use Contao\StringUtil;
-use Agoat\ContentElements\Controller;
-use Agoat\ContentElements\Pattern;
+use Agoat\CustomContentElementsBundle\Contao\Controller;
+use Agoat\CustomContentElementsBundle\Contao\Pattern;
 
 
 /**

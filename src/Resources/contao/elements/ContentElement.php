@@ -14,9 +14,9 @@ namespace Agoat\CustomContentElementsBundle\Contao;
 
 use Contao\System;
 use Contao\TemplateLoader;
-use Agoat\ContentElements\Controller;
-use Agoat\ContentElements\Template;
-use Agoat\ContentElements\Pattern;
+use Agoat\CustomContentElementsBundle\Contao\Controller;
+use Agoat\CustomContentElementsBundle\Contao\Template;
+use Agoat\CustomContentElementsBundle\Contao\Pattern;
 
 
 /**
