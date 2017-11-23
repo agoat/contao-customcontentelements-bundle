@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Agoat\\ContentElementsBundle\\": "src/"
+            "Agoat\\CustomContentElementsBundle\\": "src/"
         },
         "classmap": [
             "src/Resources/contao"
