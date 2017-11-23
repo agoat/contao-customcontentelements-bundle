@@ -44,6 +44,7 @@ $GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\CustomContentElementsBund
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Versions','hideDataTableVersions');
 
+$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Ajax','executeGroupActions');
 
 $GLOBALS['TL_HOOKS']['compareThemeFiles'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Theme','compareTables');
 $GLOBALS['TL_HOOKS']['extractThemeFiles'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Theme','importTables');
@@ -202,4 +203,6 @@ $GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\CustomContentElementsBundle\Contao\
 $GLOBALS['BE_FFL']['group'] 		= '\Agoat\CustomContentElementsBundle\Contao\Group';
 $GLOBALS['BE_FFL']['groupstart'] 	= '\Agoat\CustomContentElementsBundle\Contao\GroupStart';
 $GLOBALS['BE_FFL']['groupstop'] 	= '\Agoat\CustomContentElementsBundle\Contao\GroupStop';
+$GLOBALS['BE_FFL']['groupscript'] 	= '\Agoat\CustomContentElementsBundle\Contao\GroupScript';
+
 
