@@ -51,7 +51,7 @@ class PatternListWizard extends Pattern
 	 */
 	public function preview()
 	{
-		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label> <a href="javascript:void(0);" title="" > <img src="system/themes/flexible/icons/tablewizard.svg" alt="CSV import" style="vertical-align:text-bottom" height="14" width="16"></a></h3>';
+		$strPreview = '<div class="widget clr" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label> <a href="javascript:void(0);" title="" > <img src="system/themes/flexible/icons/tablewizard.svg" alt="CSV import" style="vertical-align:text-bottom" height="14" width="16"></a></h3>';
 		
 		$strRowPreview = '<ul class="tl_listwizard" data-tabindex="1"><li><input type="text" class="tl_text" tabindex="1" value=""> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/copy.svg" width="14" height="16" alt="Duplicate the element" class="tl_listwizard_img"></a> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/drag.svg" width="14" height="16" alt="" class="drag-handle" title="Move the item via drag and drop"></a> <a href="javascript:void(0);"><img src="system/themes/flexible/icons/delete.svg" width="14" height="16" alt="Delete the element" class="tl_listwizard_img"></a></li></ul>';
 			

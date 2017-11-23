@@ -167,7 +167,7 @@ class PatternFileTree extends Pattern
 	 */
 	public function preview()
 	{
-		$strPreview = '<div class="clr widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
+		$strPreview = '<div class="widget clr"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div><div class="selector_container"><ul class="' . (($this->source == 'image') ? 'sgallery' : '') . '">';
 
 		switch ($this->source)
 		{

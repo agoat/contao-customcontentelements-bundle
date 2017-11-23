@@ -206,7 +206,7 @@ class PatternSubPattern extends Pattern
 	{
 		if ($this->subPatternType == 'options')
 		{
-			$strPreview = '<div class="w50 clr">';
+			$strPreview = '<div class="w50 widget">';
 			$strPreview .= '<h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 			$strPreview .= '<select class="tl_select" style="width: 412px;" onchange="$$(\'.' . $this->alias . '\').hide();$(this.options[this.selectedIndex].value).show();">';
 
@@ -244,7 +244,7 @@ class PatternSubPattern extends Pattern
 			{
 				if (!$arrOption['group'])
 				{
-					$strPreview .=  '<div id="' .  $arrOption['value'] . '" class="sub_pattern ' . $this->alias . '" style="display: ' . (($arrOption['value'] == $default) ? 'block' : 'none'). ';">';	
+					$strPreview .=  '<div id="' .  $arrOption['value'] . '" class="subpal cf ' . $this->alias . '" style="display: ' . (($arrOption['value'] == $default) ? 'block' : 'none'). ';">';	
 						
 					$colSubPattern = \PatternModel::findVisibleByPidAndTableAndOption($this->id, 'tl_subpattern', $arrOption['value']);
 					
@@ -277,9 +277,9 @@ class PatternSubPattern extends Pattern
 		}
 		else
 		{
-			$strPreview =  '<div class="w50 clr">';	
-			$strPreview .=  '<div class="tl_checkbox_single_container"><input class="tl_checkbox" type="checkbox" onclick="$(\'sub_' . $this->id . '\').toggle();"> <label onclick="$(\'sub_' . $this->id . '\').toggle();">' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
-			$strPreview .=  '<div id="sub_' . $this->id . '" class="sub_pattern" style="display: none;">';	
+			$strPreview =  '<div class="w50 widget">';	
+			$strPreview .=  '<div class="tl_checkbox_single_container"><input class="tl_checkbox" type="checkbox" onclick="$(\'sub_' . $this->id . '\').toggle();"> <label onclick="$(\'sub_' . $this->id . '\').toggle();">' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div></div>';	
+			$strPreview .=  '<div id="sub_' . $this->id . '" class="subpal cf" style="display: none;">';	
 
 			// Add the sub pattern
 			$colSubPattern = \PatternModel::findVisibleByPidAndTable($this->id, 'tl_subpattern');
@@ -304,7 +304,7 @@ class PatternSubPattern extends Pattern
 				}
 			}
 
-			$strPreview .=  '</div></div>';	
+			$strPreview .=  '</div>';	
 		}
 
 		return $strPreview;

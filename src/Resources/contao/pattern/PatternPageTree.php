@@ -100,7 +100,7 @@ class PatternPageTree extends Pattern
 	 */
 	public function preview()
 	{
-		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
+		$strPreview = '<div class="widget clr"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3><div class="selector_container"><ul>';
 
 		if ($this->multiPage)
 		{

@@ -48,7 +48,7 @@ class PatternExplanation extends Pattern
 	 */
 	public function preview()
 	{
-		return '<div class="widget"><div class="tl_explanation">' . StringUtil::toHtml5($this->explanation) . '</div></div>';
+		return '<div class="widget clr"><div class="tl_explanation">' . StringUtil::toHtml5($this->explanation) . '</div></div>';
 	}
 
 
