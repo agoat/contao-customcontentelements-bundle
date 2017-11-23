@@ -30,7 +30,7 @@ class Theme extends \Contao\Theme
 		$arrDbFields = array
 		(
 			'tl_elements'	=> $this->Database->getFieldNames('tl_elements'),
-			'tl_pattern'	=> $this->Database->getFieldNames('tl_pattern'),
+			'tl_pattern'	=> $this->Database->getFieldNames('tl_pattern')
 		);
 			
 		$tables = $xml->getElementsByTagName('table');
@@ -103,6 +103,7 @@ class Theme extends \Contao\Theme
 		(
 			'tl_elements'	=> 'WRITE',
 			'tl_pattern'	=> 'WRITE',
+			'tl_subpattern'	=> 'WRITE',
 			'tl_files'		=> 'READ',
 			'tl_theme'		=> 'READ'
 		);
@@ -197,7 +198,14 @@ class Theme extends \Contao\Theme
 					{
 						if ($table == 'tl_pattern')
 						{
-							$value = $arrMapper['tl_elements'][$value];
+							if (isset($arrMapper['tl_elements'][$value]))
+							{
+								$value = $arrMapper['tl_elements'][$value];
+							}
+							else
+							{
+								$value = $arrMapper['tl_pattern'][$value];
+							}
 						}
 						else
 						{
@@ -299,10 +307,23 @@ class Theme extends \Contao\Theme
 						unset($set[$k]);
 					}
 				}
-					
+			
 				// Insert into database
 				$this->Database->prepare("INSERT INTO $table %s")->set($set)->execute();
 
+				// Insert subpattern into database
+				if ($table == 'tl_pattern' && in_array($set['type'], $GLOBALS['TL_CTP_SUB']))
+				{
+					$subSet['id'] = $set['id'];
+					$subSet['pid'] = $set['id'];
+					$subSet['type'] = $set['type'];
+					$subSet['title'] = $set['label'];
+					$subSet['alias'] = $set['alias'];
+					$subSet['subPatternType	'] = $set['subPatternType'];
+					$subSet['numberOfGroups	'] = $set['numberOfGroups'];
+
+					$this->Database->prepare("INSERT INTO tl_subpattern %s")->set($subSet)->execute();
+				}
 			}
 		}
 
@@ -322,7 +343,7 @@ class Theme extends \Contao\Theme
 		// Find tables node
 		$tables = $xml->getElementsByTagName('tables')[0];
 		
-		// Add the table (elements)
+		// Add the elements table
 		$table = $xml->createElement('table');
 		$table->setAttribute('name', 'tl_elements');
 		$table = $tables->appendChild($table);
@@ -335,19 +356,18 @@ class Theme extends \Contao\Theme
 		$arrOrder = $objDcaExtractor->getOrderFields();
 
 		// Get all content blocks
-		$objContentBlocks = $this->Database->prepare("SELECT * FROM tl_elements WHERE pid=?")
+		$objElements = $this->Database->prepare("SELECT * FROM tl_elements WHERE pid=?")
 										->execute($objThemeId);
 
 		// Add the rows
-		while ($objContentBlocks->next())
+		while ($objElements->next())
 		{
-			$this->addDataRow($xml, $table, $objContentBlocks->row(), $arrOrder);
+			$this->addDataRow($xml, $table, $objElements->row(), $arrOrder);
 		}
 
-		$objContentBlocks->reset();
+		$objElements->reset();
 		
-		
-		// Add the child table (pattern)
+		// Add the pattern table
 		$table = $xml->createElement('table');
 		$table->setAttribute('name', 'tl_pattern');
 		$table = $tables->appendChild($table);
@@ -359,10 +379,11 @@ class Theme extends \Contao\Theme
 		$objDcaExtractor = \DcaExtractor::getInstance('tl_pattern');
 		$arrOrder = $objDcaExtractor->getOrderFields();
 
+
 		// Add pattern recursively
-		while ($objContentBlocks->next())
+		while ($objElements->next())
 		{
-			$this->addPatternData($xml, $table, $arrOrder, $objContentBlocks->id);
+			$this->addPatternData($xml, $table, $arrOrder, $objElements->id);
 		}
 	}
 
@@ -372,21 +393,19 @@ class Theme extends \Contao\Theme
 	 */
 	protected function addPatternData ($xml, $table, $arrOrder, $intParentID)
 	{
-			// Get all content patterns
-			$objContentPattern = $this->Database->prepare("SELECT * FROM tl_pattern WHERE pid=?")
-									   ->execute($intParentID);
+		// Get all content patterns
+		$objPattern = $this->Database->prepare("SELECT * FROM tl_pattern WHERE pid=?")
+						   ->execute($intParentID);
+		
+		// Add the rows
+		while ($objPattern->next())
+		{
+			$this->addDataRow($xml, $table, $objPattern->row(), $arrOrder);
 			
-			// Add the rows
-			while ($objContentPattern->next())
+			if (in_array($objPattern->type, $GLOBALS['TL_CTP_SUB']))
 			{
-				$this->addDataRow($xml, $table, $objContentPattern->row(), $arrOrder);
-				
-				if (in_array($objContentPattern->type, $GLOBALS['TL_CTP_SUB']))
-				{
-					$this->addPatternData($xml, $table, $arrOrder, $objContentPattern->id);
-				}
+				$this->addPatternData($xml, $table, $arrOrder, $objPattern->id);
 			}
-	
+		}
 	}
-	
 }
