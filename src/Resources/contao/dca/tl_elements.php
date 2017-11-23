@@ -460,7 +460,7 @@ class tl_elements extends Backend
 		{
 			foreach ($colPattern as $i=>$objPattern)
 			{
-				if (\Agoat\ContentElements\Pattern::isSubPattern($objPattern->type))
+				if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($objPattern->type))
 				{
 					// copy to subpattern table
 					$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
@@ -493,7 +493,7 @@ class tl_elements extends Backend
 						
 						$insertID = $objInsertStmt->insertId;
 						
-						if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
+						if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrCurrent['type']))
 						{
 							// copy to subpattern table
 							$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
@@ -545,7 +545,7 @@ class tl_elements extends Backend
 		{
 			foreach ($arrData['tl_subpattern'] as $arrSubPattern)
 			{
-				if (\Agoat\ContentElements\Pattern::isSubPattern($arrSubPattern['type']))
+				if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrSubPattern['type']))
 				{			
 
 					$colPattern = \PatternModel::findByPidAndTable($arrSubPattern['id'], 'tl_subpattern');
@@ -566,7 +566,7 @@ class tl_elements extends Backend
 						$db->prepare("DELETE FROM tl_pattern WHERE id=?")
 						   ->execute($arrCurrent['id']);
 						
-						if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
+						if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrCurrent['type']))
 						{
 							// Add related row to undo array
 							$arrData['tl_subpattern'][] = $db->prepare("SELECT * FROM tl_subpattern WHERE id=?")

@@ -816,7 +816,7 @@ class tl_pattern extends Backend
 	 */
 	public function patternButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		if (\Agoat\ContentElements\Pattern::isSubPattern($row['type']))
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($row['type']))
 		{
 			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;spid='.$row['id'],true, array('act','mode')).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 		}
@@ -1120,7 +1120,7 @@ class tl_pattern extends Backend
 		$db = Database::getInstance();
 		
 		// Save changes to subpattern table
-		if (\Agoat\ContentElements\Pattern::isSubPattern($dc->activeRecord->type))
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($dc->activeRecord->type))
 		{			
 			if ($db->prepare("SELECT * FROM tl_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
 			{
@@ -1156,7 +1156,7 @@ class tl_pattern extends Backend
 		$objPattern = \PatternModel::findById($insertID);
 
 		// Copy changes to subpattern table and duplicate the subpattern
-		if (\Agoat\ContentElements\Pattern::isSubPattern($objPattern->type))
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($objPattern->type))
 		{			
 			// Copy to subpattern table
 			$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
@@ -1189,7 +1189,7 @@ class tl_pattern extends Backend
 				
 				$insertID = $objInsertStmt->insertId;
 				
-				if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
+				if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrCurrent['type']))
 				{
 					// Copy to subpattern table
 					$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
@@ -1247,7 +1247,7 @@ class tl_pattern extends Backend
 	{
 		$db = Database::getInstance();
 		
-		if (\Agoat\ContentElements\Pattern::isSubPattern($dc->activeRecord->type))
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($dc->activeRecord->type))
 		{			
 			// Get the undo database row
 			$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
@@ -1273,7 +1273,7 @@ class tl_pattern extends Backend
 				$db->prepare("DELETE FROM tl_pattern WHERE id=?")
 				   ->execute($arrCurrent['id']);
 				
-				if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
+				if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrCurrent['type']))
 				{
 					// Add related row to undo array
 					$arrData['tl_subpattern'][] = $db->prepare("SELECT * FROM tl_subpattern WHERE id=?")
