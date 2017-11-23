@@ -1110,11 +1110,16 @@ class tl_pattern extends Backend
 	}
 
 	
+	/**
+	 * Save subpattern rows with the pattern
+	 *
+	 * @param DataContainer $dc
+	 */
 	public function saveSubPattern ($dc)
 	{
 		$db = Database::getInstance();
 		
-		// save changes to subpattern table
+		// Save changes to subpattern table
 		if (\Agoat\ContentElements\Pattern::isSubPattern($dc->activeRecord->type))
 		{			
 			if ($db->prepare("SELECT * FROM tl_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
@@ -1129,7 +1134,7 @@ class tl_pattern extends Backend
 			}
 		}
 
-		// save the filter for subpattern
+		// Save the filter for subpattern
 		if (isset($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1]))
 		{
 			$db->prepare("UPDATE tl_pattern SET suboption=? WHERE id=?")
@@ -1138,16 +1143,22 @@ class tl_pattern extends Backend
 	}
 
 	
+	/**
+	 * Copy subpattern rows with the pattern
+	 *
+	 * @param interger      $insertID
+	 * @param DataContainer $dc
+	 */
 	public function copySubPattern ($insertID, $dc)
 	{
 		$db = Database::getInstance();
 		
 		$objPattern = \PatternModel::findById($insertID);
 
-		// copy changes to subpattern table and duplicate the subpattern
+		// Copy changes to subpattern table and duplicate the subpattern
 		if (\Agoat\ContentElements\Pattern::isSubPattern($objPattern->type))
 		{			
-			// copy to subpattern table
+			// Copy to subpattern table
 			$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
 			   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
 
@@ -1180,7 +1191,7 @@ class tl_pattern extends Backend
 				
 				if (\Agoat\ContentElements\Pattern::isSubPattern($arrCurrent['type']))
 				{
-					// copy to subpattern table
+					// Copy to subpattern table
 					$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
 					   ->execute($insertID, $insertID, $arrCurrent['label'], $arrCurrent['alias'], $arrCurrent['type'], $arrCurrent['subPatternType'], $arrCurrent['numberOfGroups']);
 
@@ -1208,6 +1219,11 @@ class tl_pattern extends Backend
 	}
 	
 	
+	/**
+	 * Cut/Move subpattern rows with the pattern
+	 *
+	 * @param DataContainer $dc
+	 */
 	public function cutSubPattern ($dc)
 	{
 		$db = Database::getInstance();
@@ -1221,13 +1237,19 @@ class tl_pattern extends Backend
 	}
 	
 
+	/**
+	 * Delete subpattern rows with the pattern
+	 *
+	 * @param DataContainer $dc
+	 * @param interger      $intUndoId
+	 */
 	public function deleteSubPattern ($dc, $intUndoId)
 	{
 		$db = Database::getInstance();
 		
 		if (\Agoat\ContentElements\Pattern::isSubPattern($dc->activeRecord->type))
 		{			
-			// get the undo database row
+			// Get the undo database row
 			$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
 						  ->execute($intUndoId);
 
@@ -1270,7 +1292,7 @@ class tl_pattern extends Backend
 				}
 			}
 			
-			// save to the undo database row
+			// Save to the undo database row
 			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
 			   ->execute(serialize($arrData), $intUndoId);
 		}
