@@ -1,5 +1,5 @@
 {
-    "name": "agoat/contao-contentelements",
+    "name": "agoat/contao-customcontentelements",
     "description": "Contao 4 custom content elements",
     "keywords": ["contao", "contao4", "contao-bundle", "plugin", "content", "elements", "custom-elements", "content-elements"],
     "type": "contao-bundle",
@@ -11,8 +11,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/agoat/contao-contentelements-bundle/issues",
-        "source": "https://github.com/agoat/contao-contentelements-bundle"
+        "issues": "https://github.com/agoat/contao-customcontentelements-bundle/issues",
+        "source": "https://github.com/agoat/contao-customcontentelements-bundle"
     },
     "require": {
         "php": "^5.6|^7.0",
