@@ -162,7 +162,7 @@ class PatternSubPattern extends Pattern
 
 		foreach($colSubPattern as $objSubPattern)
 		{
-			// Construct dca for pattern
+			// Create DCA for sub pattern
 			$strClass = Pattern::findClass($objSubPattern->type);
 			$bolData = Pattern::hasData($objSubPattern->type);
 				
@@ -189,7 +189,7 @@ class PatternSubPattern extends Pattern
 				$objSubPatternClass->element = $this->element;	
 				$objSubPatternClass->data = $arrData[$objSubPattern->alias];							
 
-				$objSubPatternClass->construct();
+				$objSubPatternClass->create();
 			}
 		}
 	
@@ -266,7 +266,7 @@ class PatternSubPattern extends Pattern
 						{
 							$objSubPatternClass = new $strClass($objSubPattern);
 
-							$strPreview .= $objSubPatternClass->view();
+							$strPreview .= $objSubPatternClass->preview();
 						}
 					}
 					
@@ -299,7 +299,7 @@ class PatternSubPattern extends Pattern
 					{
 						$objSubPatternClass = new $strClass($objSubPattern);
 		
-						$strPreview .= $objSubPatternClass->view();
+						$strPreview .= $objSubPatternClass->preview();
 					}
 				}
 			}
