@@ -29,7 +29,7 @@ class PatternSubPattern extends Pattern
 		}
 
 		// Execute Ajax action
-		if (\Environment::get('isAjaxRequest') && \Input::post('pattern') == $this->pattern)
+		if (\Environment::get('isAjaxRequest') && \Input::post('pattern') == $this->pattern . (($this->parent > 0) ? '_' . $this->parent : ''))
 		{
 			switch (\Input::post('action'))
 			{
@@ -105,12 +105,12 @@ class PatternSubPattern extends Pattern
 				'eval'			=>	array
 				(
 					'tl_class'		=>	'w50 clr',
-					'onchange'		=>	'AjaxRequest.switchSubpattern(this, ' . $this->data->id . ', \'' . $this->pattern . '\')'
+					'onchange'		=>	'AjaxRequest.switchSubpattern(this, \'' . $this->pattern . (($this->parent > 0) ? '_' . $this->parent : '') . '\', ' . $this->data->id . ')'
 				)
 			));
 			
 			$option = $this->data->singleSelectField;
-		
+	
 			if (!$option)
 			{
 				$option = $default;
@@ -128,7 +128,7 @@ class PatternSubPattern extends Pattern
 				'eval'			=>	array
 				(
 					'tl_class'		=>	'w50 clr m12',
-					'onclick'		=>	'AjaxRequest.toggleSubpattern(this, ' . $this->data->id . ', \'' . $this->pattern . '\')'
+					'onclick'		=>	'AjaxRequest.toggleSubpattern(this, \'' . $this->pattern . (($this->parent > 0) ? '_' . $this->parent : '') . '\', ' . $this->data->id . ')'
 				)
 			));
 
@@ -144,7 +144,7 @@ class PatternSubPattern extends Pattern
 			return;
 		}
 
-		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[' . $this->pattern . ']';
+		$GLOBALS['TL_DCA']['tl_content']['palettes'][$this->element] .= ',[' . $this->pattern . (($this->parent > 0) ? '_' . $this->parent : '') . ']';
 		
 		$arrData = array();
 		
@@ -204,8 +204,9 @@ class PatternSubPattern extends Pattern
 	{
 		if ($this->subPatternType == 'options')
 		{
-			$strPreview = '<div class="" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
-			$strPreview .= '<select class="tl_select" style="width: 412px;" onchange="$$(\'.tl_select_container_' . $this->id . '\').hide();$$(\'.tl_select_container_' . $this->id . '_\' + this.options[this.selectedIndex].value).show();">';
+			$strPreview = '<div class="w50 clr">';
+			$strPreview .= '<h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+			$strPreview .= '<select class="tl_select" style="width: 412px;" onchange="$$(\'.' . $this->alias . '\').hide();$(this.options[this.selectedIndex].value).show();">';
 
 			foreach (StringUtil::deserialize($this->options) as $arrOption)
 			{
@@ -241,7 +242,7 @@ class PatternSubPattern extends Pattern
 			{
 				if (!$arrOption['group'])
 				{
-					$strPreview .=  '<div class="tl_select_container_' . $this->id . ' tl_select_container_' . $this->id . '_' . $arrOption['value'] . '" style="display: ' . (($arrOption['value'] == $default) ? 'block' : 'none'). ';">';	
+					$strPreview .=  '<div id="' .  $arrOption['value'] . '" class="sub_pattern ' . $this->alias . '" style="display: ' . (($arrOption['value'] == $default) ? 'block' : 'none'). ';">';	
 						
 					$colSubPattern = \PatternModel::findVisibleByPidAndTableAndOption($this->id, 'tl_subpattern', $arrOption['value']);
 					
@@ -274,8 +275,9 @@ class PatternSubPattern extends Pattern
 		}
 		else
 		{
-			$strPreview =  '<div class="tl_checkbox_single_container"><input class="tl_checkboxx" type="checkbox" onclick="$$(\'.tl_checkbox_container_' . $this->id . '\').toggle();"> <label onclick="$$(\'.tl_checkbox_container_' . $this->id . '\').toggle();">' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
-			$strPreview .=  '<div class="tl_checkbox_container_' . $this->id . '" style="display: none;">';	
+			$strPreview =  '<div class="w50 clr">';	
+			$strPreview .=  '<div class="tl_checkbox_single_container"><input class="tl_checkbox" type="checkbox" onclick="$(\'sub_' . $this->id . '\').toggle();"> <label onclick="$(\'sub_' . $this->id . '\').toggle();">' . $this->label . '</label><p title="" class="tl_help tl_tip">' . $this->description . '</p></div>';	
+			$strPreview .=  '<div id="sub_' . $this->id . '" class="sub_pattern" style="display: none;">';	
 
 			// add the sub pattern
 			$colSubPattern = \PatternModel::findVisibleByPidAndTable($this->id, 'tl_subpattern');
@@ -300,7 +302,7 @@ class PatternSubPattern extends Pattern
 				}
 			}
 
-			$strPreview .=  '</div>';	
+			$strPreview .=  '</div></div>';	
 		}
 
 		return $strPreview;
@@ -318,7 +320,8 @@ class PatternSubPattern extends Pattern
 		{
 			if ($this->data->singleSelectField)
 			{
-				// Add select option value (instead of the alias) to the value mapper
+
+			// Add select option value (instead of the alias) to the value mapper
 				$this->arrMapper[] = substr($this->data->singleSelectField,1);
 
 				$colSubPattern = \PatternModel::findVisibleByPidAndTableAndOption($this->id, 'tl_subpattern', substr($this->data->singleSelectField, 1));
