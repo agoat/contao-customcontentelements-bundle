@@ -32,6 +32,7 @@ if (TL_MODE == 'BE')
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
 
+
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Config','setNewsArticleCallbacks');
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addPageLayoutToBE');
@@ -62,54 +63,63 @@ $GLOBALS['TL_CTP'] = array
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternTextField',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'textarea'		=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternTextArea',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'selectfield'	=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternSelectField',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'checkbox'		=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternCheckBox',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'filetree'		=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternFileTree',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'pagetree'		=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternPageTree',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'listwizard'	=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternListWizard',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'tablewizard'	=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternTableWizard',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		),
 		'code'			=> array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternCode',
 			'data'			=> true,
 			'output'		=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
 		)
 	),
 	'layout' => array
@@ -121,7 +131,24 @@ $GLOBALS['TL_CTP'] = array
 		'explanation' => array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternExplanation',
-		)
+			'childOf'		=> array('subpattern', 'multipattern'),
+		),
+		'subpattern' => array
+		(
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternSubPattern',
+			'data'			=> true,
+			'output'		=> true,
+			'subpattern'	=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
+		),
+		'multipattern' => array
+		(
+			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternMultiPattern',
+			'data'			=> true,
+			'output'		=> true,
+			'subpattern'	=> true,
+			'childOf'		=> array('subpattern', 'multipattern'),
+		),
 	),
 	'element' => array
 	(
@@ -144,6 +171,7 @@ $GLOBALS['TL_CTP'] = array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternImageSize',
 			'output'		=> true,
+			'childOf'		=> array('subpattern'),
 		),
 		'form' => array
 		(
@@ -155,7 +183,7 @@ $GLOBALS['TL_CTP'] = array
 		(
 			'class'			=> 'Agoat\CustomContentElementsBundle\Contao\PatternModule',
 			'unique'		=> true,
-			'output'			=> true,
+			'output'		=> true,
 		)
 	)
 );
@@ -170,4 +198,7 @@ $GLOBALS['BE_FFL']['fileTree'] 		= '\Agoat\CustomContentElementsBundle\Contao\Fi
 $GLOBALS['BE_FFL']['pageTree'] 		= '\Agoat\CustomContentElementsBundle\Contao\PageTree';
 $GLOBALS['BE_FFL']['articleTree'] 	= '\Agoat\CustomContentElementsBundle\Contao\ArticleTree';
 
+$GLOBALS['BE_FFL']['group'] 		= '\Agoat\CustomContentElementsBundle\Contao\Group';
+$GLOBALS['BE_FFL']['groupstart'] 	= '\Agoat\CustomContentElementsBundle\Contao\GroupStart';
+$GLOBALS['BE_FFL']['groupstop'] 	= '\Agoat\CustomContentElementsBundle\Contao\GroupStop';
 
