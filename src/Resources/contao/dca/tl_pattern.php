@@ -32,12 +32,16 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		),
 		'onsubmit_callback'			  => array
 		(
-			array('tl_pattern', 'saveGroups'),
+			array('tl_pattern', 'saveMemberGroups'),
 			array('tl_pattern', 'saveSubPattern'),
 		),
 		'oncopy_callback'			  => array
 		(
 			array('tl_pattern', 'copySubPattern'),
+		),
+		'oncut_callback'			  => array
+		(
+			array('tl_pattern', 'cutSubPattern'),
 		),
 		'ondelete_callback'			  => array
 		(
@@ -1092,7 +1096,7 @@ class tl_pattern extends Backend
 	 *
 	 * @param DataContainer $dc
 	 */
-	public function saveGroups ($dc)
+	public function saveMemberGroups ($dc)
 	{
 		$db = Database::getInstance();
 					
@@ -1205,7 +1209,20 @@ class tl_pattern extends Backend
 			}
 		}
 	}
-
+	
+	
+	public function cutSubPattern ($dc)
+	{
+		$db = Database::getInstance();
+	
+		// save the filter for subpattern
+		if (isset($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1]))
+		{
+			$db->prepare("UPDATE tl_pattern SET suboption=? WHERE id=?")
+			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1], $dc->id);
+		}
+	}
+	
 
 	public function deleteSubPattern ($dc, $intUndoId)
 	{
