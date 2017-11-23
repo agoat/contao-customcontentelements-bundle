@@ -148,5 +148,4 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 			'sql'	=> "varchar(64) NOT NULL default ''"
 		)
 	)
-)
-
+);
