@@ -215,6 +215,7 @@ class PatternMultiPattern extends Pattern
 	 */
 	public function preview()
 	{
+		$strPreview = '<div class="tl_form">';
 		$strPreview = '<div class="tl_group_header clr"><div class="tl_content_right  click2edit">';
 		$strPreview .= '<button type="button" class="insert-handle" title="' . $GLOBALS['TL_LANG']['MSC']['group']['new']['top'] . '">' . \Image::getHtml('new.svg', 'new') . ' ' . $GLOBALS['TL_LANG']['MSC']['group']['new']['label'] . '</button>';
 		$strPreview .= '</div></div>';
@@ -259,6 +260,8 @@ class PatternMultiPattern extends Pattern
 		// Add group twice
 		$strPreview .=  $strGroupPreview;	
 		$strPreview .=  $strGroupPreview;	
+
+		$strPreview .=  '</div>';
 
 		return $strPreview;
 	}
