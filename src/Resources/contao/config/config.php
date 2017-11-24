@@ -23,7 +23,6 @@ array_push($GLOBALS['BE_MOD']['design']['themes']['tables'], 'tl_elements', 'tl_
 if (TL_MODE == 'BE')
 {
 	$GLOBALS['TL_CSS'][] = 'bundles/agoatcustomcontentelements/style.css|static';
-	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/agoatcustomcontentelements/core.js';
 }
 
 
