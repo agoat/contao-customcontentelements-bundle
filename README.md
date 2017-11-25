@@ -49,7 +49,7 @@ class AppKernel
         $bundles = [
             // ...
             // after Contao\CoreBundle\ContaoCoreBundle
-            new Agoat\CustomContentElementsBundle\AgoatCustomContentElementsBundle (),
+            new Agoat\CustomContentElementsBundle\AgoatCustomContentElementsBundle(),
         ];
     }
 }
