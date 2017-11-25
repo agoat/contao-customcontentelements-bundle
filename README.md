@@ -1,4 +1,4 @@
-# Custom content elements extension for Contao 4
+# Custom content elements for Contao 4
 
 [![Version](https://img.shields.io/packagist/v/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
 [![License](https://img.shields.io/packagist/l/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
