@@ -20,7 +20,7 @@
         "contao/core-bundle": "^4.4"
     },
     "conflict": {
-        "contao/core-bundle": "4.5.*",
+        "contao/core-bundle": "4.5.*"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.5"
