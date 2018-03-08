@@ -38,7 +38,6 @@ $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBun
 
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addContentElementsCSS');
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addContentElementsJS');
-$GLOBALS['TL_HOOKS']['generatePage'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addLayoutJS');
 
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Versions','hideDataTableVersions');
 

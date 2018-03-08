@@ -12,8 +12,7 @@
 
 
 // Palettes
-$GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('external', 'external,backendCSS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] = str_replace('analytics', 'analytics,externalJS,backendJS', $GLOBALS['TL_DCA']['tl_layout']['palettes']['default']);
+$GLOBALS['TL_DCA']['tl_layout']['palettes']['default'] .= ';{backend_legend:hide},backendCSS,backendJS';
 
 
 // Fields
@@ -26,18 +25,6 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['backendCSS'] = array
 	'sql'                     => "blob NULL"
 );
 $GLOBALS['TL_DCA']['tl_layout']['fields']['orderBackendCSS'] = array
-(
-	'sql'                     => "blob NULL"
-);
-$GLOBALS['TL_DCA']['tl_layout']['fields']['externalJS'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_layout']['externalJS'],
-	'exclude'                 => true,
-	'inputType'               => 'fileTree',
-	'eval'                    => array('multiple'=>true, 'orderField'=>'orderExternalJS', 'fieldType'=>'checkbox', 'filesOnly'=>true, 'extensions'=>'js'),
-	'sql'                     => "blob NULL"
-);
-$GLOBALS['TL_DCA']['tl_layout']['fields']['orderExternalJS'] = array
 (
 	'sql'                     => "blob NULL"
 );
