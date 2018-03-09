@@ -80,7 +80,14 @@ class ContentElement extends \Contao\ContentElement
 			TemplateLoader::addFile($this->objElement->template, $this->objElement->getRelated('pid')->templates);
 		}
 
-		$this->strTemplate = $this->objElement->template;
+		if (TL_MODE == 'BE' && $this->objElement->backendTpl)
+		{
+			$this->strTemplate = $this->objElement->backendTpl;
+		}
+		else
+		{
+			$this->strTemplate = $this->objElement->template;
+		}
 				
 		if (TL_MODE == 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start != '' && $this->start > time()) || ($this->stop != '' && $this->stop < time())))
 		{

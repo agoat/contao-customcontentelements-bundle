@@ -5,22 +5,18 @@
 			<trans-unit id="tl_elements.type_legend">
 				<source>Element type</source>
 			</trans-unit>
-			
 			<trans-unit id="tl_elements.type.0">
 				<source>Element type</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.type.1">
 				<source>Choose the type of element element.</source>
 			</trans-unit>
- 
- 
 			<trans-unit id="tl_elements.group_legend">
 				<source>Group settings</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.element_legend">
 				<source>Element settings</source>
 			</trans-unit>
-
 			<trans-unit id="tl_elements.title.0">
 				<source>Title/Alias</source>
 			</trans-unit>
@@ -39,8 +35,6 @@
 			<trans-unit id="tl_elements.singleSRC.1">
 				<source>Select a image (recommended resolution 120x80 px) for visual selection.</source>
 			</trans-unit>
-
-			
 			<trans-unit id="tl_elements.template_legend">
 				<source>Template settings</source>
 			</trans-unit>
@@ -51,47 +45,36 @@
 			<trans-unit id="tl_elements.template.1">
 				<source>Select the template file for the content element.</source>
 			</trans-unit>
-			<trans-unit id="tl_elements.stylesheet.0">
-				<source>Backend stylesheet</source>
+			<trans-unit id="tl_elements.backendTpl.0">
+				<source>Backend template</source>
 			</trans-unit>
-			<trans-unit id="tl_elements.stylesheet.1">
-				<source>Select a stylesheet file (css, scss or less) for the backend display of the content element.</source>
+			<trans-unit id="tl_elements.backendTpl.1">
+				<source>Select the template file to be used in the backend.</source>
 			</trans-unit>
-
-
 			<trans-unit id="tl_elements.default_legend">
 				<source>Default settings</source>
 			</trans-unit>
-
 			<trans-unit id="tl_elements.defaultType.0">
 				<source>Default content element</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.defaultType.1">
 				<source>Set this content element as the default element when adding a new one.</source>
 			</trans-unit>
-
-
 			<trans-unit id="tl_elements.invisible_legend">
 				<source>Visibility settings</source>
 			</trans-unit>
-
 			<trans-unit id="tl_elements.invisible.0">
 				<source>Invisible</source>
 			</trans-unit>
 			<trans-unit id="tl_elements.invisible.1">
 				<source>Select and the content element will not be rendered in the frontend and will not be shown in the content element selection.</source>
 			</trans-unit>
-
-
 			<trans-unit id="tl_elements_type.group.0">
 				<source>Group</source>
 			</trans-unit>
 			<trans-unit id="tl_elements_type.element.0">
 				<source>Element</source>
 			</trans-unit>
-
-			
-			
 			<trans-unit id="tl_elements.new.0">
 				<source>New content element</source>
 			</trans-unit>

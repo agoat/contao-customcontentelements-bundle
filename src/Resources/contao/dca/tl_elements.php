@@ -114,7 +114,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 		'__selector__'			=> array('type'),
 		'default'				=> '{type_legend},type',
 		'group'					=> '{type_legend},type;{group_legend},title',
-		'element'				=> '{type_legend},type;{element_legend},title,description,singleSRC;{template_legend},template;{default_legend},defaultType;{invisible_legend},invisible'
+		'element'				=> '{type_legend},type;{element_legend},title,description,singleSRC;{template_legend},template,backendTpl;{default_legend},defaultType;{invisible_legend},invisible'
 	),
 	// Fields
 	'fields' => array
@@ -183,7 +183,18 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 			'default'				  => 'ce_simple',
 			'flag'                    => 11,
 			'options_callback'        => array('tl_elements', 'getContentElementTemplates'),
-			'eval'                    => array('tl_class'=>'w50'),
+			'eval'                    => array('chosen'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'backendTpl' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_elements']['backendTpl'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'select',
+			'flag'                    => 11,
+			'options_callback'        => array('tl_elements', 'getContentElementTemplates'),
+			'eval'                    => array('includeBlankOption'=>true, 'chosen'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'singleSRC' => array
