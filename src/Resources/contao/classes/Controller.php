@@ -382,7 +382,7 @@ class Controller extends ContaoController
 					//$this->import($callback[0]);
 					$layoutId = static::importStatic($callback[0])->{$callback[1]}($strTable, $intId);
 			
-					if (layoutId)
+					if ($layoutId)
 					{
 						return $layoutId;
 					}
