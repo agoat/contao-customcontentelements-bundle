@@ -101,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 		),
 		'singleArticle' => array
 		(
-			'sql'	=> "int(10) unsigned NOT NULL default '0'"
+			'sql'	=> "binary(16) NULL"
 		),
 		'multiArticle' => array
 		(
@@ -113,7 +113,7 @@ $GLOBALS['TL_DCA']['tl_data'] = array
 		),
 		'singlePage' => array
 		(
-			'sql'	=> "int(10) unsigned NOT NULL default '0'"
+			'sql'	=> "binary(16) NULL"
 		),
 		'multiPage' => array
 		(

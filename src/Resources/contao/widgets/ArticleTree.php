@@ -14,10 +14,11 @@ namespace Agoat\CustomContentElementsBundle\Contao;
 
 
 /**
- * Provide methods to handle the input field "articleTree"
+ * Provide methods to handle input field "articleTree".
  */
 class ArticleTree extends \Widget
 {
+
 	/**
 	 * Submit user input
 	 * @var boolean
@@ -52,7 +53,7 @@ class ArticleTree extends \Widget
 	{
 		$this->import('Database');
 		parent::__construct($arrAttributes);
-		
+
 		// Prepare the order field
 		if ($this->orderField != '')
 		{
@@ -63,12 +64,12 @@ class ArticleTree extends \Widget
 			if ($this->Database->fieldExists($this->orderField, $this->strTable))
 			{
 				// Retrieve the order value
-				$objRow = $this->Database->prepare("SELECT {$this->orderField} FROM {$this->strTable} WHERE id=?")
+				$objRow = $this->Database->prepare("SELECT " . \Database::quoteIdentifier($this->orderField) . " FROM " . $this->strTable . " WHERE id=?")
 							   ->limit(1)
 							   ->execute($this->activeRecord->id);
 
 				$tmp = \StringUtil::deserialize($objRow->{$this->orderField});
-				$this->{$this->orderField} = (!empty($tmp) && is_array($tmp)) ? array_filter($tmp) : array();
+				$this->{$this->orderField} = (!empty($tmp) && \is_array($tmp)) ? array_filter($tmp) : array();
 			}
 		}
 	}
@@ -93,7 +94,12 @@ class ArticleTree extends \Widget
 		// Store the order value
 		if ($this->orderField != '')
 		{
-			$arrNew = explode(',', \Input::post($this->strOrderName));
+			$arrNew = array();
+
+			if ($order = \Input::post($this->strOrderName))
+			{
+				$arrNew = explode(',', $order);
+			}
 
 			// Only proceed if the value has changed
 			if ($arrNew !== $this->{$this->orderField})
@@ -101,11 +107,11 @@ class ArticleTree extends \Widget
 				// Don't try to save virtual pattern fields to database 
 				if ($this->Database->fieldExists($this->orderField, $this->strTable))
 				{
-					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
+					$this->Database->prepare("UPDATE " . $this->strTable . " SET tstamp=?, " . \Database::quoteIdentifier($this->orderField) . "=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
 				}
-				
-			    $this->objDca->createNewVersion = true; // see #6285
+
+				$this->objDca->createNewVersion = true; // see #6285
 			}
 		}
 
@@ -121,7 +127,7 @@ class ArticleTree extends \Widget
 		}
 		elseif (strpos($varInput, ',') === false)
 		{
-			return $this->multiple ? array(intval($varInput)) : intval($varInput);
+			return $this->multiple ? array((int) $varInput) : (int) $varInput;
 		}
 		else
 		{
@@ -139,15 +145,21 @@ class ArticleTree extends \Widget
 	 */
 	protected function checkValue($varInput)
 	{
-		if ($varInput == '' || !is_array($this->rootNodes))
+		if ($varInput == '' || !\is_array($this->rootNodes))
 		{
 			return;
 		}
 
-		$arrPids = $this->Database->prepare("SELECT pid FROM tl_article WHERE id IN (?)")
-							      ->execute($varInput)->fetchAssoc();
+		if (strpos($varInput, ',') === false)
+		{
+			$arrIds = array((int) $varInput);
+		}
+		else
+		{
+			$arrIds = array_map('intval', array_filter(explode(',', $varInput)));
+		}
 
-        if (count(array_diff($arrPids, array_merge($this->rootNodes, $this->Database->getChildRecords($this->rootNodes, 'tl_page')))) > 0)
+		if (\count(array_diff($arrIds, array_merge($this->rootNodes, $this->Database->getChildRecords($this->rootNodes, 'tl_page')))) > 0)
 		{
 			$this->addError($GLOBALS['TL_LANG']['ERR']['invalidArticles']);
 		}
@@ -163,11 +175,11 @@ class ArticleTree extends \Widget
 	{
 		$arrSet = array();
 		$arrValues = array();
-		$blnHasOrder = ($this->orderField != '' && is_array($this->{$this->orderField}));
+		$blnHasOrder = ($this->orderField != '' && \is_array($this->{$this->orderField}));
 
-		if (!empty($this->varValue)) // Can be an array
+		if (!empty($this->varValue)) // can be an array
 		{
-			$objArticles = \ArticleModel::findMultipleByIds((array)$this->varValue);
+			$objArticles = \ArticleModel::findMultipleByIds((array) $this->varValue);
 
 			if ($objArticles !== null)
 			{
@@ -207,7 +219,7 @@ class ArticleTree extends \Widget
 
 		$return = '<input type="hidden" name="'.$this->strName.'" id="ctrl_'.$this->strId.'" value="'.implode(',', $arrSet).'">' . ($blnHasOrder ? '
   <input type="hidden" name="'.$this->strOrderName.'" id="ctrl_'.$this->strOrderId.'" value="'.$this->{$this->orderField}.'">' : '') . '
-  <div class="selector_container">' . (($blnHasOrder && count($arrValues) > 1) ? '
+  <div class="selector_container">' . (($blnHasOrder && \count($arrValues) > 1) ? '
     <p class="sort_hint">' . $GLOBALS['TL_LANG']['MSC']['dragItemsHint'] . '</p>' : '') . '
     <ul id="sort_'.$this->strId.'" class="'.($blnHasOrder ? 'sortable' : '').'">';
 
@@ -225,9 +237,13 @@ class ArticleTree extends \Widget
 		}
 		else
 		{
-			$extras = ['fieldType' => $this->fieldType];
+			$extras = array
+			(
+				'fieldType' => $this->fieldType,
+				'source' => $this->strTable.'.'.$this->currentRecord,
+			);
 
-			if (is_array($this->rootNodes))
+			if (\is_array($this->rootNodes))
 			{
 				$extras['rootNodes'] = array_values($this->rootNodes);
 			}

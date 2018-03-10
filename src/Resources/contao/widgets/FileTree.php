@@ -18,6 +18,7 @@ namespace Agoat\CustomContentElementsBundle\Contao;
  */
 class FileTree extends \Widget
 {
+
 	/**
 	 * Submit user input
 	 * @var boolean
@@ -58,17 +59,17 @@ class FileTree extends \Widget
 		{
 			$this->strOrderId = $this->orderField . str_replace($this->strField, '', $this->strId);
 			$this->strOrderName = $this->orderField . str_replace($this->strField, '', $this->strName);
-			
+
 			// Don't try to load virtual pattern fields from database
 			if ($this->Database->fieldExists($this->orderField, $this->strTable))
 			{
 				// Retrieve the order value
-				$objRow = $this->Database->prepare("SELECT {$this->orderField} FROM {$this->strTable} WHERE id=?")
+				$objRow = $this->Database->prepare("SELECT " . \Database::quoteIdentifier($this->orderField) . " FROM " . $this->strTable . " WHERE id=?")
 										 ->limit(1)
 										 ->execute($this->activeRecord->id);
 
 				$tmp = \StringUtil::deserialize($objRow->{$this->orderField});
-				$this->{$this->orderField} = (!empty($tmp) && is_array($tmp)) ? array_filter($tmp) : array();
+				$this->{$this->orderField} = (!empty($tmp) && \is_array($tmp)) ? array_filter($tmp) : array();
 			}
 		}
 	}
@@ -93,7 +94,12 @@ class FileTree extends \Widget
 		// Store the order value
 		if ($this->orderField != '')
 		{
-			$arrNew = array_map('StringUtil::uuidToBin', explode(',', \Input::post($this->strOrderName)));
+			$arrNew = array();
+
+			if ($order = \Input::post($this->strOrderName))
+			{
+				$arrNew = array_map('StringUtil::uuidToBin', explode(',', $order));
+			}
 
 			// Only proceed if the value has changed
 			if ($arrNew !== $this->{$this->orderField})
@@ -101,10 +107,10 @@ class FileTree extends \Widget
 				// Don't try to save virtual pattern fields to database 
 				if ($this->Database->fieldExists($this->orderField, $this->strTable))
 				{
-					$this->Database->prepare("UPDATE {$this->strTable} SET tstamp=?, {$this->orderField}=? WHERE id=?")
+					$this->Database->prepare("UPDATE " . $this->strTable . " SET tstamp=?, " . \Database::quoteIdentifier($this->orderField) . "=? WHERE id=?")
 								   ->execute(time(), serialize($arrNew), $this->activeRecord->id);
 				}
-				
+
 				$this->objDca->createNewVersion = true; // see #6285
 			}
 		}
@@ -191,7 +197,7 @@ class FileTree extends \Widget
 				$objFile = new \File($objFile->path);
 				$extensions = \StringUtil::trimsplit(',', $this->extensions);
 
-				if (!in_array($objFile->extension, $extensions))
+				if (!\in_array($objFile->extension, $extensions))
 				{
 					$this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['extensionsOnly'], $this->extensions));
 					break;
@@ -210,18 +216,13 @@ class FileTree extends \Widget
 	{
 		$arrSet = array();
 		$arrValues = array();
-		$blnHasOrder = ($this->orderField != '' && is_array($this->{$this->orderField}));
-	
+		$blnHasOrder = ($this->orderField != '' && \is_array($this->{$this->orderField}));
+
 		if (!empty($this->varValue)) // Can be an array
 		{
-			$objFiles = \FilesModel::findMultipleByUuids((array)$this->varValue);
+			$objFiles = \FilesModel::findMultipleByUuids((array) $this->varValue);
 			$allowedDownload = \StringUtil::trimsplit(',', strtolower(\Config::get('allowedDownload')));
 
-			if ($this->extensions)
-			{
-				$allowedDownload = \StringUtil::trimsplit(',', strtolower($this->extensions));
-			}
-		
 			if ($objFiles !== null)
 			{
 				while ($objFiles->next())
@@ -262,7 +263,7 @@ class FileTree extends \Widget
 					{
 						if ($objFiles->type == 'folder')
 						{
-							$objSubfiles = \FilesModel::findByPid($objFiles->uuid);
+							$objSubfiles = \FilesModel::findByPid($objFiles->uuid, array('order' => 'name'));
 
 							if ($objSubfiles === null)
 							{
@@ -278,7 +279,7 @@ class FileTree extends \Widget
 								}
 
 								$objFile = new \File($objSubfiles->path);
-								$strInfo = '<span class="dirname">' . dirname($objSubfiles->path) . '/</span>' . $objFile->basename . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
+								$strInfo = '<span class="dirname">' . \dirname($objSubfiles->path) . '/</span>' . $objFile->basename . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
 
 								if ($this->isGallery)
 								{
@@ -291,7 +292,7 @@ class FileTree extends \Widget
 								else
 								{
 									// Only show allowed download types
-									if (in_array($objFile->extension, $allowedDownload) && !preg_match('/^meta(_[a-z]{2})?\.txt$/', $objFile->basename))
+									if (\in_array($objFile->extension, $allowedDownload) && !preg_match('/^meta(_[a-z]{2})?\.txt$/', $objFile->basename))
 									{
 										$arrValues[$objSubfiles->uuid] = \Image::getHtml($objFile->icon) . ' ' . $strInfo;
 									}
@@ -301,7 +302,7 @@ class FileTree extends \Widget
 						else
 						{
 							$objFile = new \File($objFiles->path);
-							$strInfo = '<span class="dirname">' . dirname($objFiles->path) . '/</span>' . $objFile->basename . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
+							$strInfo = '<span class="dirname">' . \dirname($objFiles->path) . '/</span>' . $objFile->basename . ' <span class="tl_gray">(' . $this->getReadableSize($objFile->size) . ($objFile->isImage ? ', ' . $objFile->width . 'x' . $objFile->height . ' px' : '') . ')</span>';
 
 							if ($this->isGallery)
 							{
@@ -314,7 +315,7 @@ class FileTree extends \Widget
 							else
 							{
 								// Only show allowed download types
-								if (in_array($objFile->extension, $allowedDownload) && !preg_match('/^meta(_[a-z]{2})?\.txt$/', $objFile->basename))
+								if (\in_array($objFile->extension, $allowedDownload) && !preg_match('/^meta(_[a-z]{2})?\.txt$/', $objFile->basename))
 								{
 									$arrValues[$objFiles->uuid] = \Image::getHtml($objFile->icon) . ' ' . $strInfo;
 								}
@@ -357,7 +358,7 @@ class FileTree extends \Widget
 
 		$return = '<input type="hidden" name="'.$this->strName.'" id="ctrl_'.$this->strId.'" value="'.$strSet.'">' . ($blnHasOrder ? '
   <input type="hidden" name="'.$this->strOrderName.'" id="ctrl_'.$this->strOrderId.'" value="'.$strOrder.'">' : '') . '
-  <div class="selector_container">' . (($blnHasOrder && count($arrValues) > 1) ? '
+  <div class="selector_container">' . (($blnHasOrder && \count($arrValues) > 1) ? '
     <p class="sort_hint">' . $GLOBALS['TL_LANG']['MSC']['dragItemsHint'] . '</p>' : '') . '
     <ul id="sort_'.$this->strId.'" class="'.trim(($blnHasOrder ? 'sortable ' : '').($this->isGallery ? 'sgallery' : '')).'">';
 
@@ -436,7 +437,7 @@ class FileTree extends \Widget
 	 *
 	 * @return string
 	 */
-	protected function getPreviewImage(\File $objFile, $strInfo, $strClass='gimage')
+	protected function getPreviewImage(File $objFile, $strInfo, $strClass='gimage')
 	{
 		if (($objFile->isSvgImage || $objFile->height <= \Config::get('gdMaxImgHeight') && $objFile->width <= \Config::get('gdMaxImgWidth')) && $objFile->viewWidth && $objFile->viewHeight)
 		{
@@ -455,7 +456,7 @@ class FileTree extends \Widget
 			$image = \Image::getPath('placeholder.svg');
 		}
 
-		if (strpos($image, 'data:') === 0)
+		if (strncmp($image, 'data:', 5) === 0)
 		{
 			return '<img src="' . $objFile->dataUri . '" width="' . $objFile->width . '" height="' . $objFile->height . '" alt="" class="' . $strClass . '" title="' . \StringUtil::specialchars($strInfo) . '">';
 		}
