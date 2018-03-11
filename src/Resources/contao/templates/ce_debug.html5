@@ -20,7 +20,7 @@
 <div style="clear:both;">
 <?php 
 $vars = $this->getData(); 
-unset($vars[Template]);
+unset($vars['Template']);
 echo "<pre>\n";
 print_r($vars);
 echo "</pre>\n";
