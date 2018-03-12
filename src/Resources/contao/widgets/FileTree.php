@@ -437,7 +437,7 @@ class FileTree extends \Widget
 	 *
 	 * @return string
 	 */
-	protected function getPreviewImage(File $objFile, $strInfo, $strClass='gimage')
+	protected function getPreviewImage(\File $objFile, $strInfo, $strClass='gimage')
 	{
 		if (($objFile->isSvgImage || $objFile->height <= \Config::get('gdMaxImgHeight') && $objFile->width <= \Config::get('gdMaxImgWidth')) && $objFile->viewWidth && $objFile->viewHeight)
 		{
