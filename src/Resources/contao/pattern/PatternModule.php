@@ -38,7 +38,7 @@ class PatternModule extends Pattern
 	{
 		$objModule = \ModuleModel::findByPk($this->module);
 		
-		return '<div class="widget"><span style="color:#b3b3b3 ">' . $objModule->name . ' (ID ' . $objModule->id . ')</span></div>';
+		return '<div class="widget clr"><span style="color:#b3b3b3 ">' . $objModule->name . ' (ID ' . $objModule->id . ')</span></div>';
 	}
 
 

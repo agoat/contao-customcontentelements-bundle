@@ -71,7 +71,7 @@ class PatternTextField extends Pattern
 	 */
 	public function preview()
 	{
-		$strPreview = '<div class="' . (($this->classLong) ? 'long' : 'w50') . ((in_array($this->picker, array('datetime', 'color', 'link'))) ? ' wizard' : '') . ' widget" style="padding-top:10px;"><h3><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="widget ' . (($this->classLong) ? 'long' : 'w50') . ((in_array($this->picker, array('datetime', 'color', 'link'))) ? ' wizard' : '') . ' widget"><h3><label>' . $this->label . '</label></h3>';
 
 		if ($this->picker == 'unit')
 		{

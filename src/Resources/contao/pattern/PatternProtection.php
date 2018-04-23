@@ -61,7 +61,7 @@ class PatternProtection extends Pattern
 	 */
 	public function preview()
 	{
-		$strPreview = '<div class="widget"><div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="1" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][0] . '</label><p class="tl_help tl_tip" title="">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][1] . '</p></div></div>';
+		$strPreview = '<div class="widget clr"><div id="ctrl_protected" class="tl_checkbox_single_container"><input name="protected" value="1" type="hidden"><input name="protected" id="opt_protected_0" class="tl_checkbox" value="1" onfocus="Backend.getScrollOffset()" type="checkbox"' . (($this->canChangeGroups) ? 'checked' : '') . '> <label for="opt_protected_0">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][0] . '</label><p class="tl_help tl_tip" title="">' . $GLOBALS['TL_LANG']['tl_pattern']['protected'][1] . '</p></div></div>';
 		
 		if ($this->canChangeGroups)
 		{

@@ -47,7 +47,7 @@ class PatternVisibility extends Pattern
 	 */
 	public function preview()
 	{
-		$strPreview = '<div class="widget m12"><div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $GLOBALS['TL_LANG']['tl_pattern']['invisible'][0] . '</label><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_pattern']['invisible'][1] . '</p></div></div>';	
+		$strPreview = '<div class="widget clr m12"><div class="tl_checkbox_single_container"><input class="tl_checkbox" value="1" type="checkbox"> <label>' . $GLOBALS['TL_LANG']['tl_pattern']['invisible'][0] . '</label><p title="" class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_pattern']['invisible'][1] . '</p></div></div>';	
 		
 		if ($this->canChangeStart)
 		{

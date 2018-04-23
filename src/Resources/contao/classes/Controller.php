@@ -253,6 +253,76 @@ class Controller extends ContaoController
 		}
 	}
 
+
+	/*
+	 * Dynamically change parent table when editing subpattern
+	 *
+	 * @param string $strTable
+	 */
+	public function handleSubPatternTable ($strTable)
+	{
+		if ($strTable == 'tl_pattern')
+		{
+			if (\Input::get('spid') !== null)
+			{
+				$objParent = \PatternModel::findById(\Input::get('spid'));
+			}
+			else if (\Input::get('act') == 'edit' && \Input::get('mode') == '1')
+			{
+				// For the 'save and edit' function use the parent of the parent to check for a sub pattern
+				$objParent = \PatternModel::findById(\Input::get('pid'));
+
+				if ($objParent->ptable == 'tl_subpattern')
+				{
+					$objParent = \PatternModel::findById($objParent->pid);
+				}
+				else
+				{
+					$objParent = null;
+				}
+			}
+			else
+			{
+				$objParent = null;	
+			}
+
+			if (null !== $objParent)
+			{
+				if (\Input::get('id') == \Input::get('spid') && \Input::get('act') == 'edit')
+				{
+					// When editing a sub pattern itself use the ptable of the sub pattern object
+					$GLOBALS['TL_DCA']['tl_pattern']['config']['ptable'] = $objParent->ptable;
+				}
+				else
+				{
+					$GLOBALS['TL_DCA']['tl_pattern']['config']['ptable'] = 'tl_subpattern';
+				}
+				
+				$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['headerFields'] =  array('type','alias');
+
+				// Extra config for the sub pattern types
+				if ($objParent->type == 'subpattern')
+				{
+					$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['headerFields'][] =  'subPatternType';
+					
+					// Set the filter for the subpattern option
+					if ($objParent->subPatternType == 'options')
+					{
+						// Set callbacks and filter
+						$GLOBALS['TL_DCA']['tl_pattern']['config']['onload_callback'][] = array('tl_pattern', 'subPatternFilter');
+						$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['panel_callback']['subPatternFilter'] = array('tl_pattern', 'generatesubPatternFilter');
+
+						$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['panelLayout'] = str_replace('filter', 'subPatternFilter;filter', $GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['panelLayout']);
+					}
+				}
+				else if ($objParent->type == 'multipattern')
+				{
+					$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['headerFields'][] =  'numberOfGroups';
+				}
+			}
+		}
+	}
+
 	
 	/**
 	 * Resolve the rootpage ID from table and id
@@ -322,7 +392,7 @@ class Controller extends ContaoController
 		
 		return null;
 	}
-
+	
 
 	/**
 	 * Resolve the layout ID from table and id

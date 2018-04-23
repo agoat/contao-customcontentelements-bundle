@@ -42,11 +42,11 @@ class PatternImageSize extends Pattern
 		
 		if (is_numeric($size[2]))
 		{
-			return '<div class="widget"><span style="color:#b3b3b3 ">' . $sizes['image_sizes'][$size[2]] . '</span></div>';
+			return '<div class="widget clr"><span style="color:#b3b3b3 ">' . $sizes['image_sizes'][$size[2]] . '</span></div>';
 		}
 		else
 		{
-			return '<div class="widget"><span style="color:#b3b3b3 ">' . $GLOBALS['TL_LANG']['MSC'][$size[2]][0] . ' (' . $size[0] . 'x' . $size[1] . ')</span></div>';
+			return '<div class="widget clr"><span style="color:#b3b3b3 ">' . $GLOBALS['TL_LANG']['MSC'][$size[2]][0] . ' (' . $size[0] . 'x' . $size[1] . ')</span></div>';
 		}
 	}
 

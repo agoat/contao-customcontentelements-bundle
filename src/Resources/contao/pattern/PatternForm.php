@@ -38,7 +38,7 @@ class PatternForm extends Pattern
 	{
 		$objForm = new Form($this);
 		
-		return '<div class="widget"><span style="color:#b3b3b3 ">' . $objForm->title . ' (ID ' . $objForm->id . ')</span></div>';
+		return '<div class="widget clr"><span style="color:#b3b3b3 ">' . $objForm->title . ' (ID ' . $objForm->id . ')</span></div>';
 	}
 
 

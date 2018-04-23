@@ -23,6 +23,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		'switchToEdit'                => false,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_elements',
+		'ctable'                      => array('tl_subpattern'),
 		'dynamicPtable'				  => true,
 		'onload_callback' => array
 		(
@@ -31,7 +32,20 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		),
 		'onsubmit_callback'			  => array
 		(
-			array('tl_pattern', 'saveGroups'),
+			array('tl_pattern', 'saveMemberGroups'),
+			array('tl_pattern', 'saveSubPattern'),
+		),
+		'oncopy_callback'			  => array
+		(
+			array('tl_pattern', 'copySubPattern'),
+		),
+		'oncut_callback'			  => array
+		(
+			array('tl_pattern', 'cutSubPattern'),
+		),
+		'ondelete_callback'			  => array
+		(
+			array('tl_pattern', 'deleteSubPattern'),
 		),
 		'sql' => array
 		(
@@ -67,11 +81,17 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		),
 		'operations' => array
 		(
+			'edit' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['edit'],
+				'icon'                => 'edit.svg',
+				'button_callback'     => array('tl_pattern', 'patternButton')
+			),
 			'editheader' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_pattern']['editheader'],
 				'href'                => 'act=edit',
-				'icon'                => 'edit.svg',
+				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
@@ -112,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type', 'source', 'multiSource', 'insideRoot', 'picker'),
+		'__selector__'                => array('type', 'source', 'multiSource', 'insideRoot', 'picker' ,'subPatternType'),
 		'default'                     => '{type_legend},type',
 		// input
 		'textfield'					  => '{type_legend},type;{textfield_legend},minLength,maxLength,rgxp,defaultValue,multiple,picker;{label_legend},label,description;{pattern_legend},alias,mandatory,classClr,classLong;{invisible_legend},invisible',
@@ -129,7 +149,9 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		// layout
 		'section'					  => '{type_legend},type;{section_legend},label,hidden;{invisible_legend},invisible',
 		'explanation'				  => '{type_legend},type;{explanation_legend},explanation;{invisible_legend},invisible',
-		// element
+		'subpattern'				  => '{type_legend},type;{subpattern_legend},subPatternType;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
+		'multipattern'				  => '{type_legend},type;{multipattern_legend},numberOfGroups;{label_legend},label,description;{pattern_legend},alias;{invisible_legend},invisible',
+ 		// element
 		'visibility'				  => '{type_legend},type;{visibility_legend},canChangeStart,canChangeStop;{invisible_legend},invisible',
 		'protection'				  => '{type_legend},type;{protection_legend},groups,canChangeGroups;{invisible_legend},invisible',
 		// system
@@ -145,6 +167,7 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 		'multiSource'				  => 'sortBy,canChangeSortBy,numberOfItems,metaIgnore',
 		'insideRoot'				  => 'insideLang',
 		'picker_unit'				  => 'units',
+		'subPatternType_options'	  => 'options',
 	),
 	// Fields
 	'fields' => array
@@ -250,6 +273,25 @@ $GLOBALS['TL_DCA']['tl_pattern'] = array
 			'inputType'               => 'checkbox',
 			'eval'                    => array('tl_class'=>'w50 m12'),
 			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'subPatternType' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['subPatternType'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'options'                 => array('button', 'options'),
+			'reference'               => &$GLOBALS['TL_LANG']['tl_pattern_subPatternType'],
+			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'numberOfGroups' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_pattern']['numberOfGroups'],
+			'exclude'                 => true,
+			'default'				  => 100,
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'natural', 'maxlength'=>3, 'minval'=>2, 'maxval'=>100, 'tl_class'=>'w50 clr'),
+			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
 		),
 		'explanation' => array
 		(
@@ -644,6 +686,144 @@ class tl_pattern extends Backend
 
 
 	/**
+	 * Generate a sub pattern filter
+	 *
+	 * @param object $dc
+	 *
+	 * @return string
+	 */
+	public function generatesubPatternFilter($dc) 
+	{ 
+		$objPattern = \PatternModel::findByPk(\Input::get('spid'));
+		
+		if ($objPattern !== null)
+		{
+			$return = '<div class="tl_filter tl_subpanel"><strong>' . $GLOBALS['TL_LANG']['tl_pattern']['suboption'] . ' </strong>';
+			$return .= '<select name="suboption" id="suboption" class="tl_select" onchange="this.form.submit()">';
+
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				if ($arrOption['group'])
+				{
+					if ($blnOpenGroup)
+					{
+						$return .= '</optgroup>';
+					}
+					
+					$return .= '<optgroup label="&nbsp;' . StringUtil::specialchars($arrOption['label']) . '">';
+					$blnOpenGroup = true;
+					continue;
+				}
+				
+				$return .='<option value="' . $arrOption['value'] . '"' . (($GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['filter']['suboption'][1] == $arrOption['value'])? ' selected' : '') . '>' . StringUtil::specialchars($arrOption['label']) . '</option>';
+			}
+
+			if ($blnOpenGroup)
+			{
+				$return .= '</optgroup>';
+			}
+
+			$return .='</select></div>';
+		
+			return $return;
+		}
+	}
+
+	
+	/**
+	 * Sub pattern filter
+	 *
+	 * @param object $dc
+	 */
+	public function subPatternFilter($dc) 
+	{ 
+		/** @var SessionInterface $objSession */
+		$objSession = \System::getContainer()->get('session');
+		
+		/** @var AttributeBagInterface $objSessionBag */
+		$objSessionBag = $objSession->getBag('contao_backend');
+		
+		$filter = $objSessionBag->get('filter');
+		$suboption = $filter['tl_pattern_'.CURRENT_ID]['suboption'];
+
+		$objPattern = \PatternModel::findByPk(\Input::get('spid'));
+
+		if ($objPattern === null)
+		{
+			// Try from pid when no spid
+			$objPattern = \PatternModel::findByPk(\Input::get('pid'));
+		}
+
+		$arrAllowedValues = array();
+		
+		if ($objPattern->options !== null)
+		{
+			foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+			{
+				if (!$arrOption['group'])
+				{
+					$arrAllowedValues[] = $arrOption['value'];
+				}
+			}
+		}
+
+		if (\Input::post('FORM_SUBMIT') == 'tl_filters' && in_array(\Input::post('suboption'), $arrAllowedValues))
+		{
+			// Validate the user input
+			if (\Input::post('suboption'))
+			{
+				$suboption = \Input::Post('suboption');
+			}
+			
+			$filter['tl_pattern_'.CURRENT_ID]['suboption'] = $suboption;
+			$objSessionBag->set('filter', $filter);
+		}
+		
+		if (!$suboption)
+		{
+			
+			if ($objPattern !== null)
+			{
+				foreach (StringUtil::deserialize($objPattern->options) as $arrOption)
+				{
+					if ($arrOption['default'] || (!$suboption && !$arrOption['group']))
+					{
+						$suboption = $arrOption['value'];
+					}	
+				}
+				
+			$filter['tl_pattern_'.CURRENT_ID]['suboption'] = $suboption;
+			$objSessionBag->set('filter', $filter);
+			}
+		}
+
+		// Set the filter option
+		$GLOBALS['TL_DCA']['tl_pattern']['list']['sorting']['filter']['suboption'] = array('suboption=?', $suboption);
+	}
+
+	
+	/**
+	 * Return the pattern edit button
+	 *
+	 * @param array  $row
+	 * @param string $href
+	 * @param string $label
+	 * @param string $title
+	 * @param string $icon
+	 * @param string $attributes
+	 *
+	 * @return string
+	 */
+	public function patternButton($row, $href, $label, $title, $icon, $attributes)
+	{
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($row['type']))
+		{
+			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id'].'&amp;spid='.$row['id'],true, array('act','mode')).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+		}
+	}	
+
+	
+	/**
 	 * Add the type of content pattern
 	 *
 	 * @param array $arrRow
@@ -687,7 +867,6 @@ class tl_pattern extends Backend
 		
 		return '<div class="cte_type ' . $key . '">' . $type . $options . '</div><div style="padding: 5px 0 10px;">' . $strPatternView . '</div>';
 	}
-
 
 	
 	/**
@@ -757,11 +936,12 @@ class tl_pattern extends Backend
 					   ->execute('', $dc->activeRecord->id);
 				}
 				break;
-
+	
 		}
 		
 		return $value;
 	}
+
 
 	/**
 	 * Reduce the maxLength for 4 input fields
@@ -834,11 +1014,18 @@ class tl_pattern extends Backend
 	public function getPattern($dc)
 	{
 		$pattern = array();
-		
+
+		if ($dc->activeRecord->ptable != 'tl_elements')
+		{
+			$objParent = \PatternModel::findById($dc->activeRecord->pid);
+		}
+			
 		foreach ($GLOBALS['TL_CTP'] as $k=>$v)
 		{
 			foreach ($v as $kk=>$vv)
 			{
+				if ($objParent === null)
+				{
 					if (!$vv['unique'])
 					{
 						$pattern[$k][] = $kk;
@@ -848,6 +1035,12 @@ class tl_pattern extends Backend
 					{
 						$pattern[$k][] = $kk;
 					}
+				}
+				
+				elseif (is_array($vv['childOf']) && in_array($objParent->type, $vv['childOf']))
+				{
+					$pattern[$k][] = $kk;
+				}
 			}
 		}
 	
@@ -900,7 +1093,7 @@ class tl_pattern extends Backend
 	 *
 	 * @param DataContainer $dc
 	 */
-	public function saveGroups ($dc)
+	public function saveMemberGroups ($dc)
 	{
 		$db = Database::getInstance();
 					
@@ -916,7 +1109,196 @@ class tl_pattern extends Backend
 		}
 	}
 
+	
+	/**
+	 * Save subpattern rows with the pattern
+	 *
+	 * @param DataContainer $dc
+	 */
+	public function saveSubPattern ($dc)
+	{
+		$db = Database::getInstance();
+		
+		// Save changes to subpattern table
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($dc->activeRecord->type))
+		{			
+			if ($db->prepare("SELECT * FROM tl_subpattern WHERE id=?")->execute($dc->activeRecord->id)->numRows)
+			{
+				$db->prepare("UPDATE tl_subpattern SET pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=? WHERE id=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->label, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups, $dc->activeRecord->id);
+			}
+			else
+			{
+				$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+				   ->execute($dc->activeRecord->id, $dc->activeRecord->id, $dc->activeRecord->label, $dc->activeRecord->alias, $dc->activeRecord->type, $dc->activeRecord->subPatternType, $dc->activeRecord->numberOfGroups);
+			}
+		}
 
+		// Save the filter for subpattern
+		if (isset($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1]))
+		{
+			$db->prepare("UPDATE tl_pattern SET suboption=? WHERE id=?")
+			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1], $dc->activeRecord->id);
+		}
+	}
+
+	
+	/**
+	 * Copy subpattern rows with the pattern
+	 *
+	 * @param interger      $insertID
+	 * @param DataContainer $dc
+	 */
+	public function copySubPattern ($insertID, $dc)
+	{
+		$db = Database::getInstance();
+		
+		$objPattern = \PatternModel::findById($insertID);
+
+		// Copy changes to subpattern table and duplicate the subpattern
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($objPattern->type))
+		{			
+			// Copy to subpattern table
+			$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+			   ->execute($objPattern->id, $objPattern->id, $objPattern->label, $objPattern->alias, $objPattern->type, $objPattern->subPatternType, $objPattern->numberOfGroups);
+
+			$colPattern = \PatternModel::findByPidAndTable($dc->id, 'tl_subpattern');
+			
+			if ($colPattern !== null)
+			{
+				$arrPattern = $colPattern->fetchAll();
+				
+				foreach ($arrPattern as $k=>$v)
+				{
+					$arrPattern[$k]['pid'] = $insertID;
+				}				
+			}
+
+			while (!empty($arrPattern))
+			{
+				$arrCurrent = array_shift($arrPattern);
+				
+				$arrValues = $arrCurrent;
+				
+				// Remove id
+				unset($arrValues['id']);
+				
+				$objInsertStmt = $db->prepare("INSERT INTO tl_pattern %s")
+									->set($arrValues)
+									->execute();
+				
+				$insertID = $objInsertStmt->insertId;
+				
+				if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrCurrent['type']))
+				{
+					// Copy to subpattern table
+					$db->prepare("INSERT INTO tl_subpattern SET id=?,pid=?,title=?,alias=?,type=?,subPatternType=?,numberOfGroups=?")
+					   ->execute($insertID, $insertID, $arrCurrent['label'], $arrCurrent['alias'], $arrCurrent['type'], $arrCurrent['subPatternType'], $arrCurrent['numberOfGroups']);
+
+					   $colSubPattern = \PatternModel::findByPidAndTable($arrCurrent['id'], 'tl_subpattern');
+					
+					if ($colSubPattern !== null)
+					{
+						$arrSubPattern = $colSubPattern->fetchAll();
+						
+						foreach ($arrSubPattern as $k=>$v)
+						{
+							$arrSubPattern[$k]['pid'] = $insertID;
+						}				
+					}
+						
+					foreach ($arrSubPattern as $k=>$v)
+					{
+						$arrSubPattern[$k]['pid'] = $insertID;
+					}
+
+					$arrPattern = array_merge($arrPattern, $arrSubPattern);
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Cut/Move subpattern rows with the pattern
+	 *
+	 * @param DataContainer $dc
+	 */
+	public function cutSubPattern ($dc)
+	{
+		$db = Database::getInstance();
+	
+		// save the filter for subpattern
+		if (isset($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1]))
+		{
+			$db->prepare("UPDATE tl_pattern SET suboption=? WHERE id=?")
+			   ->execute($GLOBALS['TL_DCA'][$this->table]['list']['sorting']['filter']['suboption'][1], $dc->id);
+		}
+	}
+	
+
+	/**
+	 * Delete subpattern rows with the pattern
+	 *
+	 * @param DataContainer $dc
+	 * @param interger      $intUndoId
+	 */
+	public function deleteSubPattern ($dc, $intUndoId)
+	{
+		$db = Database::getInstance();
+		
+		if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($dc->activeRecord->type))
+		{			
+			// Get the undo database row
+			$objUndo = $db->prepare("SELECT data FROM tl_undo WHERE id=?")
+						  ->execute($intUndoId);
+
+			$arrData = \StringUtil::deserialize($objUndo->fetchAssoc()[data]);
+			
+			$colPattern = \PatternModel::findByPidAndTable($dc->activeRecord->id, 'tl_subpattern');
+			
+			if ($colPattern !== null)
+			{
+				$arrPattern = $colPattern->fetchAll();
+			}
+
+			while (!empty($arrPattern))
+			{
+				$arrCurrent = array_shift($arrPattern);
+				
+				// Add row to undo array
+				$arrData['tl_pattern'][] = $arrCurrent;
+				
+				// Delete row in database
+				$db->prepare("DELETE FROM tl_pattern WHERE id=?")
+				   ->execute($arrCurrent['id']);
+				
+				if (\Agoat\CustomContentElementsBundle\Contao\Pattern::isSubPattern($arrCurrent['type']))
+				{
+					// Add related row to undo array
+					$arrData['tl_subpattern'][] = $db->prepare("SELECT * FROM tl_subpattern WHERE id=?")
+															 ->execute($arrCurrent['id'])->fetchAssoc();
+					
+					// Delete row in database
+					$db->prepare("DELETE FROM tl_subpattern WHERE id=?")
+					   ->execute($arrCurrent['id']);
+					
+					$colSubPattern = \PatternModel::findByPidAndTable($arrCurrent['id'], 'tl_subpattern');
+					
+					if ($colSubPattern !== null)
+					{
+						$arrPattern = array_merge($arrPattern, $colSubPattern->fetchAll());
+					}
+				}
+			}
+			
+			// Save to the undo database row
+			$db->prepare("UPDATE tl_undo SET data=? WHERE id=?")
+			   ->execute(serialize($arrData), $intUndoId);
+		}
+	}
+
+	
 	/**
 	 * Show a hint if the content block is already in use
 	 *

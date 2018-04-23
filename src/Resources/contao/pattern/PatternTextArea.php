@@ -68,7 +68,7 @@ class PatternTextArea extends Pattern
 	{
 		$selector = 'ctrl_textarea' . $this->id;
 
-		$strPreview = '<div class="widget" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
+		$strPreview = '<div class="widget clr" style="padding-top:10px;"><h3 style="margin: 0;"><label>' . $this->label . '</label></h3>';
 		$strPreview .= '<textarea id="' . $selector . '" aria-hidden="true" class="tl_textarea noresize" rows="12" cols="80"></textarea>';
 		
 		// Register all tinyMCE template files
