@@ -32,8 +32,6 @@ if (TL_MODE == 'BE')
 $GLOBALS['TL_HOOKS']['getPageLayout'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','registerBlockElements');
 
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Config','setNewsArticleCallbacks');
-
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addPageLayoutToBE');
 
 $GLOBALS['TL_HOOKS']['outputFrontendTemplate'][] = array('Agoat\\CustomContentElementsBundle\\Contao\\Controller','addContentElementsCSS');

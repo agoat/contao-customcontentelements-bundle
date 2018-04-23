@@ -12,7 +12,7 @@
 
 namespace Agoat\CustomContentElementsBundle\Contao;
 
-use \Contao\Controller as ContaoController;
+use Contao\Controller as ContaoController;
 use Contao\File;
 use Contao\Combiner;
 use Agoat\CustomContentElementsBundle\Contao\ContentElement;
