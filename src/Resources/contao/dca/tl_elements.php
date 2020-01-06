@@ -164,7 +164,7 @@ $GLOBALS['TL_DCA']['tl_elements'] = array
 		'alias' => array
 		(
 			'eval'                    => array('doNotCopy'=>true),
-			'sql'                     => "varchar(64) COLLATE utf8_bin NOT NULL default ''",
+			'sql'                     => "varchar(255) COLLATE utf8_bin NOT NULL default ''",
 		),
 		'description' => array
 		(
