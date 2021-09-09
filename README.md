@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/packagist/l/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements)
 [![Downloads](https://img.shields.io/packagist/dt/agoat/contao-customcontentelements.svg?style=flat-square)](http://packagist.org/packages/agoat/contao-customcontentelements) 
 
-#### Now compatible with Contao 4.4 lts and 4.8 (latest) !!
+#### Now compatible with Contao 4.4 lts and 4.9 lts (Contao 4.10+ not tested) !!
 
 ## About
 Create your own **content elements** with individual input fields.
