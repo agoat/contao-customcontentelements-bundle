@@ -35,7 +35,7 @@ class ElementsModel extends Model
 	 *
 	 * @return \Model\Collection|\ElementsModel|null A collection of models or null if there are no content elements
 	 */
-	public function findPublishedByPid($intPid, array $arrOptions=array())
+	public static function findPublishedByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 
@@ -58,7 +58,7 @@ class ElementsModel extends Model
 	 *
 	 * @return \Model|\ElementsModel|null A model or null if there is no content element
 	 */
-	public function findPublishedByAlias($strAlias, array $arrOptions=array())
+	public static function findPublishedByAlias($strAlias, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 
@@ -76,7 +76,7 @@ class ElementsModel extends Model
 	 *
 	 * @return \Model|\ElementsModel|null A model or null if there is no content element
 	 */
-	public function findFirstPublishedElementByPid($intPid, array $arrOptions=array())
+	public static function findFirstPublishedElementByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 
@@ -99,7 +99,7 @@ class ElementsModel extends Model
 	 *
 	 * @return \Model|\ElementsModel|null A model or null if there is no content element
 	 */
-	public function findDefaultPublishedElementByPid($intPid, array $arrOptions=array())
+	public static function findDefaultPublishedElementByPid($intPid, array $arrOptions=array())
 	{
 		$t = static::$strTable;
 
